@@ -9,7 +9,9 @@ import Footer from "./components/layout/Footer";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Equipment from "./pages/Equipment";
+import NewEquipment from "./pages/NewEquipment";
 import Missions from "./pages/Missions";
+import NewMission from "./pages/NewMission";
 import Skills from "./pages/Skills";
 import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
@@ -29,7 +31,9 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/equipment" element={<Equipment />} />
+              <Route path="/equipment/new" element={<NewEquipment />} />
               <Route path="/missions" element={<Missions />} />
+              <Route path="/missions/new" element={<NewMission />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/users" element={<Users />} />
               <Route path="*" element={<NotFound />} />
