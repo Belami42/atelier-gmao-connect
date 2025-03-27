@@ -1,10 +1,12 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wrench, MapPin, FileText, AlertTriangle, CheckCircle } from "lucide-react";
+import { Wrench, MapPin, FileText, AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export interface Equipment {
   id: string;
@@ -17,6 +19,8 @@ export interface Equipment {
   serialNumber?: string;
   status: "operational" | "maintenance" | "faulty";
   lastMaintenance?: string;
+  docLink?: string;
+  description?: string;
 }
 
 interface EquipmentCardProps {
@@ -92,14 +96,39 @@ const EquipmentCard = ({ equipment, onClick }: EquipmentCardProps) => {
               : equipment.brand || equipment.model}
           </p>
         )}
+
+        {equipment.description && (
+          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+            {equipment.description}
+          </p>
+        )}
         
         <div className="mt-auto pt-4 flex justify-between items-center">
-          <Button size="sm" variant="ghost" className="gap-2" asChild>
-            <Link to={`/equipment/${equipment.id}`}>
-              <FileText size={14} />
-              <span>Détails</span>
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" className="gap-2" asChild>
+                <Link to={`/equipment/${equipment.id}`}>
+                  <FileText size={14} />
+                  <span>Détails</span>
+                </Link>
+              </Button>
+              
+              {equipment.docLink && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="outline" className="gap-2" asChild>
+                      <a href={equipment.docLink} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink size={14} />
+                      </a>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Documentation technique</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          </TooltipProvider>
           
           <Button size="sm" variant="outline" className="gap-2" asChild>
             <Link to={`/missions/new?equipment=${equipment.id}`}>

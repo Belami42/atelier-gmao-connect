@@ -63,7 +63,10 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
         <div className="flex gap-2">
           {/* Filtres sur desktop */}
           <div className="hidden md:flex gap-2">
-            <Select value={selectedLocation || ""} onValueChange={(value) => setSelectedLocation(value || null)}>
+            <Select 
+              value={selectedLocation || ""} 
+              onValueChange={(value) => setSelectedLocation(value === "all" ? null : value || null)}
+            >
               <SelectTrigger className="w-40 gap-2">
                 <Map size={14} />
                 <SelectValue placeholder="Localisation" />
@@ -76,7 +79,10 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
               </SelectContent>
             </Select>
             
-            <Select value={selectedStatus || ""} onValueChange={(value) => setSelectedStatus(value || null)}>
+            <Select 
+              value={selectedStatus || ""} 
+              onValueChange={(value) => setSelectedStatus(value === "all" ? null : value || null)}
+            >
               <SelectTrigger className="w-40 gap-2">
                 <CheckCircle size={14} />
                 <SelectValue placeholder="État" />

@@ -1,9 +1,9 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Equipment } from "@/components/equipment/EquipmentCard";
 
 // Demo equipment data
-const equipmentData: Equipment[] = [
+const defaultEquipmentData: Equipment[] = [
   {
     id: "robot1",
     tag: "ROBOT-01",
@@ -66,23 +66,44 @@ const equipmentData: Equipment[] = [
   }
 ];
 
+// Check if localStorage is available (to avoid SSR issues)
+const isLocalStorageAvailable = typeof window !== 'undefined' && window.localStorage;
+
 export const useEquipmentData = () => {
+  // Initialize equipment data from localStorage or use default
+  const [equipmentData, setEquipmentData] = useState<Equipment[]>(() => {
+    if (isLocalStorageAvailable) {
+      const savedEquipment = localStorage.getItem('equipmentData');
+      return savedEquipment ? JSON.parse(savedEquipment) : defaultEquipmentData;
+    }
+    return defaultEquipmentData;
+  });
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
+  // Save equipment data to localStorage when it changes
+  useEffect(() => {
+    if (isLocalStorageAvailable) {
+      localStorage.setItem('equipmentData', JSON.stringify(equipmentData));
+    }
+  }, [equipmentData]);
+  
   // Extract unique locations for filter options
   const locations = useMemo(() => 
     [...new Set(equipmentData.map(eq => eq.location))],
-    []
+    [equipmentData]
   );
   
   // Apply filters to equipment data
   const filteredEquipments = useMemo(() => {
     return equipmentData.filter(equipment => {
       const matchesSearch = equipment.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            equipment.tag.toLowerCase().includes(searchQuery.toLowerCase());
+                            equipment.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            (equipment.brand && equipment.brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                            (equipment.model && equipment.model.toLowerCase().includes(searchQuery.toLowerCase()));
       
       const matchesLocation = !selectedLocation || equipment.location === selectedLocation;
       
@@ -90,7 +111,7 @@ export const useEquipmentData = () => {
       
       return matchesSearch && matchesLocation && matchesStatus;
     });
-  }, [searchQuery, selectedLocation, selectedStatus]);
+  }, [searchQuery, selectedLocation, selectedStatus, equipmentData]);
   
   // Check if any filters are applied
   const hasActiveFilters = selectedLocation || selectedStatus;
@@ -107,8 +128,14 @@ export const useEquipmentData = () => {
     resetFilters();
   };
   
+  // Function to add a new equipment
+  const addEquipment = (newEquipment: Equipment) => {
+    setEquipmentData(prev => [...prev, newEquipment]);
+  };
+  
   return {
     equipmentData,
+    setEquipmentData,
     filteredEquipments,
     searchQuery,
     setSearchQuery,
@@ -121,6 +148,7 @@ export const useEquipmentData = () => {
     locations,
     hasActiveFilters,
     resetFilters,
-    resetSearch
+    resetSearch,
+    addEquipment
   };
 };
