@@ -1,9 +1,8 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
   Clipboard, 
-  Tool, 
+  Wrench, 
   Clock, 
   User, 
   Calendar, 
@@ -110,7 +109,7 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
       <div className="p-5">
         <div className="flex justify-between items-start gap-4">
           <Badge className={`${typeColors[mission.type]}`}>
-            <Tool size={14} className="mr-1" />
+            <Wrench size={14} className="mr-1" />
             {typeLabels[mission.type]}
           </Badge>
           
@@ -123,7 +122,7 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
         
         <div className="mt-3 flex flex-col gap-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <Tool size={14} className="mr-2 flex-shrink-0" />
+            <Wrench size={14} className="mr-2 flex-shrink-0" />
             <span className="line-clamp-1">{mission.equipmentName}</span>
           </div>
           

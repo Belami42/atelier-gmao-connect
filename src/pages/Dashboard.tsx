@@ -1,11 +1,10 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
   BarChart3, 
   ClipboardCheck, 
   ClipboardList, 
-  Tool, 
+  Wrench, 
   AlertTriangle, 
   Clock, 
   Plus,
@@ -22,7 +21,7 @@ import MissionCard, { Mission } from "@/components/mission/MissionCard";
 const Dashboard = () => {
   // Données de démo pour le tableau de bord
   const stats = [
-    { label: "Équipements", value: 12, icon: <Tool />, path: "/equipment" },
+    { label: "Équipements", value: 12, icon: <Wrench />, path: "/equipment" },
     { label: "OM en cours", value: 5, icon: <ClipboardList />, path: "/missions?status=in_progress" },
     { label: "OM à valider", value: 3, icon: <ClipboardCheck />, path: "/missions?status=to_validate" },
     { label: "Équipements en panne", value: 2, icon: <AlertTriangle />, path: "/equipment?status=faulty" },
@@ -109,7 +108,7 @@ const Dashboard = () => {
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2" asChild>
             <Link to="/equipment">
-              <Tool size={16} />
+              <Wrench size={16} />
               <span>Équipements</span>
             </Link>
           </Button>

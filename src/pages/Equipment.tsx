@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
-  Tool, 
+  Wrench, 
   Plus, 
   Search, 
   SlidersHorizontal, 
@@ -30,7 +30,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import EquipmentCard, { Equipment } from "@/components/equipment/EquipmentCard";
+import EquipmentCard from "@/components/equipment/EquipmentCard";
+import type { Equipment } from "@/components/equipment/EquipmentCard";
 
 const Equipment = () => {
   const [searchQuery, setSearchQuery] = useState("");

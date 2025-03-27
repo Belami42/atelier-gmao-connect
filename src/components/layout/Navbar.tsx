@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
-  Tool, 
+  Wrench, 
   Clipboard, 
   Award, 
   Users, 
@@ -21,13 +20,12 @@ const Navbar = () => {
 
   const navItems = [
     { name: "Tableau de bord", icon: <LayoutDashboard size={18} />, path: "/dashboard" },
-    { name: "Équipements", icon: <Tool size={18} />, path: "/equipment" },
+    { name: "Équipements", icon: <Wrench size={18} />, path: "/equipment" },
     { name: "Ordres de mission", icon: <Clipboard size={18} />, path: "/missions" },
     { name: "Compétences", icon: <Award size={18} />, path: "/skills" },
     { name: "Utilisateurs", icon: <Users size={18} />, path: "/users" },
   ];
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -41,7 +39,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when location changes
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
@@ -67,7 +64,6 @@ const Navbar = () => {
           <span>AtelierGMAO</span>
         </Link>
 
-        {/* Desktop Navigation */}
         {!isMobile && (
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
@@ -87,7 +83,6 @@ const Navbar = () => {
           </nav>
         )}
 
-        {/* Mobile Menu Button */}
         {isMobile && (
           <Button
             variant="ghost"
@@ -100,7 +95,6 @@ const Navbar = () => {
           </Button>
         )}
 
-        {/* Mobile Navigation */}
         {isMobile && (
           <div
             className={`fixed inset-0 bg-white/95 backdrop-blur-lg z-50 transform transition-transform duration-300 ease-in-out ${

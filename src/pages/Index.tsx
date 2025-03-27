@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LayoutDashboard, Tool, ClipboardList, Award, PanelRight, ArrowRight } from "lucide-react";
+import { LayoutDashboard, Wrench, ClipboardList, Award, PanelRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BlurryCard from "@/components/ui/BlurryCard";
 
@@ -11,7 +10,7 @@ const Index = () => {
     {
       title: "Base Équipements",
       description: "Référencement du parc machines de l'atelier avec fiches détaillées.",
-      icon: <Tool />,
+      icon: <Wrench />,
       path: "/equipment"
     },
     {
@@ -95,7 +94,7 @@ const Index = () => {
             
             <Button size="lg" variant="outline" className="gap-2" asChild>
               <Link to="/equipment">
-                <Tool size={18} />
+                <Wrench size={18} />
                 <span>Voir les équipements</span>
               </Link>
             </Button>

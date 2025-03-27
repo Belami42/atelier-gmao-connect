@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Tool, MapPin, FileText, AlertTriangle, CheckCircle } from "lucide-react";
+import { Wrench, MapPin, FileText, AlertTriangle, CheckCircle } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +41,7 @@ const EquipmentCard = ({ equipment, onClick }: EquipmentCardProps) => {
 
   const statusIcons = {
     operational: <CheckCircle size={14} />,
-    maintenance: <Tool size={14} />,
+    maintenance: <Wrench size={14} />,
     faulty: <AlertTriangle size={14} />
   };
 
@@ -104,7 +103,7 @@ const EquipmentCard = ({ equipment, onClick }: EquipmentCardProps) => {
           
           <Button size="sm" variant="outline" className="gap-2" asChild>
             <Link to={`/missions/new?equipment=${equipment.id}`}>
-              <Tool size={14} />
+              <Wrench size={14} />
               <span>Créer OM</span>
             </Link>
           </Button>
