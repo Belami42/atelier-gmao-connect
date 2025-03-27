@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { 
@@ -53,7 +52,6 @@ const Missions = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
   
-  // Données de démo
   const missions: Mission[] = [
     {
       id: "1",
@@ -137,7 +135,6 @@ const Missions = () => {
     }
   ];
   
-  // Filtrage des missions
   const filteredMissions = missions.filter(mission => {
     const matchesSearch = mission.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           mission.equipmentName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -151,7 +148,6 @@ const Missions = () => {
     return matchesSearch && matchesType && matchesStatus && matchesPriority;
   });
   
-  // Organiser les missions par statut pour l'affichage par onglets
   const missionsByStatus: Record<MissionStatus, Mission[]> = {
     to_assign: [],
     assigned: [],
@@ -165,14 +161,12 @@ const Missions = () => {
     missionsByStatus[mission.status].push(mission);
   });
   
-  // Fonction pour réinitialiser les filtres
   const resetFilters = () => {
     setSelectedType(null);
     setSelectedStatus(null);
     setSelectedPriority(null);
   };
   
-  // Vérifier si des filtres sont appliqués
   const hasActiveFilters = selectedType || selectedStatus || selectedPriority;
   
   return (
@@ -193,7 +187,6 @@ const Missions = () => {
         </Button>
       </div>
       
-      {/* Barre de recherche et filtres */}
       <div className="bg-white/70 backdrop-blur-md rounded-xl border p-4 mb-6 smooth-transition shadow-sm">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -215,7 +208,6 @@ const Missions = () => {
           </div>
           
           <div className="flex gap-2">
-            {/* Vue liste/calendrier */}
             <div className="hidden md:flex border rounded-md p-1">
               <Button 
                 variant={viewMode === "list" ? "default" : "ghost"} 
@@ -237,7 +229,6 @@ const Missions = () => {
               </Button>
             </div>
             
-            {/* Filtres sur desktop */}
             <div className="hidden md:flex gap-2">
               <Select value={selectedType || ""} onValueChange={(value) => setSelectedType(value as MissionType || null)}>
                 <SelectTrigger className="w-40 gap-2">
@@ -245,7 +236,7 @@ const Missions = () => {
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les types</SelectItem>
+                  <SelectItem value="all">Tous les types</SelectItem>
                   <SelectItem value="preventive">Préventif</SelectItem>
                   <SelectItem value="corrective">Correctif</SelectItem>
                   <SelectItem value="improvement">Amélioratif</SelectItem>
@@ -258,7 +249,7 @@ const Missions = () => {
                   <SelectValue placeholder="Statut" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
+                  <SelectItem value="all">Tous les statuts</SelectItem>
                   <SelectItem value="to_assign">À assigner</SelectItem>
                   <SelectItem value="assigned">Assigné</SelectItem>
                   <SelectItem value="in_progress">En cours</SelectItem>
@@ -274,7 +265,7 @@ const Missions = () => {
                   <SelectValue placeholder="Priorité" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes les priorités</SelectItem>
+                  <SelectItem value="all">Toutes les priorités</SelectItem>
                   <SelectItem value="low">Basse</SelectItem>
                   <SelectItem value="normal">Normale</SelectItem>
                   <SelectItem value="high">Haute</SelectItem>
@@ -288,7 +279,6 @@ const Missions = () => {
               )}
             </div>
             
-            {/* Bouton de filtre mobile */}
             <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" className="md:hidden gap-2">
@@ -313,7 +303,7 @@ const Missions = () => {
                         <SelectValue placeholder="Tous les types" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Tous les types</SelectItem>
+                        <SelectItem value="all">Tous les types</SelectItem>
                         <SelectItem value="preventive">Préventif</SelectItem>
                         <SelectItem value="corrective">Correctif</SelectItem>
                         <SelectItem value="improvement">Amélioratif</SelectItem>
@@ -328,7 +318,7 @@ const Missions = () => {
                         <SelectValue placeholder="Tous les statuts" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Tous les statuts</SelectItem>
+                        <SelectItem value="all">Tous les statuts</SelectItem>
                         <SelectItem value="to_assign">À assigner</SelectItem>
                         <SelectItem value="assigned">Assigné</SelectItem>
                         <SelectItem value="in_progress">En cours</SelectItem>
@@ -346,7 +336,7 @@ const Missions = () => {
                         <SelectValue placeholder="Toutes les priorités" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Toutes les priorités</SelectItem>
+                        <SelectItem value="all">Toutes les priorités</SelectItem>
                         <SelectItem value="low">Basse</SelectItem>
                         <SelectItem value="normal">Normale</SelectItem>
                         <SelectItem value="high">Haute</SelectItem>
@@ -370,7 +360,6 @@ const Missions = () => {
           </div>
         </div>
         
-        {/* Filtres actifs */}
         {hasActiveFilters && (
           <div className="flex flex-wrap gap-2 mt-4">
             {selectedType && (
@@ -436,7 +425,6 @@ const Missions = () => {
         )}
       </div>
       
-      {/* Vue par onglets */}
       {viewMode === "list" && (
         <>
           {selectedStatus ? (
@@ -538,7 +526,6 @@ const Missions = () => {
         </>
       )}
       
-      {/* Vue calendrier (placeholder) */}
       {viewMode === "calendar" && (
         <div className="bg-white/70 backdrop-blur-md rounded-xl border p-10 text-center">
           <div className="flex justify-center mb-4 text-primary">

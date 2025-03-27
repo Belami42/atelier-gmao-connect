@@ -175,7 +175,7 @@ const Equipment = () => {
                   <SelectValue placeholder="Localisation" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Toutes les localisations</SelectItem>
+                  <SelectItem value="all">Toutes les localisations</SelectItem>
                   {locations.map(location => (
                     <SelectItem key={location} value={location}>{location}</SelectItem>
                   ))}
@@ -188,7 +188,7 @@ const Equipment = () => {
                   <SelectValue placeholder="État" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les états</SelectItem>
+                  <SelectItem value="all">Tous les états</SelectItem>
                   <SelectItem value="operational">Opérationnel</SelectItem>
                   <SelectItem value="maintenance">En maintenance</SelectItem>
                   <SelectItem value="faulty">En panne</SelectItem>
@@ -227,7 +227,7 @@ const Equipment = () => {
                         <SelectValue placeholder="Toutes les localisations" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Toutes les localisations</SelectItem>
+                        <SelectItem value="all">Toutes les localisations</SelectItem>
                         {locations.map(location => (
                           <SelectItem key={location} value={location}>{location}</SelectItem>
                         ))}
@@ -242,7 +242,7 @@ const Equipment = () => {
                         <SelectValue placeholder="Tous les états" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Tous les états</SelectItem>
+                        <SelectItem value="all">Tous les états</SelectItem>
                         <SelectItem value="operational">Opérationnel</SelectItem>
                         <SelectItem value="maintenance">En maintenance</SelectItem>
                         <SelectItem value="faulty">En panne</SelectItem>
@@ -289,7 +289,7 @@ const Equipment = () => {
                 ) : selectedStatus === "faulty" ? (
                   <AlertTriangle size={12} />
                 ) : (
-                  <Tool size={12} />
+                  <Wrench size={12} />
                 )}
                 <span>
                   {selectedStatus === "operational" ? "Opérationnel" : 
