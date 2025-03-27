@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LayoutDashboard, Wrench, ClipboardList, Award, PanelRight, ArrowRight } from "lucide-react";
@@ -35,11 +36,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero Section */}
+      {/* Hero Section with Lycée Mimard background */}
       <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 -z-10" />
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl -z-10" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center -z-20" 
+          style={{ backgroundImage: "url('/lovable-uploads/e69d46b2-ede2-4a25-b62b-bab9fe14a9e0.png')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-primary/20 backdrop-blur-sm -z-10" />
         
         <motion.div 
           className="max-w-5xl mx-auto text-center"
@@ -62,7 +65,7 @@ const Index = () => {
           </motion.div>
           
           <motion.h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white shadow-text"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -71,7 +74,7 @@ const Index = () => {
           </motion.h1>
           
           <motion.p 
-            className="mt-6 text-xl text-foreground/80 max-w-3xl mx-auto"
+            className="mt-6 text-xl text-white shadow-text max-w-3xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -79,20 +82,29 @@ const Index = () => {
             Solution pédagogique de Gestion de Maintenance Assistée par Ordinateur pour le Bac Pro MSPC, conçue pour intégrer la maintenance au cœur de l'apprentissage.
           </motion.p>
           
+          <motion.div
+            className="mt-4 text-lg text-white font-semibold shadow-text"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            Lycée Etienne Mimard
+          </motion.div>
+          
           <motion.div 
             className="mt-10 flex flex-wrap gap-4 justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
           >
-            <Button size="lg" className="gap-2" asChild>
+            <Button size="lg" className="gap-2 bg-primary/90 hover:bg-primary" asChild>
               <Link to="/dashboard">
                 <LayoutDashboard size={18} />
                 <span>Tableau de bord</span>
               </Link>
             </Button>
             
-            <Button size="lg" variant="outline" className="gap-2" asChild>
+            <Button size="lg" variant="outline" className="gap-2 bg-white/30 backdrop-blur-sm text-white border-white hover:bg-white/50 hover:text-primary" asChild>
               <Link to="/equipment">
                 <Wrench size={18} />
                 <span>Voir les équipements</span>
@@ -103,7 +115,7 @@ const Index = () => {
       </section>
       
       {/* Features Section */}
-      <section className="py-20 px-6 bg-background">
+      <section className="py-20 px-6 bg-background relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <motion.h2 
