@@ -37,12 +37,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import QRCodeGenerator from "@/components/equipment/QRCodeGenerator";
 import { toast } from "sonner";
-import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { v4 as uuidv4 } from 'uuid';
-
-// Add uuid dependency
-// <lov-add-dependency>uuid@^9.0.1</lov-add-dependency>
-// <lov-add-dependency>@types/uuid@^9.0.8</lov-add-dependency>
 
 // Schéma de validation pour le formulaire d'équipement
 const equipmentSchema = z.object({
@@ -62,7 +56,6 @@ const NewEquipment = () => {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [generatedQRCode, setGeneratedQRCode] = useState<boolean>(false);
-  const { addEquipment } = useEquipmentData();
   
   // Initialiser le formulaire avec React Hook Form
   const form = useForm<EquipmentForm>({
@@ -93,24 +86,11 @@ const NewEquipment = () => {
   
   // Soumettre le formulaire
   const onSubmit = (data: EquipmentForm) => {
-    // Créer un nouvel équipement avec les données du formulaire
-    const newEquipment = {
-      id: uuidv4(),
-      tag: data.tag,
-      name: data.name,
-      location: data.location,
-      image: imagePreview || "https://images.unsplash.com/photo-1581093458791-9f3c3e4f7b41?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80",
-      brand: data.brand,
-      model: data.model,
-      status: data.status,
-      docLink: data.docLink || undefined,
-      description: data.description,
-    };
+    // Dans une application réelle, vous enverriez ces données à une API
+    console.log("Données d'équipement soumises:", data);
+    console.log("Image:", imagePreview);
     
-    // Ajouter le nouvel équipement
-    addEquipment(newEquipment);
-    
-    // Afficher une notification de succès
+    // Simuler la création réussie
     toast.success("Équipement créé avec succès");
     
     // Rediriger vers la liste des équipements

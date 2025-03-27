@@ -46,10 +46,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
         <div className="mt-6 space-y-6">
           <div className="space-y-2">
             <label className="text-sm font-medium">Localisation</label>
-            <Select 
-              value={selectedLocation || ""} 
-              onValueChange={(value) => setSelectedLocation(value === "all" ? null : value || null)}
-            >
+            <Select value={selectedLocation || ""} onValueChange={(value) => setSelectedLocation(value || null)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Toutes les localisations" />
               </SelectTrigger>
@@ -64,10 +61,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
           
           <div className="space-y-2">
             <label className="text-sm font-medium">État</label>
-            <Select 
-              value={selectedStatus || ""} 
-              onValueChange={(value) => setSelectedStatus(value === "all" ? null : value || null)}
-            >
+            <Select value={selectedStatus || ""} onValueChange={(value) => setSelectedStatus(value || null)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Tous les états" />
               </SelectTrigger>
