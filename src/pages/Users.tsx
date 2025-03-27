@@ -259,7 +259,7 @@ const UsersPage = () => {
                 <SelectValue placeholder="Rôle" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous les rôles</SelectItem>
+                <SelectItem value="all">Tous les rôles</SelectItem>
                 <SelectItem value="admin">Administrateur</SelectItem>
                 <SelectItem value="teacher">Enseignant</SelectItem>
                 <SelectItem value="student">Élève</SelectItem>
@@ -272,7 +272,7 @@ const UsersPage = () => {
                 <SelectValue placeholder="Groupe" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Tous les groupes</SelectItem>
+                <SelectItem value="all">Tous les groupes</SelectItem>
                 {groups.map(group => (
                   <SelectItem key={group} value={group}>{group}</SelectItem>
                 ))}
