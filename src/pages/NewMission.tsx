@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ClipboardList, 
@@ -49,7 +48,6 @@ import { fr } from "date-fns/locale";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 
-// Schéma de validation pour le formulaire de mission
 const missionSchema = z.object({
   title: z.string().min(3, "Le titre doit contenir au moins 3 caractères"),
   description: z.string().min(10, "La description doit contenir au moins 10 caractères"),
@@ -69,7 +67,13 @@ const NewMission = () => {
   const [resourcesUpload, setResourcesUpload] = useState<string[]>([]);
   const [datePlanned, setDatePlanned] = useState<boolean>(false);
   
-  // Données de démo
+  const location = window.location;
+  const params = new URLSearchParams(location.search);
+  const equipmentIdParam = params.get('equipment');
+  const taskIdParam = params.get('taskId');
+  const taskTitleParam = params.get('title');
+  const taskTypeParam = params.get('type');
+  
   const equipments = [
     { id: "robot1", name: "Robot FANUC LR Mate 200iD" },
     { id: "line1", name: "Ligne d'embouteillage Festo" },
@@ -98,30 +102,32 @@ const NewMission = () => {
     { id: "skill8", code: "MSP3.3", name: "Réaliser des travaux d'amélioration" },
   ];
   
-  // Filtrage par groupe d'élèves
   const [selectedGroup, setSelectedGroup] = useState<string>("all");
   const filteredStudents = selectedGroup === "all" 
     ? students 
     : students.filter(student => student.group === selectedGroup);
   
-  // Groupes d'élèves uniques
   const studentGroups = Array.from(new Set(students.map(student => student.group)));
   
-  // Initialiser le formulaire avec React Hook Form
   const form = useForm<MissionForm>({
     resolver: zodResolver(missionSchema),
     defaultValues: {
-      title: "",
+      title: taskTitleParam || "",
       description: "",
-      type: "preventive",
+      type: (taskTypeParam as "preventive" | "corrective" | "improvement") || "preventive",
       priority: "normal",
-      equipmentId: "",
+      equipmentId: equipmentIdParam || "",
       assignedUsers: [],
       skills: []
     },
   });
   
-  // Gérer le téléchargement de ressources
+  useEffect(() => {
+    if (taskIdParam) {
+      setDatePlanned(true);
+    }
+  }, [taskIdParam]);
+  
   const handleResourceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
@@ -131,26 +137,21 @@ const NewMission = () => {
     }
   };
   
-  // Supprimer une ressource
   const removeResource = (index: number) => {
     setResourcesUpload(prev => prev.filter((_, i) => i !== index));
   };
   
-  // Soumettre le formulaire
   const onSubmit = (data: MissionForm) => {
-    // Ajouter les ressources téléchargées
     const completeData = {
       ...data,
-      resources: resourcesUpload
+      resources: resourcesUpload,
+      fromMaintenanceTask: taskIdParam || null
     };
     
-    // Dans une application réelle, vous enverriez ces données à une API
     console.log("Données de mission soumises:", completeData);
     
-    // Simuler la création réussie
     toast.success("Ordre de mission créé avec succès");
     
-    // Rediriger vers la liste des missions
     setTimeout(() => {
       navigate("/missions");
     }, 1500);

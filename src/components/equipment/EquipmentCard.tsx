@@ -1,10 +1,22 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Wrench, MapPin, FileText, AlertTriangle, CheckCircle } from "lucide-react";
+import { Wrench, MapPin, FileText, AlertTriangle, CheckCircle, Trash2, Calendar } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export interface Equipment {
   id: string;
@@ -17,14 +29,24 @@ export interface Equipment {
   serialNumber?: string;
   status: "operational" | "maintenance" | "faulty";
   lastMaintenance?: string;
+  maintenanceSchedule?: MaintenanceTask[];
+}
+
+export interface MaintenanceTask {
+  id: string;
+  title: string;
+  date: Date;
+  type: "preventive" | "corrective" | "improvement";
+  completed: boolean;
 }
 
 interface EquipmentCardProps {
   equipment: Equipment;
   onClick?: () => void;
+  onDelete?: () => void;
 }
 
-const EquipmentCard = ({ equipment, onClick }: EquipmentCardProps) => {
+const EquipmentCard = ({ equipment, onClick, onDelete }: EquipmentCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const statusColors = {
@@ -94,19 +116,52 @@ const EquipmentCard = ({ equipment, onClick }: EquipmentCardProps) => {
         )}
         
         <div className="mt-auto pt-4 flex justify-between items-center">
-          <Button size="sm" variant="ghost" className="gap-2" asChild>
-            <Link to={`/equipment/${equipment.id}`}>
-              <FileText size={14} />
-              <span>Détails</span>
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="ghost" className="gap-2" asChild>
+              <Link to={`/equipment/${equipment.id}`}>
+                <FileText size={14} />
+                <span>Détails</span>
+              </Link>
+            </Button>
+            
+            <Button size="sm" variant="ghost" className="gap-2" asChild>
+              <Link to={`/equipment/${equipment.id}/maintenance`}>
+                <Calendar size={14} />
+                <span>Maintenance</span>
+              </Link>
+            </Button>
+          </div>
           
-          <Button size="sm" variant="outline" className="gap-2" asChild>
-            <Link to={`/missions/new?equipment=${equipment.id}`}>
-              <Wrench size={14} />
-              <span>Créer OM</span>
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="gap-2" asChild>
+              <Link to={`/missions/new?equipment=${equipment.id}`}>
+                <Wrench size={14} />
+                <span>Créer OM</span>
+              </Link>
+            </Button>
+            
+            {onDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="destructive" className="p-0 w-8 h-8">
+                    <Trash2 size={14} />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Supprimer l'équipement</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Êtes-vous sûr de vouloir supprimer {equipment.name} ? Cette action est irréversible.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction onClick={onDelete}>Supprimer</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         </div>
       </div>
     </BlurryCard>

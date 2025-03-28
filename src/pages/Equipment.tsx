@@ -21,7 +21,8 @@ const Equipment = () => {
     locations,
     hasActiveFilters,
     resetFilters,
-    resetSearch
+    resetSearch,
+    deleteEquipment
   } = useEquipmentData();
   
   return (
@@ -45,7 +46,10 @@ const Equipment = () => {
       {filteredEquipments.length === 0 ? (
         <EquipmentEmptyState resetSearch={resetSearch} />
       ) : (
-        <EquipmentList equipments={filteredEquipments} />
+        <EquipmentList 
+          equipments={filteredEquipments} 
+          onDeleteEquipment={deleteEquipment}
+        />
       )}
       
       <MobileFilterSheet 
