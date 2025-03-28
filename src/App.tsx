@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Equipment from "./pages/Equipment";
 import EquipmentMaintenance from "./pages/EquipmentMaintenance";
 import NewEquipment from "./pages/NewEquipment";
+import MaintenanceCalendar from "./pages/MaintenanceCalendar";
 import Missions from "./pages/Missions";
 import NewMission from "./pages/NewMission";
 import Skills from "./pages/Skills";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/equipment" element={<Equipment />} />
               <Route path="/equipment/:equipmentId/maintenance" element={<EquipmentMaintenance />} />
               <Route path="/equipment/new" element={<NewEquipment />} />
+              <Route path="/maintenance-calendar" element={<MaintenanceCalendar />} />
               <Route path="/missions" element={<Missions />} />
               <Route path="/missions/new" element={<NewMission />} />
               <Route path="/skills" element={<Skills />} />
