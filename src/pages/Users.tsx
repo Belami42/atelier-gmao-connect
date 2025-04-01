@@ -20,6 +20,11 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import BlurryCard from "@/components/ui/BlurryCard";
 import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -40,6 +45,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import NewUserForm from "@/components/users/NewUserForm";
 
 interface User {
   id: string;
@@ -56,9 +62,8 @@ const UsersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  
-  // Données de démo
-  const usersData: User[] = [
+  const [isNewUserDialogOpen, setIsNewUserDialogOpen] = useState(false);
+  const [usersData, setUsersData] = useState<User[]>([
     {
       id: "1",
       name: "Jean Dupont",
@@ -137,7 +142,7 @@ const UsersPage = () => {
       email: "p.moreau@education.fr",
       status: "active"
     }
-  ];
+  ]);
   
   // Extraire les groupes uniques
   const groups = [...new Set(usersData.filter(user => user.group).map(user => user.group))];
@@ -204,6 +209,11 @@ const UsersPage = () => {
     setSelectedGroup(null);
   };
   
+  // Ajouter un nouvel utilisateur
+  const handleAddUser = (newUser: User) => {
+    setUsersData(prevUsers => [...prevUsers, newUser]);
+  };
+  
   // Vérifier si des filtres sont appliqués
   const hasActiveFilters = selectedRole || selectedGroup;
   
@@ -225,10 +235,21 @@ const UsersPage = () => {
           </p>
         </div>
         
-        <Button className="gap-2">
-          <Plus size={16} />
-          <span>Nouvel utilisateur</span>
-        </Button>
+        <Dialog open={isNewUserDialogOpen} onOpenChange={setIsNewUserDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus size={16} />
+              <span>Nouvel utilisateur</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[550px] p-0">
+            <NewUserForm 
+              onClose={() => setIsNewUserDialogOpen(false)} 
+              onUserCreated={handleAddUser}
+              existingGroups={groups as string[]}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
       
       {/* Barre de recherche et filtres */}
