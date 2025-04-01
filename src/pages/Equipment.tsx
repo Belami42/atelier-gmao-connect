@@ -39,7 +39,7 @@ const Equipment = () => {
       <EquipmentHeader 
         searchQuery={searchQuery} 
         onSearchChange={setSearchQuery} 
-        hasFilters={hasActiveFilters}
+        hasFilters={Boolean(hasActiveFilters)}
         onResetSearch={resetSearch}
         onOpenFilters={() => setIsFilterOpen(true)}
         isMobile={isMobile}
@@ -57,7 +57,7 @@ const Equipment = () => {
               resetFilters={resetFilters}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
-              hasActiveFilters={hasActiveFilters}
+              hasActiveFilters={Boolean(hasActiveFilters)}
               isFilterOpen={isFilterOpen}
               setIsFilterOpen={setIsFilterOpen}
             />
@@ -72,7 +72,8 @@ const Equipment = () => {
             />
           ) : (
             <EquipmentEmptyState 
-              hasFilters={hasActiveFilters} 
+              resetSearch={resetSearch}
+              hasFilters={Boolean(hasActiveFilters)} 
             />
           )}
         </main>
