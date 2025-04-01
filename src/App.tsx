@@ -13,6 +13,7 @@ import EquipmentMaintenance from "./pages/EquipmentMaintenance";
 import NewEquipment from "./pages/NewEquipment";
 import MaintenanceCalendar from "./pages/MaintenanceCalendar";
 import Missions from "./pages/Missions";
+import MissionDetails from "./pages/MissionDetails";
 import NewMission from "./pages/NewMission";
 import Skills from "./pages/Skills";
 import Users from "./pages/Users";
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/equipment/new" element={<NewEquipment />} />
               <Route path="/maintenance-calendar" element={<MaintenanceCalendar />} />
               <Route path="/missions" element={<Missions />} />
+              <Route path="/missions/:id" element={<MissionDetails />} />
               <Route path="/missions/new" element={<NewMission />} />
               <Route path="/skills" element={<Skills />} />
               <Route path="/users" element={<Users />} />

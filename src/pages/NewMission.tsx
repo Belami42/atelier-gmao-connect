@@ -1,569 +1,388 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
-  ClipboardList, 
-  Save, 
+  ArrowLeft, 
   Wrench, 
-  Calendar,
-  Users,
-  User,
-  Lightbulb,
-  Link as LinkIcon,
-  FileText,
-  Upload,
-  X
+  Clock, 
+  Calendar, 
+  User, 
+  Send,
+  AlertCircle,
+  CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
 } from "@/components/ui/select";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle,
+  CardFooter,
+  CardDescription
+} from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { toast } from "sonner";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-
-const missionSchema = z.object({
-  title: z.string().min(3, "Le titre doit contenir au moins 3 caractères"),
-  description: z.string().min(10, "La description doit contenir au moins 10 caractères"),
-  type: z.enum(["preventive", "corrective", "improvement"]),
-  priority: z.enum(["low", "normal", "high"]),
-  equipmentId: z.string().min(1, "Veuillez sélectionner un équipement"),
-  plannedDate: z.date().optional(),
-  resources: z.array(z.string()).optional(),
-  assignedUsers: z.array(z.string()).min(1, "Assignez au moins un élève"),
-  skills: z.array(z.string()).min(1, "Sélectionnez au moins une compétence")
-});
-
-type MissionForm = z.infer<typeof missionSchema>;
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import BlurryCard from "@/components/ui/BlurryCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const NewMission = () => {
   const navigate = useNavigate();
-  const [resourcesUpload, setResourcesUpload] = useState<string[]>([]);
-  const [datePlanned, setDatePlanned] = useState<boolean>(false);
-  
-  const location = window.location;
-  const params = new URLSearchParams(location.search);
-  const equipmentIdParam = params.get('equipment');
-  const taskIdParam = params.get('taskId');
-  const taskTitleParam = params.get('title');
-  const taskTypeParam = params.get('type');
-  
-  const equipments = [
-    { id: "robot1", name: "Robot FANUC LR Mate 200iD" },
-    { id: "line1", name: "Ligne d'embouteillage Festo" },
-    { id: "cnc1", name: "Machine CNC Haas" },
-    { id: "pump1", name: "Système hydraulique" },
-    { id: "conveyor1", name: "Convoyeur à bande" }
+  const [selectedEquipment, setSelectedEquipment] = useState("");
+  const [missionType, setMissionType] = useState<string | undefined>(undefined);
+  const [priority, setPriority] = useState<string | undefined>(undefined);
+
+  // Sample data
+  const equipment = [
+    { id: "robot1", name: "Robot FANUC LR Mate 200iD", location: "Atelier 1" },
+    { id: "cnc1", name: "Machine CNC Haas", location: "Atelier 1" },
+    { id: "conveyor1", name: "Convoyeur à bande", location: "Atelier 2" },
+    { id: "plc1", name: "Automate Siemens S7", location: "Laboratoire 1" },
+    { id: "pump1", name: "Système hydraulique", location: "Atelier 2" }
   ];
-  
-  const students = [
-    { id: "student1", name: "Alexandre Martin", group: "TMSPC" },
-    { id: "student2", name: "Sophie Dubois", group: "TMSPC" },
-    { id: "student3", name: "Lucas Bernard", group: "1MSPC" },
-    { id: "student4", name: "Emma Petit", group: "1MSPC" },
-    { id: "student5", name: "Hugo Lefebvre", group: "2PMIA" },
-    { id: "student6", name: "Camille Leroy", group: "2PMIA" },
+
+  const users = [
+    { id: "user1", name: "Thomas D.", role: "teacher" },
+    { id: "user2", name: "Julie M.", role: "teacher" },
+    { id: "user3", name: "Marie L.", role: "student", class: "BTS MSPC 1" },
+    { id: "user4", name: "Alex B.", role: "student", class: "BTS MSPC 1" },
+    { id: "user5", name: "Léa B.", role: "student", class: "BTS MSPC 2" },
+    { id: "user6", name: "Lucas G.", role: "student", class: "BTS MSPC 2" }
   ];
-  
+
   const skills = [
-    { id: "skill1", code: "MSP1.1", name: "Préparer son intervention" },
-    { id: "skill2", code: "MSP1.2", name: "Identifier les risques professionnels" },
-    { id: "skill3", code: "MSP1.3", name: "Gérer les déchets" },
-    { id: "skill4", code: "MSP2.1", name: "Diagnostiquer les pannes" },
-    { id: "skill5", code: "MSP2.2", name: "Dépanner par échange standard" },
-    { id: "skill6", code: "MSP3.1", name: "Réaliser les opérations de surveillance" },
-    { id: "skill7", code: "MSP3.2", name: "Réaliser des opérations de maintenance préventive" },
-    { id: "skill8", code: "MSP3.3", name: "Réaliser des travaux d'amélioration" },
+    { id: "skill1", code: "MS1", name: "Analyser un système" },
+    { id: "skill2", code: "MS2", name: "Préparer une intervention" },
+    { id: "skill3", code: "MS3", name: "Mettre en œuvre une intervention" },
+    { id: "skill4", code: "MS4", name: "Améliorer un système" },
+    { id: "skill5", code: "MS5", name: "Communiquer les informations" }
   ];
-  
-  const [selectedGroup, setSelectedGroup] = useState<string>("all");
-  const filteredStudents = selectedGroup === "all" 
-    ? students 
-    : students.filter(student => student.group === selectedGroup);
-  
-  const studentGroups = Array.from(new Set(students.map(student => student.group)));
-  
-  const form = useForm<MissionForm>({
-    resolver: zodResolver(missionSchema),
-    defaultValues: {
-      title: taskTitleParam || "",
-      description: "",
-      type: (taskTypeParam as "preventive" | "corrective" | "improvement") || "preventive",
-      priority: "normal",
-      equipmentId: equipmentIdParam || "",
-      assignedUsers: [],
-      skills: []
-    },
-  });
-  
-  useEffect(() => {
-    if (taskIdParam) {
-      setDatePlanned(true);
-    }
-  }, [taskIdParam]);
-  
-  const handleResourceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const newResources = Array.from(files).map(file => file.name);
-      setResourcesUpload(prev => [...prev, ...newResources]);
-      toast.success(`${files.length} ressource(s) ajoutée(s)`);
-    }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real app, this would handle the form submission
+    navigate("/missions");
   };
-  
-  const removeResource = (index: number) => {
-    setResourcesUpload(prev => prev.filter((_, i) => i !== index));
-  };
-  
-  const onSubmit = (data: MissionForm) => {
-    const completeData = {
-      ...data,
-      resources: resourcesUpload,
-      fromMaintenanceTask: taskIdParam || null
-    };
-    
-    console.log("Données de mission soumises:", completeData);
-    
-    toast.success("Ordre de mission créé avec succès");
-    
-    setTimeout(() => {
-      navigate("/missions");
-    }, 1500);
-  };
-  
+
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 pt-24 pb-16">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <ClipboardList className="h-8 w-8" />
+          <Button 
+            variant="ghost" 
+            className="pl-0 text-muted-foreground mb-2 -ml-3" 
+            onClick={() => navigate("/missions")}
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Retour aux missions
+          </Button>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Nouvel ordre de mission
           </h1>
           <p className="text-muted-foreground mt-1">
-            Créez un nouvel ordre de mission et assignez-le aux élèves
+            Créer une nouvelle mission de maintenance
           </p>
         </div>
+        
+        <SchoolLogo className="hidden md:block" />
       </div>
-      
-      <div className="bg-white/70 backdrop-blur-md rounded-xl border p-6 shadow-sm">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Informations générales</h2>
-              
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Titre de la mission</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Maintenance préventive robot" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description détaillée</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Décrivez les tâches à réaliser..." 
-                        {...field} 
-                        className="min-h-[120px]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Type</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Type de mission" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="preventive">Préventive</SelectItem>
-                          <SelectItem value="corrective">Corrective</SelectItem>
-                          <SelectItem value="improvement">Améliorative</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="priority"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Priorité</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Niveau de priorité" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="low">Basse</SelectItem>
-                          <SelectItem value="normal">Normale</SelectItem>
-                          <SelectItem value="high">Haute</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="equipmentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        <Wrench className="h-4 w-4" />
-                        Équipement
-                      </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sélectionner un équipement" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {equipments.map(equipment => (
-                            <SelectItem 
-                              key={equipment.id} 
-                              value={equipment.id}
-                            >
-                              {equipment.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
                 />
               </div>
-              
-              <div className="flex items-center gap-4">
-                <Checkbox 
-                  id="plannedDate" 
-                  checked={datePlanned}
-                  onCheckedChange={(checked) => {
-                    setDatePlanned(!!checked);
-                    if (!checked) {
-                      form.setValue("plannedDate", undefined);
-                    }
-                  }}
-                />
-                <label 
-                  htmlFor="plannedDate" 
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-1"
-                >
-                  <Calendar className="h-4 w-4" />
-                  Planifier une date d'intervention
-                </label>
-              </div>
-              
-              {datePlanned && (
-                <FormField
-                  control={form.control}
-                  name="plannedDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Date prévue</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={
-                                !field.value ? "text-muted-foreground" : ""
-                              }
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP", { locale: fr })
-                              ) : (
-                                "Sélectionner une date"
-                              )}
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <CalendarComponent
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date < new Date(new Date().setHours(0, 0, 0, 0))
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Assignation des élèves
-              </h2>
-              
-              <div className="flex flex-col md:flex-row gap-2 mb-4">
-                <Label className="text-sm mb-1 md:pt-2 md:mr-2">Filtrer par classe:</Label>
-                <Select 
-                  value={selectedGroup} 
-                  onValueChange={setSelectedGroup}
-                >
-                  <SelectTrigger className="w-full md:w-40">
-                    <SelectValue placeholder="Toutes les classes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes les classes</SelectItem>
-                    {studentGroups.map(group => (
-                      <SelectItem key={group} value={group}>{group}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <FormField
-                control={form.control}
-                name="assignedUsers"
-                render={() => (
-                  <FormItem>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {filteredStudents.map((student) => (
-                        <FormField
-                          key={student.id}
-                          control={form.control}
-                          name="assignedUsers"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={student.id}
-                                className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(student.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, student.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== student.id
-                                            )
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <div className="space-y-1 leading-none">
-                                  <FormLabel className="font-medium flex items-center gap-1">
-                                    <User className="h-3 w-3" />
-                                    {student.name}
-                                  </FormLabel>
-                                  <p className="text-xs text-muted-foreground">
-                                    Classe {student.group}
-                                  </p>
-                                </div>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Lightbulb className="h-5 w-5" />
-                Compétences à évaluer
-              </h2>
-              
-              <FormField
-                control={form.control}
-                name="skills"
-                render={() => (
-                  <FormItem>
-                    <div className="grid grid-cols-1 gap-2">
-                      {skills.map((skill) => (
-                        <FormField
-                          key={skill.id}
-                          control={form.control}
-                          name="skills"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={skill.id}
-                                className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(skill.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, skill.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== skill.id
-                                            )
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <div className="space-y-1 leading-none">
-                                  <FormLabel className="font-medium">
-                                    {skill.code} - {skill.name}
-                                  </FormLabel>
-                                </div>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Ressources documentaires
-              </h2>
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Nouvel Ordre de Mission</h2>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <BlurryCard className="p-6">
+              <h3 className="text-lg font-medium mb-4">Informations générales</h3>
               
               <div className="space-y-4">
-                <div className="flex items-center justify-center border-2 border-dashed rounded-md p-4 cursor-pointer hover:bg-muted/50 transition-colors">
-                  <input
-                    id="resources"
-                    type="file"
-                    multiple
-                    onChange={handleResourceUpload}
-                    className="hidden"
-                  />
-                  <label htmlFor="resources" className="cursor-pointer text-center">
-                    <div className="py-4 flex flex-col items-center">
-                      <Upload className="h-10 w-10 text-muted-foreground mb-2" />
-                      <p className="font-medium">Cliquez pour ajouter des ressources</p>
-                      <p className="text-sm text-muted-foreground">
-                        PDF, DOC, XLS, JPG, PNG (max 10MB par fichier)
-                      </p>
-                    </div>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Titre de la mission*</Label>
+                    <Input id="title" required placeholder="Ex: Remplacement capteur" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Type de mission*</Label>
+                    <Select value={missionType} onValueChange={setMissionType} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="preventive">Préventive</SelectItem>
+                        <SelectItem value="corrective">Corrective</SelectItem>
+                        <SelectItem value="improvement">Améliorative</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
-                {resourcesUpload.length > 0 && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-medium">Ressources ajoutées:</h3>
-                    <ul className="border rounded-md divide-y">
-                      {resourcesUpload.map((resource, index) => (
-                        <li key={index} className="flex items-center justify-between p-2">
-                          <span className="flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-muted-foreground" />
-                            {resource}
-                          </span>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={() => removeResource(index)}
-                            className="h-7 w-7 p-0"
-                          >
-                            <span className="sr-only">Supprimer</span>
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </li>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description*</Label>
+                  <Textarea 
+                    id="description" 
+                    required
+                    placeholder="Description détaillée de la mission..."
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="equipment">Équipement concerné*</Label>
+                  <Select value={selectedEquipment} onValueChange={setSelectedEquipment} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un équipement" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {equipment.map((eq) => (
+                        <SelectItem key={eq.id} value={eq.id}>
+                          {eq.name} ({eq.location})
+                        </SelectItem>
                       ))}
-                    </ul>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="priority">Priorité*</Label>
+                    <Select value={priority} onValueChange={setPriority} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Basse</SelectItem>
+                        <SelectItem value="normal">Normale</SelectItem>
+                        <SelectItem value="high">Haute</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Statut initial*</Label>
+                    <Select required defaultValue="to_assign">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="to_assign">À assigner</SelectItem>
+                        <SelectItem value="assigned">Assigné</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
               </div>
-            </div>
+            </BlurryCard>
             
-            <div className="flex gap-2 justify-end pt-4">
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/missions")}
-              >
-                Annuler
-              </Button>
-              <Button type="submit" className="gap-2">
-                <Save className="h-4 w-4" />
-                Créer l'ordre de mission
-              </Button>
-            </div>
-          </form>
-        </Form>
+            <BlurryCard className="p-6">
+              <h3 className="text-lg font-medium mb-4">Planification</h3>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="planned_date">Date prévue</Label>
+                    <Input id="planned_date" type="date" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="estimated_duration">Durée estimée (minutes)</Label>
+                    <Input id="estimated_duration" type="number" min="0" placeholder="Ex: 60" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="prerequisites">Prérequis et matériel nécessaire</Label>
+                  <Textarea 
+                    id="prerequisites" 
+                    placeholder="Outils, pièces de rechange, documentation..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </BlurryCard>
+            
+            <BlurryCard className="p-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-4">
+                <h3 className="text-lg font-medium">Attribution</h3>
+                
+                <Tabs defaultValue="students" className="w-fit">
+                  <TabsList>
+                    <TabsTrigger value="students">Élèves</TabsTrigger>
+                    <TabsTrigger value="teachers">Enseignants</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {users.filter(user => user.role === "student").map((student) => (
+                    <div key={student.id} className="flex items-center space-x-2 border rounded-md p-3">
+                      <Checkbox id={`student-${student.id}`} />
+                      <Label htmlFor={`student-${student.id}`} className="flex flex-col">
+                        <span>{student.name}</span>
+                        <span className="text-sm text-muted-foreground">{student.class}</span>
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {users.filter(user => user.role === "teacher").map((teacher) => (
+                      <div key={teacher.id} className="flex items-center space-x-2 border rounded-md p-3">
+                        <Checkbox id={`teacher-${teacher.id}`} />
+                        <Label htmlFor={`teacher-${teacher.id}`}>{teacher.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </BlurryCard>
+          </div>
+          
+          <div className="space-y-6">
+            <BlurryCard className="p-6">
+              <h3 className="text-lg font-medium mb-4">Résumé de la mission</h3>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Wrench size={18} className="text-primary" />
+                  <span className="font-medium">Type:</span>
+                  {missionType ? (
+                    <Badge className={
+                      missionType === "preventive" ? "bg-[#0EA5E9] text-white" : 
+                      missionType === "corrective" ? "bg-[#F97316] text-white" : 
+                      "bg-[#8B5CF6] text-white"
+                    }>
+                      {missionType === "preventive" ? "Préventive" : 
+                       missionType === "corrective" ? "Corrective" : "Améliorative"}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground">Non sélectionné</span>
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <AlertCircle size={18} className="text-primary" />
+                  <span className="font-medium">Priorité:</span>
+                  {priority ? (
+                    <Badge className={
+                      priority === "low" ? "bg-primary text-white" : 
+                      priority === "normal" ? "bg-amber-500 text-white" : 
+                      "bg-red-500 text-white"
+                    }>
+                      {priority === "low" ? "Basse" : 
+                       priority === "normal" ? "Normale" : "Haute"}
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground">Non sélectionné</span>
+                  )}
+                </div>
+                
+                <div className="flex items-start gap-2">
+                  <Wrench size={18} className="text-primary mt-1" />
+                  <div>
+                    <span className="font-medium">Équipement:</span>
+                    {selectedEquipment ? (
+                      <div className="mt-1">
+                        {equipment.find(eq => eq.id === selectedEquipment)?.name}
+                        <div className="text-sm text-muted-foreground">
+                          {equipment.find(eq => eq.id === selectedEquipment)?.location}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground mt-1">Non sélectionné</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </BlurryCard>
+            
+            <BlurryCard className="p-6">
+              <h3 className="text-lg font-medium mb-4">Compétences associées</h3>
+              
+              <div className="space-y-3">
+                {skills.map((skill) => (
+                  <div key={skill.id} className="flex items-center space-x-2">
+                    <Checkbox id={`skill-${skill.id}`} />
+                    <Label htmlFor={`skill-${skill.id}`} className="text-sm flex gap-2">
+                      <Badge variant="outline">{skill.code}</Badge>
+                      <span>{skill.name}</span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </BlurryCard>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center">Prêt à créer la mission ?</CardTitle>
+                <CardDescription className="text-center">
+                  Vérifiez les informations avant de créer la mission
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <div className="space-y-2 w-full">
+                  <Button type="submit" className="w-full gap-2 bg-accent hover:bg-accent/90">
+                    <Send size={16} />
+                    <span>Créer la mission</span>
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={() => navigate("/missions")}
+                  >
+                    Annuler
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      </form>
+      
+      <div className="md:hidden mt-8">
+        <SchoolLogo />
       </div>
     </div>
   );

@@ -1,435 +1,351 @@
 
 import React, { useState } from "react";
-import { 
-  Award, 
-  Search, 
-  ChevronDown, 
-  ChevronRight, 
-  BookOpen, 
-  Users, 
-  CheckCircle, 
-  Info,
-  X
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  GraduationCap, 
+  Search, 
+  Plus, 
+  ChevronRight, 
+  CheckCircle2,
+  X,
+  Edit,
+  Trash2
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
-interface Skill {
-  id: string;
-  code: string;
-  title: string;
-  description?: string;
-  category: string;
-  subSkills?: Skill[];
-  validated?: number;
-  total?: number;
-}
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const Skills = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [openCategories, setOpenCategories] = useState<string[]>(["C1"]);
-  
-  // Données de démo pour les compétences MSPC
-  const skillsData: Skill[] = [
+  const [activeTab, setActiveTab] = useState("all");
+
+  // Sample data
+  const skills = [
     {
-      id: "C1",
-      code: "C1",
-      title: "Analyser le fonctionnement et l'organisation d'un système",
-      category: "Analyser",
-      validated: 12,
-      total: 25,
-      subSkills: [
-        {
-          id: "C1.1",
-          code: "C1.1",
-          title: "Analyser le fonctionnement et l'organisation d'un système",
-          description: "Observer et analyser le fonctionnement et l'organisation d'un système en vue de préparer une intervention de maintenance.",
-          category: "Analyser"
-        },
-        {
-          id: "C1.2",
-          code: "C1.2",
-          title: "Analyser les solutions constructives",
-          description: "Identifier et caractériser les solutions constructives qui assurent les fonctions opératives.",
-          category: "Analyser"
-        }
+      id: "1",
+      code: "MS1",
+      name: "Analyser un système",
+      description: "Étudier et comprendre le fonctionnement d'un système technique",
+      category: "diagnostic",
+      level: "bts1"
+    },
+    {
+      id: "2",
+      code: "MS2",
+      name: "Préparer une intervention",
+      description: "Organiser et planifier une intervention de maintenance",
+      category: "preparation",
+      level: "bts1"
+    },
+    {
+      id: "3",
+      code: "MS3",
+      name: "Mettre en œuvre une intervention",
+      description: "Réaliser une opération de maintenance sur un équipement",
+      category: "intervention",
+      level: "bts1"
+    },
+    {
+      id: "4",
+      code: "MS4",
+      name: "Améliorer un système",
+      description: "Proposer et implémenter des améliorations sur un système",
+      category: "amelioration",
+      level: "bts2"
+    },
+    {
+      id: "5",
+      code: "MS5",
+      name: "Communiquer les informations",
+      description: "Rédiger des rapports et présenter les résultats d'intervention",
+      category: "communication",
+      level: "bts2"
+    }
+  ];
+
+  const studentSkills = [
+    {
+      id: "1",
+      studentName: "Martin Dubois",
+      studentClass: "BTS MSPC 1",
+      skills: [
+        { id: "1", status: "validated", date: "2023-10-15" },
+        { id: "2", status: "in_progress", date: "2023-11-10" }
       ]
     },
     {
-      id: "C2",
-      code: "C2",
-      title: "Communiquer, rendre compte de son intervention",
-      category: "Communiquer",
-      validated: 8,
-      total: 18,
-      subSkills: [
-        {
-          id: "C2.1",
-          code: "C2.1",
-          title: "Signaler, transmettre des informations",
-          description: "Transmettre à l'écrit ou à l'oral des informations, des données relatives au fonctionnement d'une installation.",
-          category: "Communiquer"
-        },
-        {
-          id: "C2.2",
-          code: "C2.2",
-          title: "Rédiger et argumenter des comptes rendus",
-          description: "Rédiger tout ou partie d'un compte-rendu d'intervention de maintenance ou d'amélioration.",
-          category: "Communiquer"
-        }
+      id: "2",
+      studentName: "Léa Bernard",
+      studentClass: "BTS MSPC 1",
+      skills: [
+        { id: "1", status: "validated", date: "2023-10-18" },
+        { id: "3", status: "validated", date: "2023-11-05" }
       ]
     },
     {
-      id: "C3",
-      code: "C3",
-      title: "Organiser et optimiser son activité",
-      category: "Organiser",
-      validated: 15,
-      total: 20,
-      subSkills: [
-        {
-          id: "C3.1",
-          code: "C3.1",
-          title: "Préparer son intervention",
-          description: "Préparer et organiser son intervention en tenant compte des contraintes et des procédures.",
-          category: "Organiser"
-        },
-        {
-          id: "C3.2",
-          code: "C3.2",
-          title: "Optimiser son intervention",
-          description: "Optimiser la planification et la réalisation des tâches assignées.",
-          category: "Organiser"
-        }
-      ]
-    },
-    {
-      id: "C4",
-      code: "C4",
-      title: "Conduire une opération de maintenance préventive",
-      category: "Réaliser",
-      validated: 22,
-      total: 35,
-      subSkills: [
-        {
-          id: "C4.1",
-          code: "C4.1",
-          title: "Exécuter des opérations de surveillance",
-          description: "Effectuer des opérations de contrôle et de surveillance selon des procédures établies.",
-          category: "Réaliser"
-        },
-        {
-          id: "C4.2",
-          code: "C4.2",
-          title: "Réaliser des opérations de maintenance préventive",
-          description: "Réaliser des opérations planifiées selon des procédures établies.",
-          category: "Réaliser"
-        },
-        {
-          id: "C4.3",
-          code: "C4.3",
-          title: "Participer à l'amélioration du système",
-          description: "Proposer des solutions d'amélioration dans le cadre d'un groupe de travail.",
-          category: "Réaliser"
-        }
-      ]
-    },
-    {
-      id: "C5",
-      code: "C5",
-      title: "Conduire une opération de maintenance corrective",
-      category: "Réparer",
-      validated: 18,
-      total: 30,
-      subSkills: [
-        {
-          id: "C5.1",
-          code: "C5.1",
-          title: "Diagnostiquer une défaillance",
-          description: "Localiser la zone de défaillance et identifier l'élément défectueux.",
-          category: "Réparer"
-        },
-        {
-          id: "C5.2",
-          code: "C5.2",
-          title: "Préparer la réparation, la mise en service",
-          description: "Organiser la réparation et rassembler les moyens nécessaires.",
-          category: "Réparer"
-        },
-        {
-          id: "C5.3",
-          code: "C5.3",
-          title: "Réaliser une réparation, une adaptation, une amélioration",
-          description: "Remplacer, modifier ou ajuster les éléments défectueux ou obsolètes.",
-          category: "Réparer"
-        },
-        {
-          id: "C5.4",
-          code: "C5.4",
-          title: "Mettre en service après une intervention",
-          description: "Restituer le système en fonctionnement après intervention.",
-          category: "Réparer"
-        }
+      id: "3",
+      studentName: "Thomas Petit",
+      studentClass: "BTS MSPC 2",
+      skills: [
+        { id: "4", status: "in_progress", date: "2023-11-12" },
+        { id: "5", status: "validated", date: "2023-10-28" }
       ]
     }
   ];
-  
-  // Fonction pour basculer l'état d'ouverture d'une catégorie
-  const toggleCategory = (categoryId: string) => {
-    if (openCategories.includes(categoryId)) {
-      setOpenCategories(openCategories.filter(id => id !== categoryId));
-    } else {
-      setOpenCategories([...openCategories, categoryId]);
-    }
-  };
-  
-  // Fonction pour filtrer les compétences
-  const filterSkills = (skills: Skill[]): Skill[] => {
-    if (!searchQuery) return skills;
+
+  const filteredSkills = skills.filter(skill => {
+    const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          skill.code.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab = activeTab === "all" || skill.level === activeTab;
     
-    return skills.map(skill => {
-      // Vérifier si cette compétence correspond à la recherche
-      const matchesSearch = 
-        skill.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        skill.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (skill.description && skill.description.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Si cette compétence a des sous-compétences, les filtrer également
-      const filteredSubSkills = skill.subSkills ? filterSkills(skill.subSkills) : [];
-      
-      // Si cette compétence correspond OU une de ses sous-compétences correspond, l'inclure dans les résultats
-      if (matchesSearch || (filteredSubSkills.length > 0)) {
-        return {
-          ...skill,
-          subSkills: filteredSubSkills
-        };
-      }
-      
-      // Sinon, cette compétence ne correspond pas aux critères de recherche
-      return null;
-    }).filter(Boolean) as Skill[];
+    return matchesSearch && matchesTab;
+  });
+
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
+
+  const levelLabels = {
+    "bts1": "BTS MSPC 1",
+    "bts2": "BTS MSPC 2"
   };
-  
-  const filteredSkills = filterSkills(skillsData);
-  
-  // Fonction pour calculer le pourcentage de progression
-  const calculateProgress = (validated?: number, total?: number) => {
-    if (!validated || !total || total === 0) return 0;
-    return (validated / total) * 100;
+
+  const categoryColors = {
+    "diagnostic": "bg-[#0EA5E9] text-white",
+    "preparation": "bg-[#F97316] text-white",
+    "intervention": "bg-[#8B5CF6] text-white",
+    "amelioration": "bg-[#10B981] text-white",
+    "communication": "bg-[#D946EF] text-white"
   };
-  
+
+  const categoryLabels = {
+    "diagnostic": "Diagnostic",
+    "preparation": "Préparation",
+    "intervention": "Intervention",
+    "amelioration": "Amélioration",
+    "communication": "Communication"
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Référentiel de compétences</h1>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
+            Compétences
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Suivi des compétences du Bac Pro MSPC
+            Gestion des compétences et suivi de progression
           </p>
         </div>
-      </div>
-      
-      {/* Barre de recherche */}
-      <div className="bg-white/70 backdrop-blur-md rounded-xl border p-4 mb-8 shadow-sm">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-          <Input
-            placeholder="Rechercher une compétence..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground smooth-transition"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-      </div>
-      
-      {/* Message si aucun résultat */}
-      {filteredSkills.length === 0 && (
-        <div className="text-center p-10 bg-white/70 backdrop-blur-md rounded-xl border">
-          <div className="flex justify-center mb-4 text-muted-foreground">
-            <BookOpen size={40} strokeWidth={1.5} />
-          </div>
-          <h3 className="text-lg font-medium">Aucune compétence trouvée</h3>
-          <p className="text-muted-foreground mt-1">
-            Essayez de modifier vos critères de recherche.
-          </p>
-          <Button variant="outline" className="mt-4" onClick={() => setSearchQuery("")}>
-            Réinitialiser la recherche
+        
+        <div className="flex items-center gap-4">
+          <SchoolLogo className="hidden md:block" />
+          <Button className="gap-2 bg-accent hover:bg-accent/90">
+            <Plus size={16} />
+            <span>Nouvelle compétence</span>
           </Button>
         </div>
-      )}
-      
-      {/* Vue d'ensemble des compétences */}
-      {filteredSkills.length > 0 && !searchQuery && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {skillsData.map((category, index) => (
-            <BlurryCard key={category.id} className="fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-              <div className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                    <Award size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-lg">{category.code}</h3>
-                    <p className="text-foreground/80 line-clamp-2">{category.title}</p>
-                    
-                    <div className="mt-4 flex items-center gap-2">
-                      <Users size={16} className="text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        Validées: {category.validated}/{category.total}
-                      </span>
-                    </div>
-                    
-                    <div className="mt-2 w-full bg-muted rounded-full h-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full" 
-                        style={{ width: `${calculateProgress(category.validated, category.total)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <Separator className="my-4" />
-                
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="w-full justify-center gap-1"
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  <span>Détails</span>
-                  {openCategories.includes(category.id) ? (
-                    <ChevronDown size={16} />
-                  ) : (
-                    <ChevronRight size={16} />
-                  )}
-                </Button>
+      </div>
+
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
+                />
               </div>
-            </BlurryCard>
-          ))}
+            ))}
+          </div>
         </div>
-      )}
-      
-      {/* Liste détaillée des compétences */}
-      <div className="space-y-4">
-        {filteredSkills.map((category) => (
-          <Collapsible 
-            key={category.id} 
-            open={openCategories.includes(category.id)} 
-            onOpenChange={() => toggleCategory(category.id)}
-            className="fade-up"
-          >
-            <BlurryCard>
-              <CollapsibleTrigger className="w-full">
-                <div className="p-4 flex items-center justify-between cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary/10 rounded-lg p-2 text-primary">
-                      <Award size={20} />
-                    </div>
-                    <div className="text-left">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-medium">{category.code}</h3>
-                        <Badge variant="outline" className="bg-primary/5">
-                          {category.category}
-                        </Badge>
-                      </div>
-                      <p className="text-foreground/80">{category.title}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    {!searchQuery && category.validated !== undefined && category.total !== undefined && (
-                      <div className="text-right hidden sm:block">
-                        <div className="flex items-center gap-2 justify-end">
-                          <span className="text-sm text-foreground/80">
-                            {category.validated}/{category.total}
-                          </span>
-                          <div className="w-20 bg-muted rounded-full h-2">
-                            <div 
-                              className="bg-primary h-2 rounded-full" 
-                              style={{ width: `${calculateProgress(category.validated, category.total)}%` }}
-                            ></div>
-                          </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Référentiel de Compétences</h2>
+        </div>
+      </div>
+
+      <BlurryCard className="mb-6 p-4">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+            <Input
+              placeholder="Rechercher une compétence..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground smooth-transition"
+              >
+                <X size={16} />
+              </button>
+            )}
+          </div>
+          
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
+            <TabsList className="bg-muted w-full md:w-auto">
+              <TabsTrigger value="all">Toutes</TabsTrigger>
+              <TabsTrigger value="bts1">BTS MSPC 1</TabsTrigger>
+              <TabsTrigger value="bts2">BTS MSPC 2</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+      </BlurryCard>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="md:col-span-2">
+          <BlurryCard className="p-4">
+            <h2 className="text-xl font-semibold mb-4">Liste des compétences</h2>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Code</TableHead>
+                    <TableHead>Nom</TableHead>
+                    <TableHead className="hidden md:table-cell">Niveau</TableHead>
+                    <TableHead className="hidden md:table-cell">Catégorie</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredSkills.length > 0 ? (
+                    filteredSkills.map((skill, index) => (
+                      <TableRow key={skill.id} className="fade-up" style={{ animationDelay: `${index * 0.05}s` }}>
+                        <TableCell className="font-medium">{skill.code}</TableCell>
+                        <TableCell>{skill.name}</TableCell>
+                        <TableCell className="hidden md:table-cell">{levelLabels[skill.level as keyof typeof levelLabels]}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge className={categoryColors[skill.category as keyof typeof categoryColors]}>
+                            {categoryLabels[skill.category as keyof typeof categoryLabels]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="icon">
+                            <Edit size={16} />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 size={16} />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-32 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <GraduationCap size={32} className="text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">Aucune compétence trouvée</p>
                         </div>
-                      </div>
-                    )}
-                    
-                    <div className="text-muted-foreground">
-                      {openCategories.includes(category.id) ? (
-                        <ChevronDown size={20} />
-                      ) : (
-                        <ChevronRight size={20} />
-                      )}
-                    </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </BlurryCard>
+        </div>
+        
+        <div>
+          <BlurryCard className="p-4">
+            <h2 className="text-xl font-semibold mb-4">Statistiques</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Par niveau</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span>BTS MSPC 1</span>
+                    <Badge>{skills.filter(s => s.level === "bts1").length}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>BTS MSPC 2</span>
+                    <Badge>{skills.filter(s => s.level === "bts2").length}</Badge>
                   </div>
                 </div>
-              </CollapsibleTrigger>
+              </div>
               
-              <CollapsibleContent>
-                <Separator />
-                <div className="p-4 space-y-4">
-                  {category.subSkills?.map((subSkill) => (
-                    <div key={subSkill.id} className="bg-muted/30 rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-medium">{subSkill.code}</h4>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger>
-                                  <Info size={14} className="text-muted-foreground" />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="max-w-xs">{subSkill.description}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                          <p className="text-foreground/80 mt-1">{subSkill.title}</p>
-                          
-                          {subSkill.description && (
-                            <p className="text-sm text-muted-foreground mt-2 md:hidden">
-                              {subSkill.description}
-                            </p>
-                          )}
-                        </div>
-                        
-                        <Badge 
-                          variant="outline" 
-                          className="bg-primary/5 flex items-center gap-1 whitespace-nowrap"
-                        >
-                          <CheckCircle size={12} className="text-green-500" />
-                          <span>6 élèves</span>
-                        </Badge>
-                      </div>
+              <Separator />
+              
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Par catégorie</h3>
+                <div className="space-y-2">
+                  {Object.entries(categoryLabels).map(([key, label]) => (
+                    <div key={key} className="flex justify-between items-center">
+                      <span>{label}</span>
+                      <Badge className={categoryColors[key as keyof typeof categoryColors]}>
+                        {skills.filter(s => s.category === key).length}
+                      </Badge>
                     </div>
                   ))}
                 </div>
-              </CollapsibleContent>
-            </BlurryCard>
-          </Collapsible>
-        ))}
+              </div>
+            </div>
+          </BlurryCard>
+          
+          <BlurryCard className="p-4 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Progression des élèves</h2>
+            <div className="space-y-4">
+              {studentSkills.map((student) => (
+                <div key={student.id} className="p-3 border rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <h3 className="font-medium">{student.studentName}</h3>
+                      <p className="text-sm text-muted-foreground">{student.studentClass}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" className="gap-1">
+                      <span>Détails</span>
+                      <ChevronRight size={14} />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {student.skills.map((skill) => {
+                      const skillData = skills.find(s => s.id === skill.id);
+                      return (
+                        <Badge key={skill.id} variant="outline" className="gap-1 px-2 py-1">
+                          {skill.status === "validated" ? (
+                            <CheckCircle2 size={12} className="text-green-500" />
+                          ) : (
+                            <div className="w-2 h-2 rounded-full bg-amber-500" />
+                          )}
+                          <span>{skillData?.code}</span>
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </BlurryCard>
+        </div>
+      </div>
+      
+      <div className="md:hidden mt-8">
+        <SchoolLogo />
       </div>
     </div>
   );

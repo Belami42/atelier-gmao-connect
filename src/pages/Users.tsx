@@ -1,507 +1,389 @@
 
 import React, { useState } from "react";
 import { 
-  Users, 
+  Users as UsersIcon, 
   Search, 
-  Plus, 
-  User, 
-  X,
-  Check,
-  MoreHorizontal,
-  Edit,
-  Trash,
-  UserCog,
-  Shield,
-  GraduationCap
+  PlusCircle, 
+  X, 
+  Edit, 
+  Trash2, 
+  UserCircle,
+  GraduationCap,
+  BookOpen,
+  Shield
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import BlurryCard from "@/components/ui/BlurryCard";
-import {
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import NewUserForm from "@/components/users/NewUserForm";
+import BlurryCard from "@/components/ui/BlurryCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
-interface User {
-  id: string;
-  name: string;
-  username: string;
-  role: "admin" | "teacher" | "student";
-  group?: string;
-  email?: string;
-  avatar?: string;
-  status: "active" | "inactive";
-}
-
-const UsersPage = () => {
+const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-  const [isNewUserDialogOpen, setIsNewUserDialogOpen] = useState(false);
-  const [usersData, setUsersData] = useState<User[]>([
+  const [activeRole, setActiveRole] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Sample data
+  const users = [
     {
       id: "1",
-      name: "Jean Dupont",
-      username: "j.dupont",
-      role: "teacher",
-      email: "j.dupont@education.fr",
-      status: "active"
+      name: "Étienne Martin",
+      email: "e.martin@mimard.fr",
+      role: "admin",
+      class: null,
+      avatar: null
     },
     {
       id: "2",
-      name: "Marie Lambert",
-      username: "m.lambert",
-      role: "admin",
-      email: "m.lambert@education.fr",
-      status: "active"
+      name: "Sophie Dubois",
+      email: "s.dubois@mimard.fr",
+      role: "teacher",
+      class: null,
+      avatar: null
     },
     {
       id: "3",
-      name: "Thomas Dubois",
-      username: "t.dubois",
-      role: "student",
-      group: "MSPC1",
-      email: "t.dubois@student.fr",
-      status: "active"
+      name: "Laurent Petit",
+      email: "l.petit@mimard.fr",
+      role: "teacher",
+      class: null,
+      avatar: null
     },
     {
       id: "4",
-      name: "Julie Martin",
-      username: "j.martin",
+      name: "Marie Lambert",
+      email: "m.lambert@etudiant.mimard.fr",
       role: "student",
-      group: "MSPC1",
-      email: "j.martin@student.fr",
-      status: "active"
+      class: "BTS MSPC 1",
+      avatar: null
     },
     {
       id: "5",
-      name: "Alex Bernard",
-      username: "a.bernard",
+      name: "Thomas Moreau",
+      email: "t.moreau@etudiant.mimard.fr",
       role: "student",
-      group: "MSPC2",
-      email: "a.bernard@student.fr",
-      status: "active"
+      class: "BTS MSPC 1",
+      avatar: null
     },
     {
       id: "6",
-      name: "Sophie Petit",
-      username: "s.petit",
+      name: "Léa Bernard",
+      email: "l.bernard@etudiant.mimard.fr",
       role: "student",
-      group: "MSPC2",
-      email: "s.petit@student.fr",
-      status: "inactive"
+      class: "BTS MSPC 2",
+      avatar: null
     },
     {
       id: "7",
-      name: "Marc Leroy",
-      username: "m.leroy",
+      name: "Lucas Girard",
+      email: "l.girard@etudiant.mimard.fr",
       role: "student",
-      group: "MSPC1",
-      email: "m.leroy@student.fr",
-      status: "active"
-    },
-    {
-      id: "8",
-      name: "Emma Richard",
-      username: "e.richard",
-      role: "student",
-      group: "MSPC2",
-      email: "e.richard@student.fr",
-      status: "active"
-    },
-    {
-      id: "9",
-      name: "Pierre Moreau",
-      username: "p.moreau",
-      role: "teacher",
-      email: "p.moreau@education.fr",
-      status: "active"
+      class: "BTS MSPC 2",
+      avatar: null
     }
-  ]);
-  
-  // Extraire les groupes uniques
-  const groups = [...new Set(usersData.filter(user => user.group).map(user => user.group))];
-  
-  // Filtrer les utilisateurs
-  const filteredUsers = usersData.filter(user => {
-    const matchesSearch = 
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()));
+  ];
+
+  // Sample classes
+  const classes = [
+    {
+      id: "1",
+      name: "BTS MSPC 1",
+      level: "bts1",
+      studentCount: 14
+    },
+    {
+      id: "2",
+      name: "BTS MSPC 2",
+      level: "bts2",
+      studentCount: 12
+    },
+    {
+      id: "3",
+      name: "BAC PRO MSPC 1",
+      level: "bac1",
+      studentCount: 18
+    },
+    {
+      id: "4",
+      name: "BAC PRO MSPC 2",
+      level: "bac2",
+      studentCount: 16
+    }
+  ];
+
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRole = activeRole === "all" || user.role === activeRole;
     
-    const matchesRole = !selectedRole || user.role === selectedRole;
-    
-    const matchesGroup = !selectedGroup || user.group === selectedGroup;
-    
-    return matchesSearch && matchesRole && matchesGroup;
+    return matchesSearch && matchesRole;
   });
-  
-  // Fonction pour obtenir la couleur du badge en fonction du rôle
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "admin":
-        return "bg-violet-500";
-      case "teacher":
-        return "bg-blue-500";
-      case "student":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
+
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
+
+  const roleIcons = {
+    "admin": <Shield className="h-5 w-5 text-red-500" />,
+    "teacher": <BookOpen className="h-5 w-5 text-blue-500" />,
+    "student": <GraduationCap className="h-5 w-5 text-green-500" />
+  };
+
+  const roleLabels = {
+    "admin": "Administrateur",
+    "teacher": "Enseignant",
+    "student": "Élève"
+  };
+
+  const getRoleColor = (role: string) => {
+    switch(role) {
+      case "admin": return "bg-red-500 text-white";
+      case "teacher": return "bg-blue-500 text-white";
+      case "student": return "bg-green-500 text-white";
+      default: return "bg-gray-500 text-white";
     }
   };
-  
-  // Fonction pour obtenir le libellé du rôle
-  const getRoleLabel = (role: string) => {
-    switch (role) {
-      case "admin":
-        return "Administrateur";
-      case "teacher":
-        return "Enseignant";
-      case "student":
-        return "Élève";
-      default:
-        return "Utilisateur";
-    }
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase();
   };
-  
-  // Fonction pour obtenir l'icône du rôle
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "admin":
-        return <Shield size={16} />;
-      case "teacher":
-        return <UserCog size={16} />;
-      case "student":
-        return <GraduationCap size={16} />;
-      default:
-        return <User size={16} />;
-    }
-  };
-  
-  // Fonction pour réinitialiser les filtres
-  const resetFilters = () => {
-    setSelectedRole(null);
-    setSelectedGroup(null);
-  };
-  
-  // Ajouter un nouvel utilisateur
-  const handleAddUser = (newUser: User) => {
-    setUsersData(prevUsers => [...prevUsers, newUser]);
-  };
-  
-  // Vérifier si des filtres sont appliqués
-  const hasActiveFilters = selectedRole || selectedGroup;
-  
-  // Regrouper les utilisateurs par rôle
-  const usersByRole = {
-    all: filteredUsers,
-    admin: filteredUsers.filter(user => user.role === "admin"),
-    teacher: filteredUsers.filter(user => user.role === "teacher"),
-    student: filteredUsers.filter(user => user.role === "student")
-  };
-  
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Utilisateurs</h1>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
+            Utilisateurs
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Gestion des comptes utilisateurs
+            Gestion des élèves, enseignants et administrateurs
           </p>
         </div>
         
-        <Dialog open={isNewUserDialogOpen} onOpenChange={setIsNewUserDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus size={16} />
-              <span>Nouvel utilisateur</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[550px] p-0">
-            <NewUserForm 
-              onClose={() => setIsNewUserDialogOpen(false)} 
-              onUserCreated={handleAddUser}
-              existingGroups={groups as string[]}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-      
-      {/* Barre de recherche et filtres */}
-      <div className="bg-white/70 backdrop-blur-md rounded-xl border p-4 mb-8 smooth-transition shadow-sm">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input
-              placeholder="Rechercher un utilisateur..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground smooth-transition"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-          
-          <div className="flex gap-2">
-            <Select value={selectedRole || ""} onValueChange={(value) => setSelectedRole(value || null)}>
-              <SelectTrigger className="w-40 gap-2">
-                <User size={14} />
-                <SelectValue placeholder="Rôle" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les rôles</SelectItem>
-                <SelectItem value="admin">Administrateur</SelectItem>
-                <SelectItem value="teacher">Enseignant</SelectItem>
-                <SelectItem value="student">Élève</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <Select value={selectedGroup || ""} onValueChange={(value) => setSelectedGroup(value || null)}>
-              <SelectTrigger className="w-40 gap-2">
-                <Users size={14} />
-                <SelectValue placeholder="Groupe" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les groupes</SelectItem>
-                {groups.map(group => (
-                  <SelectItem key={group} value={group}>{group}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {hasActiveFilters && (
-              <Button variant="ghost" size="icon" onClick={resetFilters} title="Réinitialiser les filtres">
-                <X size={16} />
+        <div className="flex items-center gap-4">
+          <SchoolLogo className="hidden md:block" />
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="gap-2 bg-accent hover:bg-accent/90">
+                <PlusCircle size={16} />
+                <span>Nouvel utilisateur</span>
               </Button>
-            )}
-          </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
+                <DialogDescription>
+                  Ajouter un élève, un enseignant ou un administrateur au système.
+                </DialogDescription>
+              </DialogHeader>
+              <NewUserForm onSubmit={() => setIsDialogOpen(false)} classes={classes} />
+            </DialogContent>
+          </Dialog>
         </div>
-        
-        {/* Filtres actifs */}
-        {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2 mt-4">
-            {selectedRole && (
-              <Badge variant="secondary" className="gap-1 px-3 py-1">
-                {getRoleIcon(selectedRole)}
-                <span>{getRoleLabel(selectedRole)}</span>
-                <button 
-                  onClick={() => setSelectedRole(null)}
-                  className="ml-1 hover:text-foreground smooth-transition"
-                >
-                  <X size={12} />
-                </button>
-              </Badge>
-            )}
-            
-            {selectedGroup && (
-              <Badge variant="secondary" className="gap-1 px-3 py-1">
-                <Users size={12} />
-                <span>{selectedGroup}</span>
-                <button 
-                  onClick={() => setSelectedGroup(null)}
-                  className="ml-1 hover:text-foreground smooth-transition"
-                >
-                  <X size={12} />
-                </button>
-              </Badge>
-            )}
-            
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={resetFilters} 
-              className="h-7 text-xs text-muted-foreground hover:text-foreground"
-            >
-              Effacer tous les filtres
-            </Button>
-          </div>
-        )}
       </div>
-      
-      {/* Message si aucun résultat */}
-      {filteredUsers.length === 0 && (
-        <div className="text-center p-10 bg-white/70 backdrop-blur-md rounded-xl border">
-          <div className="flex justify-center mb-4 text-muted-foreground">
-            <Users size={40} strokeWidth={1.5} />
-          </div>
-          <h3 className="text-lg font-medium">Aucun utilisateur trouvé</h3>
-          <p className="text-muted-foreground mt-1">
-            Essayez de modifier vos critères de recherche ou de réinitialiser les filtres.
-          </p>
-          <Button variant="outline" className="mt-4" onClick={() => {
-            setSearchQuery("");
-            resetFilters();
-          }}>
-            Réinitialiser la recherche
-          </Button>
-        </div>
-      )}
-      
-      {/* Liste des utilisateurs */}
-      {filteredUsers.length > 0 && (
-        <Tabs defaultValue="all">
-          <TabsList className="mb-6">
-            <TabsTrigger value="all" className="gap-2">
-              Tous
-              <Badge>{usersByRole.all.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="admin" className="gap-2">
-              Administrateurs
-              <Badge>{usersByRole.admin.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="teacher" className="gap-2">
-              Enseignants
-              <Badge>{usersByRole.teacher.length}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="student" className="gap-2">
-              Élèves
-              <Badge>{usersByRole.student.length}</Badge>
-            </TabsTrigger>
-          </TabsList>
-          
-          {Object.entries(usersByRole).map(([role, users]) => (
-            <TabsContent key={role} value={role}>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {users.map((user, index) => (
-                  <BlurryCard key={user.id} className="fade-up" style={{ animationDelay: `${index * 0.05}s` }}>
-                    <div className="p-5">
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center text-primary font-medium">
-                              {user.name.split(' ').map(name => name[0]).join('')}
-                            </div>
-                            {user.status === "active" && (
-                              <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1">
-                                <Check size={10} className="text-white" />
-                              </div>
-                            )}
-                          </div>
-                          
-                          <div>
-                            <h3 className="font-medium">{user.name}</h3>
-                            <p className="text-sm text-muted-foreground">@{user.username}</p>
-                          </div>
-                        </div>
-                        
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal size={16} />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <Edit size={14} className="mr-2" />
-                              <span>Modifier</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Shield size={14} className="mr-2" />
-                              <span>Changer le rôle</span>
-                            </DropdownMenuItem>
-                            {user.status === "active" ? (
-                              <DropdownMenuItem>
-                                <X size={14} className="mr-2" />
-                                <span>Désactiver</span>
-                              </DropdownMenuItem>
-                            ) : (
-                              <DropdownMenuItem>
-                                <Check size={14} className="mr-2" />
-                                <span>Activer</span>
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">
-                              <Trash size={14} className="mr-2" />
-                              <span>Supprimer</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <Badge className={`gap-1 ${getRoleBadgeColor(user.role)}`}>
-                          {getRoleIcon(user.role)}
-                          <span>{getRoleLabel(user.role)}</span>
-                        </Badge>
-                        
-                        {user.group && (
-                          <Badge variant="outline" className="bg-primary/5 gap-1">
-                            <Users size={12} />
-                            <span>{user.group}</span>
-                          </Badge>
-                        )}
-                        
-                        {user.status === "inactive" && (
-                          <Badge variant="outline" className="bg-destructive/10 text-destructive gap-1">
-                            <X size={12} />
-                            <span>Inactif</span>
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      {user.email && (
-                        <p className="mt-4 text-sm text-muted-foreground truncate">
-                          {user.email}
-                        </p>
-                      )}
-                      
-                      <Separator className="my-4" />
-                      
-                      <div className="flex justify-between">
-                        <Button variant="outline" size="sm" className="gap-1">
-                          <Edit size={14} />
-                          <span>Éditer</span>
-                        </Button>
-                        
-                        <Button size="sm" className="gap-1">
-                          <User size={14} />
-                          <span>Profil</span>
-                        </Button>
-                      </div>
-                    </div>
-                  </BlurryCard>
-                ))}
+
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
+                />
               </div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      )}
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Communauté Éducative</h2>
+        </div>
+      </div>
+
+      <Tabs defaultValue="users" className="space-y-6">
+        <TabsList className="bg-secondary/50">
+          <TabsTrigger value="users" className="gap-2">
+            <UsersIcon size={14} />
+            <span>Utilisateurs</span>
+          </TabsTrigger>
+          <TabsTrigger value="classes" className="gap-2">
+            <BookOpen size={14} />
+            <span>Classes</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="users" className="space-y-6">
+          <BlurryCard className="p-4">
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+                <Input
+                  placeholder="Rechercher un utilisateur..."
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground smooth-transition"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+              
+              <Tabs value={activeRole} onValueChange={setActiveRole} className="w-full md:w-auto">
+                <TabsList className="bg-muted w-full md:w-auto">
+                  <TabsTrigger value="all">Tous</TabsTrigger>
+                  <TabsTrigger value="student">Élèves</TabsTrigger>
+                  <TabsTrigger value="teacher">Enseignants</TabsTrigger>
+                  <TabsTrigger value="admin">Administrateurs</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+          </BlurryCard>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user, index) => (
+                <BlurryCard 
+                  key={user.id} 
+                  className="p-6 fade-up" 
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={user.avatar || ""} />
+                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-medium">{user.name}</h3>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Badge className={getRoleColor(user.role)}>
+                      {roleLabels[user.role as keyof typeof roleLabels]}
+                    </Badge>
+                    {user.class && (
+                      <Badge variant="outline" className="border-primary/20 bg-primary/5">
+                        {user.class}
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="mt-4 flex justify-end gap-2">
+                    <Button variant="outline" size="icon">
+                      <Edit size={16} />
+                    </Button>
+                    <Button variant="outline" size="icon">
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </BlurryCard>
+              ))
+            ) : (
+              <div className="col-span-full">
+                <BlurryCard className="p-8 text-center">
+                  <UserCircle size={40} className="mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium">Aucun utilisateur trouvé</h3>
+                  <p className="text-muted-foreground mt-2">
+                    Essayez de modifier vos critères de recherche ou ajoutez un nouvel utilisateur.
+                  </p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mt-4 gap-2">
+                        <PlusCircle size={16} />
+                        <span>Nouvel utilisateur</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[500px]">
+                      <DialogHeader>
+                        <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
+                        <DialogDescription>
+                          Ajouter un élève, un enseignant ou un administrateur au système.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <NewUserForm onSubmit={() => {}} classes={classes} />
+                    </DialogContent>
+                  </Dialog>
+                </BlurryCard>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="classes" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {classes.map((cls, index) => (
+              <Card key={cls.id} className="fade-up" style={{ animationDelay: `${index * 0.1}s` }}>
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle>{cls.name}</CardTitle>
+                    <Badge className="bg-primary">
+                      {cls.studentCount} élèves
+                    </Badge>
+                  </div>
+                  <CardDescription>Niveau: {cls.level.toUpperCase()}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarFallback>S</AvatarFallback>
+                    </Avatar>
+                    <div className="text-sm">Sophie Dubois (Responsable)</div>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button variant="ghost" size="sm">Modifier</Button>
+                  <Button variant="outline" size="sm">Voir les élèves</Button>
+                </CardFooter>
+              </Card>
+            ))}
+            
+            <Card className="flex flex-col items-center justify-center p-8 border-dashed">
+              <GraduationCap size={36} className="text-muted-foreground mb-4" />
+              <CardTitle className="text-center mb-2">Nouvelle classe</CardTitle>
+              <CardDescription className="text-center mb-4">
+                Ajouter une nouvelle classe ou groupe d'élèves
+              </CardDescription>
+              <Button>
+                <PlusCircle size={16} className="mr-2" />
+                Créer une classe
+              </Button>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+      
+      <div className="md:hidden mt-8">
+        <SchoolLogo />
+      </div>
     </div>
   );
 };
 
-export default UsersPage;
+export default Users;

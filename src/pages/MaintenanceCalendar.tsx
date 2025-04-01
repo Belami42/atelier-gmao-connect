@@ -1,345 +1,313 @@
 
 import React, { useState } from "react";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, isSameMonth, isSameDay, addYears, subYears } from "date-fns";
-import { fr } from "date-fns/locale";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus, Wrench, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import MaintenanceTaskModal from "@/components/maintenance/MaintenanceTaskModal";
 import TaskDetailsModal from "@/components/maintenance/TaskDetailsModal";
-import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { useNavigate } from "react-router-dom";
-import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const ViewMode = {
-  MONTH: "month",
-  YEAR: "year"
-} as const;
-
-type ViewModeType = typeof ViewMode[keyof typeof ViewMode];
+import BlurryCard from "@/components/ui/BlurryCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const MaintenanceCalendar = () => {
-  const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewModeType>(ViewMode.MONTH);
-  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTask, setSelectedTask] = useState<MaintenanceTask | null>(null);
-  
-  const { equipmentData, addMaintenanceTask, updateMaintenanceTask, deleteMaintenanceTask } = useEquipmentData();
+  const [date, setDate] = useState<Date>(new Date());
+  const [view, setView] = useState<"month" | "week" | "day">("month");
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any | null>(null);
 
-  // Fonction pour naviguer dans le calendrier
-  const navigateCalendar = (direction: "prev" | "next") => {
-    if (viewMode === ViewMode.MONTH) {
-      setCurrentDate(direction === "prev" ? subMonths(currentDate, 1) : addMonths(currentDate, 1));
-    } else {
-      setCurrentDate(direction === "prev" ? subYears(currentDate, 1) : addYears(currentDate, 1));
+  // Sample data - in a real app, this would come from an API
+  const maintenanceTasks = [
+    {
+      id: "1",
+      title: "Vérification niveau huile",
+      description: "Contrôle et remplissage de l'huile hydraulique",
+      equipment: "Presse hydraulique",
+      date: new Date(2023, 10, 15), // November 15, 2023
+      duration: 30, // minutes
+      assignedTo: ["Thomas D."],
+      status: "scheduled"
+    },
+    {
+      id: "2",
+      title: "Nettoyage filtres",
+      description: "Nettoyage des filtres à air du système de ventilation",
+      equipment: "CVC Atelier",
+      date: new Date(2023, 10, 18), // November 18, 2023
+      duration: 60, // minutes
+      assignedTo: ["Julie M."],
+      status: "completed"
+    },
+    {
+      id: "3",
+      title: "Graissage articulations",
+      description: "Graissage des articulations du bras robotisé",
+      equipment: "Robot FANUC",
+      date: new Date(2023, 10, 22), // November 22, 2023
+      duration: 45, // minutes
+      assignedTo: ["Alex B."],
+      status: "scheduled"
     }
+  ];
+
+  const handleTaskClick = (task: any) => {
+    setSelectedTask(task);
   };
 
-  // Générer les jours du mois actuel
-  const daysInMonth = eachDayOfInterval({
-    start: startOfMonth(currentDate),
-    end: endOfMonth(currentDate)
-  });
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
 
-  // Calculer les jours vides au début du mois (pour l'alignement)
-  const startDay = getDay(startOfMonth(currentDate));
-  
-  // Fonction pour obtenir les tâches de maintenance pour une date donnée
-  const getTasksForDate = (date: Date) => {
-    return equipmentData.flatMap(equipment => 
-      (equipment.maintenanceSchedule || [])
-        .filter(task => {
-          // Convertir la date de la tâche en objet Date si elle est stockée sous forme de chaîne
-          const taskDate = task.date instanceof Date ? task.date : new Date(task.date);
-          return isSameDay(taskDate, date);
-        })
-        .map(task => ({ ...task, equipmentId: equipment.id, equipmentName: equipment.name }))
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const renderMonthView = () => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+
+    // Adjust for Sunday as the first day of the week
+    const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+    const days = [];
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="bg-gray-50 p-2 min-h-[100px] rounded-md"></div>);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const currentDay = new Date(year, month, day);
+      const tasksForDay = maintenanceTasks.filter(
+        task => 
+          task.date.getDate() === day && 
+          task.date.getMonth() === month && 
+          task.date.getFullYear() === year
+      );
+
+      days.push(
+        <div 
+          key={`day-${day}`}
+          className={`bg-white p-2 min-h-[100px] rounded-md border ${
+            day === date.getDate() ? "ring-2 ring-primary/50" : ""
+          }`}
+        >
+          <div className="font-medium">{day}</div>
+          <div className="mt-1 space-y-1">
+            {tasksForDay.map(task => (
+              <Button 
+                key={task.id}
+                variant="ghost" 
+                size="sm" 
+                className={`w-full justify-start text-xs p-1 ${
+                  task.status === "completed" ? "text-green-600" : "text-blue-600"
+                }`}
+                onClick={() => handleTaskClick(task)}
+              >
+                <span className="truncate">{task.title}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-7 gap-1">
+        {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map(day => (
+          <div key={day} className="font-medium text-center p-2">{day}</div>
+        ))}
+        {days}
+      </div>
     );
-  };
-
-  // Générer tous les mois de l'année
-  const monthsInYear = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date(currentDate.getFullYear(), i, 1);
-    return {
-      date,
-      label: format(date, "MMMM", { locale: fr }),
-      tasks: equipmentData.flatMap(equipment => 
-        (equipment.maintenanceSchedule || [])
-          .filter(task => {
-            const taskDate = task.date instanceof Date ? task.date : new Date(task.date);
-            return taskDate.getMonth() === i && taskDate.getFullYear() === currentDate.getFullYear();
-          })
-          .map(task => ({ ...task, equipmentId: equipment.id, equipmentName: equipment.name }))
-      )
-    };
-  });
-
-  // Gérer l'ouverture du modal d'ajout de tâche
-  const handleAddTask = (date: Date) => {
-    setSelectedDate(date);
-    setIsAddTaskModalOpen(true);
-  };
-
-  // Gérer la sélection d'une tâche existante
-  const handleSelectTask = (task: MaintenanceTask & { equipmentId: string, equipmentName: string }) => {
-    setSelectedTask({
-      ...task,
-      date: task.date instanceof Date ? task.date : new Date(task.date)
-    });
-  };
-
-  // Gérer la création d'un ordre de mission à partir d'une tâche
-  const handleCreateMission = (task: MaintenanceTask, equipmentId: string) => {
-    const params = new URLSearchParams();
-    params.append('equipment', equipmentId);
-    params.append('taskId', task.id);
-    params.append('title', task.title);
-    params.append('type', task.type);
-    
-    navigate(`/missions/new?${params.toString()}`);
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <CalendarIcon className="h-8 w-8" />
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Calendrier de maintenance
           </h1>
           <p className="text-muted-foreground mt-1">
-            Planifiez et gérez les tâches de maintenance préventive
+            Planification des opérations de maintenance préventive
           </p>
         </div>
         
-        <div className="flex gap-2">
-          <Select value={viewMode} onValueChange={(value) => setViewMode(value as ViewModeType)}>
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="Vue" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ViewMode.MONTH}>Vue mensuelle</SelectItem>
-              <SelectItem value={ViewMode.YEAR}>Vue annuelle</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select 
-            value={selectedEquipmentId || "all"} 
-            onValueChange={(value) => setSelectedEquipmentId(value === "all" ? null : value)}
-          >
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Tous les équipements" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les équipements</SelectItem>
-              {equipmentData.map(equipment => (
-                <SelectItem key={equipment.id} value={equipment.id}>
-                  {equipment.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      
-      <div className="bg-white/70 backdrop-blur-md rounded-xl border p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="icon" onClick={() => navigateCalendar("prev")}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <h2 className="text-xl font-semibold px-2">
-              {viewMode === ViewMode.MONTH 
-                ? format(currentDate, "MMMM yyyy", { locale: fr }) 
-                : format(currentDate, "yyyy")}
-            </h2>
-            <Button variant="outline" size="icon" onClick={() => navigateCalendar("next")}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <Button onClick={() => {
-            setSelectedDate(new Date());
-            setIsAddTaskModalOpen(true);
-          }} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Ajouter une tâche
+        <div className="flex items-center gap-4">
+          <SchoolLogo className="hidden md:block" />
+          <Button className="gap-2 bg-accent hover:bg-accent/90" onClick={() => setIsTaskModalOpen(true)}>
+            <Plus size={16} />
+            <span>Nouvelle tâche</span>
           </Button>
         </div>
-        
-        {viewMode === ViewMode.MONTH ? (
-          <div>
-            <div className="grid grid-cols-7 mb-2">
-              {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day, i) => (
-                <div key={i} className="h-10 flex items-center justify-center font-medium">
-                  {day}
-                </div>
-              ))}
+      </div>
+
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Maintenance Préventive</h2>
+        </div>
+      </div>
+
+      <BlurryCard className="mb-6 p-4">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between">
+          <div className="flex gap-2 items-center">
+            <Button variant="outline" size="icon" onClick={() => {
+              const newDate = new Date(date);
+              if (view === "month") {
+                newDate.setMonth(date.getMonth() - 1);
+              } else if (view === "week") {
+                newDate.setDate(date.getDate() - 7);
+              } else {
+                newDate.setDate(date.getDate() - 1);
+              }
+              setDate(newDate);
+            }}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <div className="text-lg font-medium">
+              {new Intl.DateTimeFormat('fr-FR', { 
+                month: 'long', 
+                year: 'numeric',
+                ...(view === 'day' && { day: 'numeric' }) 
+              }).format(date)}
             </div>
             
-            <div className="grid grid-cols-7 gap-1">
-              {/* Jours vides du début du mois (pour l'alignement) */}
-              {Array.from({ length: startDay }).map((_, index) => (
-                <div key={`empty-start-${index}`} className="h-28 p-1 bg-gray-50 rounded-md"></div>
-              ))}
-              
-              {/* Jours du mois */}
-              {daysInMonth.map((day, index) => {
-                const dayTasks = getTasksForDate(day).filter(task => {
-                  if (!selectedEquipmentId) return true;
-                  return task.equipmentId === selectedEquipmentId;
-                });
-                
-                return (
-                  <div 
-                    key={index} 
-                    className={`h-28 p-1 border rounded-md overflow-hidden ${
-                      isSameMonth(day, currentDate) 
-                        ? "bg-white" 
-                        : "bg-gray-50 text-gray-400"
-                    }`}
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium">{format(day, "d")}</span>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-5 w-5"
-                        onClick={() => handleAddTask(day)}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-1 overflow-y-auto max-h-[calc(100%-20px)]">
-                      {dayTasks.length > 0 ? (
-                        dayTasks.map((task) => (
-                          <div 
-                            key={task.id} 
-                            className={`text-xs p-1 rounded cursor-pointer truncate ${
-                              task.type === "preventive" 
-                                ? "bg-blue-100 text-blue-800" 
-                                : task.type === "corrective" 
-                                ? "bg-red-100 text-red-800" 
-                                : "bg-green-100 text-green-800"
-                            } ${task.completed ? "line-through opacity-70" : ""}`}
-                            onClick={() => handleSelectTask(task)}
-                          >
-                            <div className="flex items-center gap-1">
-                              <Wrench className="h-2 w-2 flex-shrink-0" />
-                              <span className="truncate">{task.title}</span>
-                            </div>
-                          </div>
-                        ))
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })}
+            <Button variant="outline" size="icon" onClick={() => {
+              const newDate = new Date(date);
+              if (view === "month") {
+                newDate.setMonth(date.getMonth() + 1);
+              } else if (view === "week") {
+                newDate.setDate(date.getDate() + 7);
+              } else {
+                newDate.setDate(date.getDate() + 1);
+              }
+              setDate(newDate);
+            }}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            
+            <Button variant="outline" size="sm" onClick={() => setDate(new Date())}>
+              Aujourd'hui
+            </Button>
+          </div>
+          
+          <div className="flex gap-2 items-center">
+            <Tabs 
+              value={view} 
+              onValueChange={(v) => setView(v as "month" | "week" | "day")}
+              className="w-fit"
+            >
+              <TabsList>
+                <TabsTrigger value="month">Mois</TabsTrigger>
+                <TabsTrigger value="week">Semaine</TabsTrigger>
+                <TabsTrigger value="day">Jour</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
+            <div className="hidden md:block">
+              <Button variant="outline" size="sm" className="gap-2">
+                <CalendarIcon className="h-4 w-4" />
+                <span>Sélectionner</span>
+              </Button>
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {monthsInYear.map((month, index) => {
-              const filteredTasks = selectedEquipmentId 
-                ? month.tasks.filter(task => task.equipmentId === selectedEquipmentId)
-                : month.tasks;
-                
-              return (
-                <div key={index} className="border rounded-md p-4 bg-white">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-medium capitalize">{month.label}</h3>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-6 text-xs"
-                      onClick={() => {
-                        setCurrentDate(month.date);
-                        setViewMode(ViewMode.MONTH);
-                      }}
-                    >
-                      Voir le mois
-                    </Button>
-                  </div>
-                  
-                  {filteredTasks.length > 0 ? (
-                    <div className="space-y-2 max-h-40 overflow-y-auto">
-                      {filteredTasks.map((task) => (
-                        <div 
-                          key={task.id} 
-                          className={`text-xs p-2 rounded flex justify-between items-center cursor-pointer ${
-                            task.type === "preventive" 
-                              ? "bg-blue-50 text-blue-800 border-blue-200" 
-                              : task.type === "corrective" 
-                              ? "bg-red-50 text-red-800 border-red-200" 
-                              : "bg-green-50 text-green-800 border-green-200"
-                          } border ${task.completed ? "line-through opacity-70" : ""}`}
-                          onClick={() => handleSelectTask(task)}
-                        >
-                          <div className="flex items-center gap-1 truncate pr-2">
-                            <span className="whitespace-nowrap">{format(new Date(task.date), "dd/MM")}</span>
-                            <span className="truncate">- {task.title}</span>
-                          </div>
-                          <Badge variant="outline" className="shrink-0 text-[10px] h-4">
-                            {task.equipmentName.split(' ')[0]}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="h-20 flex items-center justify-center text-sm text-muted-foreground">
-                      Aucune tâche planifiée
-                    </div>
-                  )}
+        </div>
+      </BlurryCard>
+
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="hidden md:block">
+          <BlurryCard className="p-4">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(d) => d && setDate(d)}
+              className="rounded-md"
+            />
+            
+            <div className="mt-4">
+              <h3 className="font-medium mb-2">Légende</h3>
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <Badge className="bg-primary">Préventive</Badge>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <div className="flex items-center">
+                  <Badge className="bg-secondary">Corrective</Badge>
+                </div>
+                <div className="flex items-center">
+                  <Badge className="bg-accent">Améliorative</Badge>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <h3 className="font-medium mb-2">Statistiques</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Total planifiées:</span>
+                  <span className="font-medium">12</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>En attente:</span>
+                  <span className="font-medium">8</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Terminées:</span>
+                  <span className="font-medium">4</span>
+                </div>
+              </div>
+            </div>
+          </BlurryCard>
+        </div>
+        
+        <div className="md:col-span-2">
+          <BlurryCard className="p-4">
+            {view === "month" && renderMonthView()}
+            {view === "week" && (
+              <div className="p-4 text-center">
+                <p>Vue semaine à venir prochainement</p>
+              </div>
+            )}
+            {view === "day" && (
+              <div className="p-4 text-center">
+                <p>Vue journalière à venir prochainement</p>
+              </div>
+            )}
+          </BlurryCard>
+        </div>
       </div>
       
-      {/* Modal pour ajouter une nouvelle tâche */}
-      <MaintenanceTaskModal
-        isOpen={isAddTaskModalOpen}
-        onClose={() => setIsAddTaskModalOpen(false)}
-        selectedDate={selectedDate}
-        equipmentOptions={equipmentData}
-        onSave={(equipmentId, task) => {
-          addMaintenanceTask(equipmentId, task);
-          setIsAddTaskModalOpen(false);
-        }}
+      <div className="md:hidden mt-8">
+        <SchoolLogo />
+      </div>
+      
+      <MaintenanceTaskModal 
+        isOpen={isTaskModalOpen} 
+        onClose={() => setIsTaskModalOpen(false)} 
       />
       
-      {/* Modal pour voir les détails d'une tâche */}
       {selectedTask && (
-        <TaskDetailsModal
-          isOpen={!!selectedTask}
-          onClose={() => setSelectedTask(null)}
+        <TaskDetailsModal 
+          isOpen={!!selectedTask} 
+          onClose={() => setSelectedTask(null)} 
           task={selectedTask}
-          equipmentId={(selectedTask as any).equipmentId}
-          equipmentName={(selectedTask as any).equipmentName}
-          onUpdate={(updates) => {
-            updateMaintenanceTask((selectedTask as any).equipmentId, selectedTask.id, updates);
-            setSelectedTask(null);
-          }}
-          onDelete={() => {
-            deleteMaintenanceTask((selectedTask as any).equipmentId, selectedTask.id);
-            setSelectedTask(null);
-          }}
-          onCreateMission={() => {
-            handleCreateMission(selectedTask, (selectedTask as any).equipmentId);
-            setSelectedTask(null);
-          }}
         />
       )}
     </div>

@@ -1,392 +1,281 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Wrench, 
-  Save, 
-  QrCode, 
-  Tag,
-  Map,
-  FileText,
-  Upload,
-  Camera,
-  Link as LinkIcon
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
 } from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import QRCodeGenerator from "@/components/equipment/QRCodeGenerator";
-import { toast } from "sonner";
-
-// Schéma de validation pour le formulaire d'équipement
-const equipmentSchema = z.object({
-  tag: z.string().min(2, "Le tag doit contenir au moins 2 caractères"),
-  name: z.string().min(3, "Le nom doit contenir au moins 3 caractères"),
-  description: z.string().optional(),
-  brand: z.string().min(2, "La marque doit être spécifiée"),
-  model: z.string().min(2, "Le modèle doit être spécifié"),
-  location: z.string().min(2, "La localisation doit être spécifiée"),
-  status: z.enum(["operational", "maintenance", "faulty"]),
-  docLink: z.string().url("Veuillez entrer une URL valide").optional().or(z.literal("")),
-});
-
-type EquipmentForm = z.infer<typeof equipmentSchema>;
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
+import { ArrowLeft, Plus, Upload, Trash2 } from "lucide-react";
+import BlurryCard from "@/components/ui/BlurryCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const NewEquipment = () => {
   const navigate = useNavigate();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [generatedQRCode, setGeneratedQRCode] = useState<boolean>(false);
-  
-  // Initialiser le formulaire avec React Hook Form
-  const form = useForm<EquipmentForm>({
-    resolver: zodResolver(equipmentSchema),
-    defaultValues: {
-      tag: "",
-      name: "",
-      description: "",
-      brand: "",
-      model: "",
-      location: "",
-      status: "operational",
-      docLink: "",
-    },
-  });
-  
-  // Gérer le téléchargement d'image
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real app, this would handle the submission
+    navigate("/equipment");
   };
-  
-  // Soumettre le formulaire
-  const onSubmit = (data: EquipmentForm) => {
-    // Dans une application réelle, vous enverriez ces données à une API
-    console.log("Données d'équipement soumises:", data);
-    console.log("Image:", imagePreview);
-    
-    // Simuler la création réussie
-    toast.success("Équipement créé avec succès");
-    
-    // Rediriger vers la liste des équipements
-    setTimeout(() => {
-      navigate("/equipment");
-    }, 1500);
-  };
-  
-  // Générer QR Code pour le lien de documentation
-  const generateQRCode = () => {
-    const docLink = form.getValues("docLink");
-    if (!docLink) {
-      toast.error("Veuillez d'abord entrer un lien de documentation valide");
-      return;
-    }
-    
-    setGeneratedQRCode(true);
-    toast.success("QR Code généré avec succès");
-  };
-  
-  // Construire l'URL de prévisualisation pour le QR Code
-  const getQRCodeValue = () => {
-    const baseUrl = window.location.origin;
-    const tag = form.getValues("tag");
-    const docLink = form.getValues("docLink");
-    
-    if (docLink) {
-      return docLink;
-    } else if (tag) {
-      return `${baseUrl}/equipment/${tag}`;
-    }
-    return baseUrl;
-  };
-  
+
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 pt-24 pb-16">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Wrench className="h-8 w-8" />
+          <Button 
+            variant="ghost" 
+            className="pl-0 text-muted-foreground mb-2 -ml-3" 
+            onClick={() => navigate("/equipment")}
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Retour aux équipements
+          </Button>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Nouvel équipement
           </h1>
           <p className="text-muted-foreground mt-1">
-            Créez une nouvelle fiche d'équipement avec QR code
+            Ajouter un nouvel équipement au parc
           </p>
         </div>
+        
+        <SchoolLogo className="hidden md:block" />
       </div>
-      
-      <div className="bg-white/70 backdrop-blur-md rounded-xl border p-6 shadow-sm">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Informations générales */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Informations générales</h2>
-                
-                <FormField
-                  control={form.control}
-                  name="tag"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        <Tag className="h-4 w-4" />
-                        Tag d'identification
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="EQ-123" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom de l'équipement</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Robot Fanuc LR Mate" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Description détaillée de l'équipement..." 
-                          {...field} 
-                          className="min-h-[100px]"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="brand"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Marque</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Fanuc" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={form.control}
-                    name="model"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Modèle</FormLabel>
-                        <FormControl>
-                          <Input placeholder="LR Mate 200iD" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        <Map className="h-4 w-4" />
-                        Localisation
-                      </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Atelier robotique" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>État</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sélectionnez l'état" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="operational">Opérationnel</SelectItem>
-                          <SelectItem value="maintenance">En maintenance</SelectItem>
-                          <SelectItem value="faulty">En panne</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
                 />
               </div>
-              
-              {/* Documentation et médias */}
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Nouvel Équipement</h2>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <BlurryCard className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Documentation et médias</h2>
+                <h3 className="text-lg font-medium">Informations générales</h3>
                 
-                <FormField
-                  control={form.control}
-                  name="docLink"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        <FileText className="h-4 w-4" />
-                        Lien vers la documentation
-                      </FormLabel>
-                      <div className="flex gap-2">
-                        <FormControl className="flex-1">
-                          <Input 
-                            placeholder="https://example.com/docs" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={generateQRCode}
-                          className="flex items-center gap-1"
-                        >
-                          <QrCode className="h-4 w-4" />
-                          <span>QR Code</span>
-                        </Button>
-                      </div>
-                      <FormDescription>
-                        Lien vers le dossier technique ou la documentation du fabricant
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nom de l'équipement*</Label>
+                    <Input id="name" required placeholder="Ex: Robot FANUC LR Mate 200iD" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="reference">Référence*</Label>
+                    <Input id="reference" required placeholder="Ex: ROBOT-001" />
+                  </div>
+                </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="image" className="flex items-center gap-1">
-                    <Camera className="h-4 w-4" />
-                    Photo de l'équipement
-                  </Label>
-                  <div className="flex items-center justify-center border-2 border-dashed rounded-md p-4 cursor-pointer hover:bg-muted/50 transition-colors">
-                    <input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <label htmlFor="image" className="cursor-pointer text-center">
-                      {imagePreview ? (
-                        <div className="relative">
-                          <img
-                            src={imagePreview}
-                            alt="Aperçu"
-                            className="mx-auto max-h-64 rounded-md"
-                          />
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Cliquez pour changer d'image
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="py-8 flex flex-col items-center">
-                          <Upload className="h-12 w-12 text-muted-foreground mb-2" />
-                          <p className="font-medium">Cliquez pour télécharger une image</p>
-                          <p className="text-sm text-muted-foreground">
-                            PNG, JPG ou GIF (max 5MB)
-                          </p>
-                        </div>
-                      )}
-                    </label>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    placeholder="Description de l'équipement..."
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Catégorie*</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="robot">Robot</SelectItem>
+                        <SelectItem value="cnc">CNC</SelectItem>
+                        <SelectItem value="conveyor">Convoyeur</SelectItem>
+                        <SelectItem value="hydraulic">Système hydraulique</SelectItem>
+                        <SelectItem value="pneumatic">Système pneumatique</SelectItem>
+                        <SelectItem value="electric">Système électrique</SelectItem>
+                        <SelectItem value="plc">Automate</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="manufacturer">Fabricant</Label>
+                    <Input id="manufacturer" placeholder="Ex: FANUC" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="model">Modèle</Label>
+                    <Input id="model" placeholder="Ex: LR Mate 200iD" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Localisation et état</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Emplacement*</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="workshop1">Atelier 1</SelectItem>
+                        <SelectItem value="workshop2">Atelier 2</SelectItem>
+                        <SelectItem value="lab1">Laboratoire 1</SelectItem>
+                        <SelectItem value="lab2">Laboratoire 2</SelectItem>
+                        <SelectItem value="storage">Stockage</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="status">État*</Label>
+                    <Select required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="operational">Opérationnel</SelectItem>
+                        <SelectItem value="maintenance_required">Maintenance requise</SelectItem>
+                        <SelectItem value="out_of_service">Hors service</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 
-                {generatedQRCode && (
-                  <div className="border rounded-md p-4 space-y-2 bg-muted/20">
-                    <h3 className="font-medium">QR Code généré</h3>
-                    <div className="flex flex-col items-center">
-                      <QRCodeGenerator value={getQRCodeValue()} size={180} />
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Scannez ce QR code pour accéder à la documentation
-                      </p>
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        className="mt-2"
-                        onClick={() => {
-                          // Dans une vraie application, implémentez l'impression ici
-                          toast.info("Fonction d'impression en développement");
-                        }}
-                      >
-                        Imprimer le QR code
-                      </Button>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="serial">Numéro de série</Label>
+                    <Input id="serial" placeholder="Ex: SN-12345678" />
                   </div>
-                )}
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="acquisition_date">Date d'acquisition</Label>
+                    <Input id="acquisition_date" type="date" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="warranty">Garantie jusqu'au</Label>
+                    <Input id="warranty" type="date" />
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Maintenance</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="maintenance_interval">Intervalle de maintenance (jours)</Label>
+                    <Input id="maintenance_interval" type="number" min="0" placeholder="Ex: 90" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="last_maintenance">Dernière maintenance</Label>
+                    <Input id="last_maintenance" type="date" />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="maintenance_instructions">Instructions de maintenance</Label>
+                  <Textarea 
+                    id="maintenance_instructions" 
+                    placeholder="Instructions spécifiques pour la maintenance de cet équipement..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-4">
+                <Button variant="outline" type="button" onClick={() => navigate("/equipment")}>
+                  Annuler
+                </Button>
+                <Button type="submit" className="bg-accent hover:bg-accent/90">
+                  <Plus size={16} className="mr-2" />
+                  Créer l'équipement
+                </Button>
+              </div>
+            </form>
+          </BlurryCard>
+        </div>
+        
+        <div className="space-y-6">
+          <BlurryCard className="p-6">
+            <h3 className="text-lg font-medium mb-4">Images</h3>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center space-y-4">
+              <Upload className="h-12 w-12 text-muted-foreground mx-auto" />
+              <div>
+                <h4 className="font-medium">Glisser-déposer des images</h4>
+                <p className="text-sm text-muted-foreground">ou cliquez pour parcourir</p>
+              </div>
+              <Button variant="outline" className="w-full">
+                Parcourir
+              </Button>
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between bg-muted p-2 rounded-md">
+                <div className="flex items-center gap-2 text-sm">
+                  <div className="h-10 w-10 bg-primary/20 rounded flex items-center justify-center">
+                    IMG
+                  </div>
+                  <span>equipement-1.jpg</span>
+                </div>
+                <Button variant="ghost" size="icon">
+                  <Trash2 size={16} />
+                </Button>
               </div>
             </div>
-            
-            <div className="flex gap-2 justify-end pt-4">
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/equipment")}
-              >
-                Annuler
-              </Button>
-              <Button type="submit" className="gap-2">
-                <Save className="h-4 w-4" />
-                Enregistrer
+          </BlurryCard>
+          
+          <BlurryCard className="p-6">
+            <h3 className="text-lg font-medium mb-4">Documents</h3>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center space-y-4">
+              <Upload className="h-12 w-12 text-muted-foreground mx-auto" />
+              <div>
+                <h4 className="font-medium">Glisser-déposer des fichiers</h4>
+                <p className="text-sm text-muted-foreground">PDF, DOC, XLS, etc.</p>
+              </div>
+              <Button variant="outline" className="w-full">
+                Parcourir
               </Button>
             </div>
-          </form>
-        </Form>
+          </BlurryCard>
+          
+          <SchoolLogo className="md:hidden" />
+        </div>
       </div>
     </div>
   );
