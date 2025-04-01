@@ -1,213 +1,177 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { LayoutDashboard, Wrench, ClipboardList, Award, PanelRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Wrench, CalendarDays, Send, Users, Graduation, BarChart } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 
 const Index = () => {
-  const features = [
-    {
-      title: "Base Équipements",
-      description: "Référencement du parc machines de l'atelier avec fiches détaillées.",
-      icon: <Wrench />,
-      path: "/equipment"
-    },
-    {
-      title: "Ordres de Mission",
-      description: "Gestion complète du cycle de vie des interventions de maintenance.",
-      icon: <ClipboardList />,
-      path: "/missions"
-    },
-    {
-      title: "Compétences MSPC",
-      description: "Intégration du référentiel pour suivi des acquisitions.",
-      icon: <Award />,
-      path: "/skills"
-    },
-    {
-      title: "Tableau de Bord",
-      description: "Visualisation rapide de l'activité et des indicateurs clés.",
-      icon: <LayoutDashboard />,
-      path: "/dashboard"
-    }
-  ];
-
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Hero Section with Lycée Mimard background */}
-      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center -z-20" 
-          style={{ backgroundImage: "url('/lovable-uploads/e69d46b2-ede2-4a25-b62b-bab9fe14a9e0.png')" }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-primary/20 backdrop-blur-sm -z-10" />
-        
-        <motion.div 
-          className="max-w-5xl mx-auto text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-6 inline-block"
-          >
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl"></div>
-              <div className="relative bg-primary text-white h-20 w-20 rounded-full flex items-center justify-center text-3xl font-bold mx-auto">
-                A
-              </div>
-            </div>
-          </motion.div>
-          
-          <motion.h1 
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white shadow-text"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <span className="text-primary">Atelier</span>GMAO
-          </motion.h1>
-          
-          <motion.p 
-            className="mt-6 text-xl text-white shadow-text max-w-3xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            Solution pédagogique de Gestion de Maintenance Assistée par Ordinateur pour le Bac Pro MSPC, conçue pour intégrer la maintenance au cœur de l'apprentissage.
-          </motion.p>
-          
-          <motion.div
-            className="mt-4 text-lg text-white font-semibold shadow-text"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
-            Lycée Etienne Mimard
-          </motion.div>
-          
-          <motion.div 
-            className="mt-10 flex flex-wrap gap-4 justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <Button size="lg" className="gap-2 bg-primary/90 hover:bg-primary" asChild>
-              <Link to="/dashboard">
-                <LayoutDashboard size={18} />
-                <span>Tableau de bord</span>
-              </Link>
-            </Button>
-            
-            <Button size="lg" variant="outline" className="gap-2 bg-white/30 backdrop-blur-sm text-white border-white hover:bg-white/50 hover:text-primary" asChild>
-              <Link to="/equipment">
-                <Wrench size={18} />
-                <span>Voir les équipements</span>
-              </Link>
-            </Button>
-          </motion.div>
-        </motion.div>
-      </section>
-      
-      {/* Features Section */}
-      <section className="py-20 px-6 bg-background relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <motion.h2 
-              className="text-3xl font-bold"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              Fonctionnalités principales
-            </motion.h2>
-            <motion.p 
-              className="mt-4 text-lg text-foreground/70 max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Une solution complète pour l'apprentissage de la maintenance industrielle
-            </motion.p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
-              >
-                <BlurryCard className="h-full">
-                  <div className="p-6 flex flex-col h-full">
-                    <div className="bg-primary/10 rounded-lg p-3 w-fit mb-4">
-                      <div className="text-primary">
-                        {feature.icon}
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-medium">{feature.title}</h3>
-                    <p className="mt-2 text-foreground/70 flex-grow">
-                      {feature.description}
-                    </p>
-                    <div className="mt-6">
-                      <Button variant="ghost" size="sm" className="gap-1 text-primary" asChild>
-                        <Link to={feature.path}>
-                          <span>Découvrir</span>
-                          <ArrowRight size={14} />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                </BlurryCard>
-              </motion.div>
-            ))}
-          </div>
+    <div className="max-w-7xl mx-auto px-4 py-8 pt-24 pb-16">
+      <div className="text-center mb-10 max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold mb-4">
+          Gestion des équipements et maintenance
+        </h1>
+        <p className="text-lg text-muted-foreground mb-8">
+          Plateforme complète pour gérer les équipements techniques, planifier la maintenance préventive et suivre les missions pédagogiques.
+        </p>
+        <div className="flex flex-wrap gap-4 justify-center">
+          <Button asChild size="lg" className="gap-2">
+            <Link to="/equipment">
+              <Wrench className="h-5 w-5" />
+              Gérer les équipements
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="gap-2">
+            <Link to="/maintenance-calendar">
+              <CalendarDays className="h-5 w-5" />
+              Calendrier de maintenance
+            </Link>
+          </Button>
         </div>
-      </section>
-      
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-primary/5 relative overflow-hidden">
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl -z-10" />
-        
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h2 
-            className="text-3xl font-bold"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Prêt à améliorer l'apprentissage<br />de la maintenance?
-          </motion.h2>
-          <motion.p 
-            className="mt-4 text-lg text-foreground/70 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Commencez dès maintenant avec AtelierGMAO et intégrez la GMAO dans votre enseignement MSPC.
-          </motion.p>
-          
-          <motion.div 
-            className="mt-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Button size="lg" className="gap-2" asChild>
-              <Link to="/dashboard">
-                <PanelRight size={18} />
-                <span>Accéder à la plateforme</span>
-              </Link>
-            </Button>
-          </motion.div>
+      </div>
+
+      <BlurryCard className="relative overflow-hidden my-12 p-8">
+        <div className="relative z-10">
+          <h2 className="text-2xl font-bold mb-3">Maintenance préventive systématique</h2>
+          <p className="mb-6 max-w-2xl">
+            Visualisez toutes les tâches de maintenance préventive planifiées sur l'ensemble des équipements et machines dans un calendrier annuel ou mensuel.
+          </p>
+          <Button asChild size="lg">
+            <Link to="/maintenance-calendar">
+              <CalendarDays className="mr-2 h-5 w-5" />
+              Accéder au calendrier
+            </Link>
+          </Button>
         </div>
-      </section>
+      </BlurryCard>
+
+      <Separator className="my-12" />
+
+      <h2 className="text-2xl font-bold mb-6">Fonctionnalités principales</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <Wrench className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Gestion des équipements</CardTitle>
+            <CardDescription>
+              Cataloguez et suivez l'état de tous vos équipements techniques
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Centralisez les informations de vos machines, avec leur état, emplacement et historique de maintenance.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/equipment">Voir les équipements</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CalendarDays className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Calendrier de maintenance</CardTitle>
+            <CardDescription>
+              Visualisez et planifiez les opérations de maintenance préventive
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Consultez toutes les maintenances prévues par machine et créez directement des ordres de mission depuis le calendrier.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/maintenance-calendar">Accéder au calendrier</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Send className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Ordres de mission</CardTitle>
+            <CardDescription>
+              Créez et suivez les missions de maintenance
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Attribuez des tâches de maintenance aux étudiants et suivez leur avancement.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/missions">Voir les missions</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <BarChart className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Tableau de bord</CardTitle>
+            <CardDescription>
+              Visualisez les métriques de maintenance
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Suivez les indicateurs clés de performance de maintenance et l'état du parc d'équipements.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/dashboard">Voir le tableau de bord</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Graduation className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Gestion des compétences</CardTitle>
+            <CardDescription>
+              Suivez les compétences acquises par les étudiants
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Associez des compétences aux missions et suivez leur acquisition par les étudiants.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/skills">Voir les compétences</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <Users className="h-8 w-8 text-primary mb-2" />
+            <CardTitle>Gestion des utilisateurs</CardTitle>
+            <CardDescription>
+              Gérez les profils des étudiants et du personnel
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p>
+              Ajoutez et modifiez les profils des utilisateurs de la plateforme.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/users">Voir les utilisateurs</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };
