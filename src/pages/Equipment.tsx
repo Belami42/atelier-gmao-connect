@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import EquipmentHeader from "@/components/equipment/EquipmentHeader";
 import EquipmentList from "@/components/equipment/EquipmentList";
@@ -6,7 +5,7 @@ import EquipmentFilters from "@/components/equipment/EquipmentFilters";
 import MobileFilterSheet from "@/components/equipment/MobileFilterSheet";
 import EquipmentEmptyState from "@/components/equipment/EquipmentEmptyState";
 import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Equipment = () => {
   const {
@@ -26,9 +25,8 @@ const Equipment = () => {
     deleteEquipment
   } = useEquipmentData();
 
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   
-  // Auto-close filter panel when switching to desktop
   useEffect(() => {
     if (!isMobile && isFilterOpen) {
       setIsFilterOpen(false);
@@ -39,10 +37,10 @@ const Equipment = () => {
     <div className="max-w-7xl mx-auto px-4 py-8 pt-24 pb-16">
       <EquipmentHeader 
         searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
-        hasActiveFilters={hasActiveFilters}
-        resetSearch={resetSearch}
-        openFilters={() => setIsFilterOpen(true)}
+        onSearchChange={setSearchQuery} 
+        hasFilters={!!hasActiveFilters}
+        onResetSearch={resetSearch}
+        onOpenFilters={() => setIsFilterOpen(true)}
         isMobile={isMobile}
       />
       
@@ -56,23 +54,30 @@ const Equipment = () => {
               setSelectedStatus={setSelectedStatus}
               locations={locations}
               resetFilters={resetFilters}
+              searchQuery=""
+              setSearchQuery={() => {}}
+              hasActiveFilters={!!hasActiveFilters}
+              isFilterOpen={false}
+              setIsFilterOpen={() => {}}
             />
           </aside>
         )}
         
         <main className="lg:col-span-3">
           {filteredEquipments.length > 0 ? (
-            <EquipmentList equipments={filteredEquipments} onDelete={deleteEquipment} />
+            <EquipmentList equipments={filteredEquipments} />
           ) : (
-            <EquipmentEmptyState searchQuery={searchQuery} hasActiveFilters={hasActiveFilters} />
+            <EquipmentEmptyState 
+              hasFilters={!!hasActiveFilters} 
+            />
           )}
         </main>
       </div>
       
       {isMobile && (
         <MobileFilterSheet 
-          isOpen={isFilterOpen} 
-          setIsOpen={setIsFilterOpen}
+          open={isFilterOpen} 
+          onOpenChange={setIsFilterOpen}
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}
           selectedStatus={selectedStatus}

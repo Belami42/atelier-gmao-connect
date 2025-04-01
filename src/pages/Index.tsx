@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Wrench, CalendarDays, Send, Users, Graduation, BarChart } from "lucide-react";
+import { Wrench, CalendarDays, Send, Users, GraduationCap, BarChart } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 
 const Index = () => {
@@ -134,7 +133,7 @@ const Index = () => {
 
         <Card>
           <CardHeader>
-            <Graduation className="h-8 w-8 text-primary mb-2" />
+            <GraduationCap className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Gestion des compétences</CardTitle>
             <CardDescription>
               Suivez les compétences acquises par les étudiants

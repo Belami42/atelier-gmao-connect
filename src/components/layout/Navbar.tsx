@@ -1,15 +1,14 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, LayoutDashboard, Wrench, CalendarDays, Send, Graduation, Users, Menu, X } from "lucide-react";
+import { Home, LayoutDashboard, Wrench, CalendarDays, Send, GraduationCap, Users, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const location = useLocation();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const links = [
@@ -18,17 +17,15 @@ const Navbar = () => {
     { href: "/equipment", label: "Équipements", icon: Wrench },
     { href: "/maintenance-calendar", label: "Calendrier maintenance", icon: CalendarDays },
     { href: "/missions", label: "Missions", icon: Send },
-    { href: "/skills", label: "Compétences", icon: Graduation },
+    { href: "/skills", label: "Compétences", icon: GraduationCap },
     { href: "/users", label: "Utilisateurs", icon: Users },
   ];
 
-  // Mobile navigation with Sheet component
   if (isMobile) {
     return (
       <header className="fixed w-full top-0 left-0 z-50 bg-white/80 backdrop-blur-md border-b">
         <div className="flex items-center justify-between p-4">
           <Link to="/" className="font-bold text-lg flex items-center">
-            {/* Logo and app name */}
             <Wrench className="mr-2 h-5 w-5" />
             <span>Smart Workshop</span>
           </Link>
@@ -61,7 +58,6 @@ const Navbar = () => {
     );
   }
 
-  // Desktop navigation
   return (
     <header className="fixed w-full top-0 left-0 z-50 bg-white/80 backdrop-blur-md border-b">
       <div className="flex items-center justify-between p-4 container mx-auto">
