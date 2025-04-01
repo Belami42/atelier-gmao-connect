@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import EquipmentHeader from "@/components/equipment/EquipmentHeader";
 import EquipmentList from "@/components/equipment/EquipmentList";
@@ -38,7 +39,7 @@ const Equipment = () => {
       <EquipmentHeader 
         searchQuery={searchQuery} 
         onSearchChange={setSearchQuery} 
-        hasFilters={!!hasActiveFilters}
+        hasFilters={hasActiveFilters}
         onResetSearch={resetSearch}
         onOpenFilters={() => setIsFilterOpen(true)}
         isMobile={isMobile}
@@ -54,21 +55,24 @@ const Equipment = () => {
               setSelectedStatus={setSelectedStatus}
               locations={locations}
               resetFilters={resetFilters}
-              searchQuery=""
-              setSearchQuery={() => {}}
-              hasActiveFilters={!!hasActiveFilters}
-              isFilterOpen={false}
-              setIsFilterOpen={() => {}}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              hasActiveFilters={hasActiveFilters}
+              isFilterOpen={isFilterOpen}
+              setIsFilterOpen={setIsFilterOpen}
             />
           </aside>
         )}
         
         <main className="lg:col-span-3">
           {filteredEquipments.length > 0 ? (
-            <EquipmentList equipments={filteredEquipments} />
+            <EquipmentList 
+              equipments={filteredEquipments} 
+              onDeleteEquipment={deleteEquipment} 
+            />
           ) : (
             <EquipmentEmptyState 
-              hasFilters={!!hasActiveFilters} 
+              hasFilters={hasActiveFilters} 
             />
           )}
         </main>
@@ -76,7 +80,7 @@ const Equipment = () => {
       
       {isMobile && (
         <MobileFilterSheet 
-          open={isFilterOpen} 
+          isOpen={isFilterOpen} 
           onOpenChange={setIsFilterOpen}
           selectedLocation={selectedLocation}
           setSelectedLocation={setSelectedLocation}

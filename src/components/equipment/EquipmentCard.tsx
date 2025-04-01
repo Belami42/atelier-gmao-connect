@@ -189,7 +189,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-4" align="center">
-              <QRCodeGenerator value={equipment.id} label={equipment.name} />
+              <QRCodeGenerator value={equipment.id} />
             </PopoverContent>
           </Popover>
 
