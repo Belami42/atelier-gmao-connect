@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -56,9 +57,9 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
   };
 
   const typeColors: Record<MissionType, string> = {
-    preventive: "bg-blue-500",
-    corrective: "bg-amber-500",
-    improvement: "bg-violet-500"
+    preventive: "bg-[#0EA5E9] text-white",
+    corrective: "bg-[#F97316] text-white",
+    improvement: "bg-[#8B5CF6] text-white"
   };
 
   const statusLabels: Record<MissionStatus, string> = {
@@ -71,12 +72,12 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
   };
 
   const statusColors: Record<MissionStatus, string> = {
-    to_assign: "bg-gray-500",
-    assigned: "bg-blue-500",
-    in_progress: "bg-amber-500",
-    to_validate: "bg-purple-500",
-    completed: "bg-green-500",
-    cancelled: "bg-red-500"
+    to_assign: "bg-gray-500 text-white",
+    assigned: "bg-[#0EA5E9] text-white",
+    in_progress: "bg-[#F97316] text-white",
+    to_validate: "bg-[#D946EF] text-white",
+    completed: "bg-[#10B981] text-white",
+    cancelled: "bg-red-500 text-white"
   };
 
   const priorityLabels: Record<MissionPriority, string> = {
@@ -122,19 +123,19 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
         
         <div className="mt-3 flex flex-col gap-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <Wrench size={14} className="mr-2 flex-shrink-0" />
+            <Wrench size={14} className="mr-2 flex-shrink-0 text-[#8B5CF6]" />
             <span className="line-clamp-1">{mission.equipmentName}</span>
           </div>
           
           {mission.plannedDate && (
             <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar size={14} className="mr-2 flex-shrink-0" />
+              <Calendar size={14} className="mr-2 flex-shrink-0 text-[#0EA5E9]" />
               <span>Prévu: {formatDate(mission.plannedDate)}</span>
             </div>
           )}
           
           <div className="flex items-center text-sm text-muted-foreground">
-            <Clock size={14} className="mr-2 flex-shrink-0" />
+            <Clock size={14} className="mr-2 flex-shrink-0 text-[#F97316]" />
             <span>Créé: {formatDate(mission.createdAt)}</span>
           </div>
         </div>
@@ -143,10 +144,10 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
           <>
             <Separator className="my-3" />
             <div className="flex items-center gap-2">
-              <User size={14} className="text-muted-foreground" />
+              <User size={14} className="text-[#D946EF]" />
               <div className="flex flex-wrap gap-1">
                 {mission.assignedToNames.map((name, index) => (
-                  <Badge key={index} variant="outline" className="bg-primary/5">
+                  <Badge key={index} variant="outline" className="bg-primary/5 border-primary/20">
                     {name}
                   </Badge>
                 ))}
@@ -165,7 +166,7 @@ const MissionCard = ({ mission, onClick }: MissionCardProps) => {
             </span>
           </div>
           
-          <Button size="sm" variant="ghost" className="gap-1" asChild>
+          <Button size="sm" variant="ghost" className="gap-1 text-[#0EA5E9] hover:text-[#0EA5E9]/80 hover:bg-[#0EA5E9]/10" asChild>
             <Link to={`/missions/${mission.id}`}>
               <span>Détails</span>
               <ArrowRight size={14} />

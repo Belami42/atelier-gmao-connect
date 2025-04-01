@@ -38,6 +38,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import MissionCard, { Mission, MissionStatus, MissionType } from "@/components/mission/MissionCard";
+import MissionLogo from "@/components/mission/MissionLogo";
 
 const Missions = () => {
   const [searchParams] = useSearchParams();
@@ -51,6 +52,12 @@ const Missions = () => {
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  
+  const maintenanceImages = [
+    "/maintenance-1.jpg",
+    "/maintenance-2.jpg",
+    "/maintenance-3.jpg",
+  ];
   
   const missions: Mission[] = [
     {
@@ -173,18 +180,41 @@ const Missions = () => {
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Ordres de mission</h1>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">Ordres de mission</h1>
           <p className="text-muted-foreground mt-1">
             Gestion des activités de maintenance
           </p>
         </div>
         
-        <Button className="gap-2" asChild>
-          <Link to="/missions/new">
-            <Plus size={16} />
-            <span>Nouvel OM</span>
-          </Link>
-        </Button>
+        <div className="flex items-center gap-4">
+          <MissionLogo className="hidden md:block" />
+          <Button className="gap-2 bg-accent hover:bg-accent/90" asChild>
+            <Link to="/missions/new">
+              <Plus size={16} />
+              <span>Nouvel OM</span>
+            </Link>
+          </Button>
+        </div>
+      </div>
+      
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex space-x-4 px-4">
+            {maintenanceImages.map((img, idx) => (
+              <div key={idx} className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
+                <div className="absolute inset-0 bg-black/30 z-10"></div>
+                <img 
+                  src={img} 
+                  alt={`Maintenance ${idx + 1}`}
+                  className="h-full w-full object-cover" 
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <h2 className="text-white font-bold text-2xl shadow-text">Maintenance Industrielle</h2>
+        </div>
       </div>
       
       <div className="bg-white/70 backdrop-blur-md rounded-xl border p-4 mb-6 smooth-transition shadow-sm">
@@ -455,11 +485,11 @@ const Missions = () => {
             </div>
           ) : (
             <Tabs defaultValue="to_validate">
-              <TabsList className="mb-6">
-                <TabsTrigger value="to_validate" className="relative gap-2">
+              <TabsList className="mb-6 bg-secondary/50 p-1">
+                <TabsTrigger value="to_validate" className="relative gap-2 data-[state=active]:bg-primary data-[state=active]:text-white">
                   À valider
                   {missionsByStatus.to_validate.length > 0 && (
-                    <Badge className="bg-primary">{missionsByStatus.to_validate.length}</Badge>
+                    <Badge className="bg-accent text-white">{missionsByStatus.to_validate.length}</Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="to_assign" className="relative gap-2">
@@ -540,6 +570,10 @@ const Missions = () => {
           </Button>
         </div>
       )}
+      
+      <div className="md:hidden mt-8">
+        <MissionLogo />
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,14 +16,14 @@
     --primary: 210 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 267 100% 66%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 142 76% 50%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
@@ -55,16 +54,16 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 100% 50%;
+    --primary: 210 100% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 267 100% 70%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 217 33% 17%;
+    --accent: 142 76% 45%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 63% 31%;
@@ -96,6 +95,14 @@
     @apply bg-black/30 backdrop-blur-lg border border-white/10 shadow-lg;
   }
   
+  .vibrant-gradient {
+    @apply bg-gradient-to-r from-[#8B5CF6] via-[#D946EF] to-[#F97316];
+  }
+
+  .tech-gradient {
+    @apply bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6];
+  }
+  
   .smooth-transition {
     @apply transition-all duration-300 ease-in-out;
   }
@@ -125,12 +132,10 @@
   --header-height: 4rem;
 }
 
-/* Improved scroll behavior */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -150,7 +155,6 @@ html {
   background: rgba(0, 0, 0, 0.2);
 }
 
-/* Image loading blur effect */
 .img-loading {
   filter: blur(10px);
   transition: filter 0.3s ease-out;
