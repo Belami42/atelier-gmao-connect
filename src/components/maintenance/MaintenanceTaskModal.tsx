@@ -19,27 +19,31 @@ import { Equipment } from "@/components/equipment/EquipmentCard";
 type MaintenanceTaskModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  selectedDate: Date | null;
-  equipmentOptions: Equipment[];
-  onSave: (equipmentId: string, task: MaintenanceTask) => void;
+  selectedDate?: Date | null;
+  equipmentOptions?: Equipment[];
+  onSave?: (equipmentId: string, task: MaintenanceTask) => void;
   existingTask?: MaintenanceTask;
   editMode?: boolean;
+  equipmentId?: string;
+  equipmentName?: string;
 };
 
 const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
   isOpen,
   onClose,
-  selectedDate,
-  equipmentOptions,
-  onSave,
+  selectedDate = null,
+  equipmentOptions = [],
+  onSave = () => {},
   existingTask,
-  editMode = false
+  editMode = false,
+  equipmentId,
+  equipmentName
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState<"preventive" | "corrective" | "improvement">("preventive");
   const [date, setDate] = useState<Date | undefined>(selectedDate || undefined);
-  const [equipmentId, setEquipmentId] = useState("");
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState(equipmentId || "");
   
   useEffect(() => {
     if (isOpen) {
@@ -48,20 +52,22 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         setDescription(existingTask.description || "");
         setType(existingTask.type);
         setDate(existingTask.date instanceof Date ? existingTask.date : new Date(existingTask.date));
-        // L'equipmentId est généralement passé séparément car il n'est pas stocké dans la tâche elle-même
+        if (equipmentId) {
+          setSelectedEquipmentId(equipmentId);
+        }
       } else {
         // En mode création, initialiser avec les valeurs par défaut
         setTitle("");
         setDescription("");
         setType("preventive");
         setDate(selectedDate || undefined);
-        setEquipmentId(equipmentOptions.length > 0 ? equipmentOptions[0].id : "");
+        setSelectedEquipmentId(equipmentId || (equipmentOptions.length > 0 ? equipmentOptions[0].id : ""));
       }
     }
-  }, [isOpen, editMode, existingTask, selectedDate, equipmentOptions]);
+  }, [isOpen, editMode, existingTask, selectedDate, equipmentOptions, equipmentId]);
   
   const handleSubmit = () => {
-    if (!title || !date || !equipmentId) return;
+    if (!title || !date || !selectedEquipmentId) return;
     
     const newTask: MaintenanceTask = {
       id: existingTask ? existingTask.id : `task-${Date.now()}`,
@@ -72,7 +78,8 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
       completed: existingTask ? existingTask.completed : false
     };
     
-    onSave(equipmentId, newTask);
+    onSave(selectedEquipmentId, newTask);
+    onClose();
   };
   
   return (
@@ -83,25 +90,36 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="equipment">Équipement</Label>
-            <Select 
-              value={equipmentId} 
-              onValueChange={setEquipmentId}
-              disabled={editMode}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un équipement" />
-              </SelectTrigger>
-              <SelectContent>
-                {equipmentOptions.map(equipment => (
-                  <SelectItem key={equipment.id} value={equipment.id}>
-                    {equipment.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {!equipmentId && equipmentOptions.length > 0 && (
+            <div className="grid gap-2">
+              <Label htmlFor="equipment">Équipement</Label>
+              <Select 
+                value={selectedEquipmentId} 
+                onValueChange={setSelectedEquipmentId}
+                disabled={editMode || !!equipmentId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un équipement" />
+                </SelectTrigger>
+                <SelectContent>
+                  {equipmentOptions.map(equipment => (
+                    <SelectItem key={equipment.id} value={equipment.id}>
+                      {equipment.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          
+          {equipmentId && equipmentName && (
+            <div className="grid gap-2">
+              <Label htmlFor="equipment">Équipement</Label>
+              <div className="p-2 border rounded-md bg-muted/40">
+                {equipmentName}
+              </div>
+            </div>
+          )}
           
           <div className="grid gap-2">
             <Label htmlFor="title">Titre</Label>
@@ -174,7 +192,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Annuler</Button>
-          <Button onClick={handleSubmit} disabled={!title || !date || !equipmentId}>
+          <Button onClick={handleSubmit} disabled={!title || !date}>
             {editMode ? "Mettre à jour" : "Créer la tâche"}
           </Button>
         </DialogFooter>

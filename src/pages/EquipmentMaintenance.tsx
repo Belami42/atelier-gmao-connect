@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -13,70 +13,76 @@ import {
   User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import MaintenanceTaskModal from "@/components/maintenance/MaintenanceTaskModal";
+import TaskDetailsModal from "@/components/maintenance/TaskDetailsModal";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
+import { useEquipmentData } from "@/hooks/useEquipmentData";
+import { toast } from "sonner";
 
 const EquipmentMaintenance = () => {
   const { equipmentId } = useParams();
   const navigate = useNavigate();
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any | null>(null);
+  const { equipmentData, addMaintenanceTask, deleteMaintenanceTask, updateMaintenanceTask } = useEquipmentData();
   
-  // Sample data - in a real app, this would come from an API
-  const equipment = {
-    id: equipmentId,
-    name: "Robot FANUC LR Mate 200iD",
-    image: "/maintenance-1.jpg",
-    category: "robot",
-    location: "Atelier 1",
-    status: "operational",
-    nextMaintenance: "2023-12-15",
-    lastMaintenance: "2023-09-15"
+  const equipment = equipmentData?.find(eq => eq.id === equipmentId);
+
+  useEffect(() => {
+    if (!equipmentId || !equipment) {
+      navigate("/equipment");
+      toast.error("Équipement non trouvé");
+    }
+  }, [equipmentId, equipment, navigate]);
+
+  if (!equipment) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+          <h1 className="text-3xl font-bold">Chargement...</h1>
+        </div>
+        <BlurryCard className="p-8 animate-pulse">
+          <div className="h-8 bg-primary/20 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-primary/10 rounded w-1/2 mb-8"></div>
+          <div className="h-48 bg-primary/5 rounded"></div>
+        </BlurryCard>
+      </div>
+    );
+  }
+
+  const maintenanceTasks = equipment.maintenanceSchedule || [];
+
+  const handleSaveTask = (_: string, task: any) => {
+    addMaintenanceTask(equipmentId!, task);
+    setIsTaskModalOpen(false);
+    toast.success("Tâche de maintenance ajoutée");
   };
 
-  const maintenanceTasks = [
-    {
-      id: "1",
-      title: "Vérification articulations",
-      description: "Contrôle et graissage des articulations du robot",
-      date: "2023-09-15",
-      duration: 45, // minutes
-      type: "preventive",
-      status: "completed",
-      assignedTo: ["Thomas D."]
-    },
-    {
-      id: "2",
-      title: "Remplacement capteur",
-      description: "Remplacement du capteur de proximité défectueux",
-      date: "2023-08-10",
-      duration: 60, // minutes
-      type: "corrective",
-      status: "completed",
-      assignedTo: ["Julie M."]
-    },
-    {
-      id: "3",
-      title: "Maintenance trimestrielle",
-      description: "Contrôle complet et maintenance préventive trimestrielle",
-      date: "2023-12-15", // future
-      duration: 120, // minutes
-      type: "preventive",
-      status: "scheduled",
-      assignedTo: ["Alex B."]
+  const handleUpdateTask = (updates: any) => {
+    if (selectedTask) {
+      updateMaintenanceTask(equipmentId!, selectedTask.id, updates);
+      setSelectedTask(null);
+      toast.success("Tâche mise à jour");
     }
-  ];
+  };
+
+  const handleDeleteTask = () => {
+    if (selectedTask) {
+      deleteMaintenanceTask(equipmentId!, selectedTask.id);
+      setSelectedTask(null);
+      toast.success("Tâche supprimée");
+    }
+  };
+
+  const handleCreateMission = () => {
+    // This would navigate to mission creation page with pre-filled data
+    toast.info("Fonctionnalité à venir: Création d'ordre de mission");
+    setSelectedTask(null);
+  };
 
   const maintenanceImages = [
     "/maintenance-1.jpg",
@@ -165,7 +171,7 @@ const EquipmentMaintenance = () => {
                 <h3 className="text-white font-medium">{equipment.name}</h3>
                 <Badge className="bg-green-500 text-white">
                   {equipment.status === "operational" ? "Opérationnel" : 
-                   equipment.status === "maintenance_required" ? "Maintenance requise" : "Hors service"}
+                   equipment.status === "maintenance" ? "Maintenance requise" : "Hors service"}
                 </Badge>
               </div>
               <p className="text-white/80 text-sm">Emplacement: {equipment.location}</p>
@@ -179,11 +185,13 @@ const EquipmentMaintenance = () => {
                 <div className="flex items-center gap-2 mt-2">
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <span>
-                    {new Date(equipment.nextMaintenance).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
+                    {maintenanceTasks.length > 0 
+                      ? new Date(maintenanceTasks[0].date).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })
+                      : "Aucune maintenance planifiée"}
                   </span>
                 </div>
               </div>
@@ -193,11 +201,9 @@ const EquipmentMaintenance = () => {
                 <div className="flex items-center gap-2 mt-2">
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                   <span>
-                    {new Date(equipment.lastMaintenance).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
+                    {maintenanceTasks.filter(t => t.completed).length > 0
+                      ? "Date de la dernière maintenance" 
+                      : "Aucune maintenance effectuée"}
                   </span>
                 </div>
               </div>
@@ -207,14 +213,14 @@ const EquipmentMaintenance = () => {
                 <div className="flex items-center gap-2 mt-2">
                   {equipment.status === "operational" ? (
                     <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  ) : equipment.status === "maintenance_required" ? (
+                  ) : equipment.status === "maintenance" ? (
                     <AlertTriangle className="h-5 w-5 text-amber-500" />
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-red-500" />
                   )}
                   <span>
                     {equipment.status === "operational" ? "Opérationnel" : 
-                     equipment.status === "maintenance_required" ? "Maintenance requise" : "Hors service"}
+                     equipment.status === "maintenance" ? "Maintenance requise" : "Hors service"}
                   </span>
                 </div>
               </div>
@@ -296,49 +302,59 @@ const EquipmentMaintenance = () => {
         </div>
         
         <div className="space-y-4">
-          {maintenanceTasks.map((task) => (
-            <div key={task.id} className="border rounded-lg p-4">
-              <div className="flex flex-col md:flex-row justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-medium">{task.title}</h4>
-                    <Badge className={
-                      task.type === "preventive" ? "bg-[#0EA5E9] text-white" : 
-                      task.type === "corrective" ? "bg-[#F97316] text-white" : 
-                      "bg-[#8B5CF6] text-white"
-                    }>
-                      {task.type === "preventive" ? "Préventif" : 
-                       task.type === "corrective" ? "Correctif" : "Amélioratif"}
-                    </Badge>
-                    <Badge className={
-                      task.status === "completed" ? "bg-green-500 text-white" : 
-                      "bg-primary text-white"
-                    }>
-                      {task.status === "completed" ? "Terminé" : "Planifié"}
-                    </Badge>
+          {maintenanceTasks.length > 0 ? (
+            maintenanceTasks.map((task) => (
+              <div 
+                key={task.id} 
+                className="border rounded-lg p-4 cursor-pointer hover:bg-muted/20 transition-colors"
+                onClick={() => setSelectedTask(task)}
+              >
+                <div className="flex flex-col md:flex-row justify-between gap-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{task.title}</h4>
+                      <Badge className={
+                        task.type === "preventive" ? "bg-[#0EA5E9] text-white" : 
+                        task.type === "corrective" ? "bg-[#F97316] text-white" : 
+                        "bg-[#8B5CF6] text-white"
+                      }>
+                        {task.type === "preventive" ? "Préventif" : 
+                        task.type === "corrective" ? "Correctif" : "Amélioratif"}
+                      </Badge>
+                      <Badge className={
+                        task.completed ? "bg-green-500 text-white" : 
+                        "bg-primary text-white"
+                      }>
+                        {task.completed ? "Terminé" : "Planifié"}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
-                </div>
-                
-                <div className="flex flex-col items-end justify-center min-w-24">
-                  <div className="text-sm">
-                    {new Date(task.date).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {task.duration} minutes
-                  </div>
-                  <div className="flex items-center gap-1 text-sm mt-1">
-                    <User size={14} className="text-muted-foreground" />
-                    <span>{task.assignedTo.join(", ")}</span>
+                  
+                  <div className="flex flex-col items-end justify-center min-w-24">
+                    <div className="text-sm">
+                      {new Date(task.date).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center p-6 border rounded-lg">
+              <p className="text-muted-foreground">Aucune tâche de maintenance enregistrée</p>
+              <Button 
+                variant="outline" 
+                className="mt-2" 
+                onClick={() => setIsTaskModalOpen(true)}
+              >
+                Ajouter une tâche
+              </Button>
             </div>
-          ))}
+          )}
         </div>
       </BlurryCard>
       
@@ -351,7 +367,22 @@ const EquipmentMaintenance = () => {
         onClose={() => setIsTaskModalOpen(false)} 
         equipmentId={equipmentId}
         equipmentName={equipment.name}
+        onSave={handleSaveTask}
+        selectedDate={new Date()}
       />
+
+      {selectedTask && (
+        <TaskDetailsModal 
+          isOpen={!!selectedTask} 
+          onClose={() => setSelectedTask(null)} 
+          task={selectedTask}
+          equipmentId={equipmentId}
+          equipmentName={equipment.name}
+          onUpdate={handleUpdateTask}
+          onDelete={handleDeleteTask}
+          onCreateMission={handleCreateMission}
+        />
+      )}
     </div>
   );
 };

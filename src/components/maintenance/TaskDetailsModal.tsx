@@ -25,22 +25,22 @@ type TaskDetailsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   task: MaintenanceTask;
-  equipmentId: string;
-  equipmentName: string;
-  onUpdate: (updates: Partial<MaintenanceTask>) => void;
-  onDelete: () => void;
-  onCreateMission: () => void;
+  equipmentId?: string;
+  equipmentName?: string;
+  onUpdate?: (updates: Partial<MaintenanceTask>) => void;
+  onDelete?: () => void;
+  onCreateMission?: () => void;
 };
 
 const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   isOpen,
   onClose,
   task,
-  equipmentId,
-  equipmentName,
-  onUpdate,
-  onDelete,
-  onCreateMission
+  equipmentId = "",
+  equipmentName = "Équipement",
+  onUpdate = () => {},
+  onDelete = () => {},
+  onCreateMission = () => {}
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   

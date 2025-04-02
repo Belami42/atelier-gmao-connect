@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
@@ -9,6 +9,8 @@ import MaintenanceTaskModal from "@/components/maintenance/MaintenanceTaskModal"
 import TaskDetailsModal from "@/components/maintenance/TaskDetailsModal";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
+import { useEquipmentData } from "@/hooks/useEquipmentData";
+import { toast } from "sonner";
 
 const MaintenanceCalendar = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -16,39 +18,7 @@ const MaintenanceCalendar = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any | null>(null);
 
-  // Sample data - in a real app, this would come from an API
-  const maintenanceTasks = [
-    {
-      id: "1",
-      title: "Vérification niveau huile",
-      description: "Contrôle et remplissage de l'huile hydraulique",
-      equipment: "Presse hydraulique",
-      date: new Date(2023, 10, 15), // November 15, 2023
-      duration: 30, // minutes
-      assignedTo: ["Thomas D."],
-      status: "scheduled"
-    },
-    {
-      id: "2",
-      title: "Nettoyage filtres",
-      description: "Nettoyage des filtres à air du système de ventilation",
-      equipment: "CVC Atelier",
-      date: new Date(2023, 10, 18), // November 18, 2023
-      duration: 60, // minutes
-      assignedTo: ["Julie M."],
-      status: "completed"
-    },
-    {
-      id: "3",
-      title: "Graissage articulations",
-      description: "Graissage des articulations du bras robotisé",
-      equipment: "Robot FANUC",
-      date: new Date(2023, 10, 22), // November 22, 2023
-      duration: 45, // minutes
-      assignedTo: ["Alex B."],
-      status: "scheduled"
-    }
-  ];
+  const { equipmentData, addMaintenanceTask, deleteMaintenanceTask, updateMaintenanceTask } = useEquipmentData();
 
   const handleTaskClick = (task: any) => {
     setSelectedTask(task);
@@ -59,6 +29,43 @@ const MaintenanceCalendar = () => {
     "/maintenance-2.jpg",
     "/maintenance-3.jpg",
   ];
+
+  // All maintenance tasks from all equipment
+  const allTasks = equipmentData?.flatMap(equipment => 
+    (equipment.maintenanceSchedule || []).map(task => ({
+      ...task,
+      equipmentId: equipment.id,
+      equipmentName: equipment.name
+    }))
+  ) || [];
+
+  const handleSaveTask = (equipmentId: string, task: any) => {
+    addMaintenanceTask(equipmentId, task);
+    setIsTaskModalOpen(false);
+    toast.success("Tâche de maintenance ajoutée");
+  };
+
+  const handleUpdateTask = (updates: any) => {
+    if (selectedTask) {
+      updateMaintenanceTask(selectedTask.equipmentId, selectedTask.id, updates);
+      setSelectedTask(null);
+      toast.success("Tâche mise à jour");
+    }
+  };
+
+  const handleDeleteTask = () => {
+    if (selectedTask) {
+      deleteMaintenanceTask(selectedTask.equipmentId, selectedTask.id);
+      setSelectedTask(null);
+      toast.success("Tâche supprimée");
+    }
+  };
+
+  const handleCreateMission = () => {
+    // This would navigate to mission creation page with pre-filled data
+    toast.info("Fonctionnalité à venir: Création d'ordre de mission");
+    setSelectedTask(null);
+  };
 
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -80,11 +87,13 @@ const MaintenanceCalendar = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const currentDay = new Date(year, month, day);
-      const tasksForDay = maintenanceTasks.filter(
-        task => 
-          task.date.getDate() === day && 
-          task.date.getMonth() === month && 
-          task.date.getFullYear() === year
+      const tasksForDay = allTasks.filter(
+        task => {
+          const taskDate = task.date instanceof Date ? task.date : new Date(task.date);
+          return taskDate.getDate() === day && 
+                 taskDate.getMonth() === month && 
+                 taskDate.getFullYear() === year;
+        }
       );
 
       days.push(
@@ -102,7 +111,7 @@ const MaintenanceCalendar = () => {
                 variant="ghost" 
                 size="sm" 
                 className={`w-full justify-start text-xs p-1 ${
-                  task.status === "completed" ? "text-green-600" : "text-blue-600"
+                  task.completed ? "text-green-600" : "text-blue-600"
                 }`}
                 onClick={() => handleTaskClick(task)}
               >
@@ -262,15 +271,15 @@ const MaintenanceCalendar = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Total planifiées:</span>
-                  <span className="font-medium">12</span>
+                  <span className="font-medium">{allTasks.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>En attente:</span>
-                  <span className="font-medium">8</span>
+                  <span className="font-medium">{allTasks.filter(t => !t.completed).length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Terminées:</span>
-                  <span className="font-medium">4</span>
+                  <span className="font-medium">{allTasks.filter(t => t.completed).length}</span>
                 </div>
               </div>
             </div>
@@ -300,7 +309,10 @@ const MaintenanceCalendar = () => {
       
       <MaintenanceTaskModal 
         isOpen={isTaskModalOpen} 
-        onClose={() => setIsTaskModalOpen(false)} 
+        onClose={() => setIsTaskModalOpen(false)}
+        selectedDate={date}
+        equipmentOptions={equipmentData || []}
+        onSave={handleSaveTask}
       />
       
       {selectedTask && (
@@ -308,6 +320,11 @@ const MaintenanceCalendar = () => {
           isOpen={!!selectedTask} 
           onClose={() => setSelectedTask(null)} 
           task={selectedTask}
+          equipmentId={selectedTask.equipmentId}
+          equipmentName={selectedTask.equipmentName}
+          onUpdate={handleUpdateTask}
+          onDelete={handleDeleteTask}
+          onCreateMission={handleCreateMission}
         />
       )}
     </div>

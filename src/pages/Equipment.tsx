@@ -70,6 +70,9 @@ const Equipment = () => {
     return matchesSearch && matchesCategory && matchesLocation && matchesStatus;
   });
 
+  // Extract unique brands for category filter
+  const brands = [...new Set(equipmentData.map(eq => eq.brand))];
+
   const maintenanceImages = [
     "/maintenance-1.jpg",
     "/maintenance-2.jpg",
@@ -125,16 +128,14 @@ const Equipment = () => {
 
       <div className="flex flex-col md:flex-row gap-6 mb-6">
         <div className="md:w-64 space-y-6">
-          {!isMobile ? (
+          {!isMobile && brands && locations && (
             <EquipmentFilters
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
+              locations={locations}
+              onLocationChange={setSelectedLocation}
+              onStatusChange={setSelectedStatus}
             />
-          ) : (
+          )}
+          {isMobile && (
             <MobileFilterSheet
               isOpen={isFilterOpen}
               setIsOpen={setIsFilterOpen}
