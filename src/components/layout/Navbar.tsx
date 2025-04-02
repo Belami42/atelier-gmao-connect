@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -23,11 +24,15 @@ const Navbar = () => {
 
   if (isMobile) {
     return (
-      <header className="fixed w-full top-0 left-0 z-50 bg-white/80 backdrop-blur-md border-b">
+      <header className="fixed w-full top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b mimard-gradient-blue">
         <div className="flex items-center justify-between p-4">
           <Link to="/" className="font-bold text-lg flex items-center">
-            <Wrench className="mr-2 h-5 w-5" />
-            <span>Smart Workshop</span>
+            <img 
+              src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+              alt="Logo Étienne Mimard"
+              className="h-10 w-auto mr-2 object-contain" 
+            />
+            <span>AtelierGMAO</span>
           </Link>
 
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -37,8 +42,16 @@ const Navbar = () => {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left">
-              <div className="flex flex-col gap-5 mt-8">
+            <SheetContent side="left" className="mimard-gradient-blue">
+              <div className="flex flex-col items-center mb-8 pt-4">
+                <img 
+                  src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+                  alt="Logo Étienne Mimard"
+                  className="h-24 w-auto object-contain mb-4" 
+                />
+                <h3 className="text-lg font-medium">Lycée Étienne Mimard</h3>
+              </div>
+              <div className="flex flex-col gap-5">
                 {links.map((link) => (
                   <Link
                     key={link.href}
@@ -59,11 +72,15 @@ const Navbar = () => {
   }
 
   return (
-    <header className="fixed w-full top-0 left-0 z-50 bg-white/80 backdrop-blur-md border-b">
+    <header className="fixed w-full top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b mimard-gradient-blue">
       <div className="flex items-center justify-between p-4 container mx-auto">
         <Link to="/" className="font-bold text-lg flex items-center">
-          <Wrench className="mr-2 h-5 w-5" />
-          <span>Smart Workshop</span>
+          <img 
+            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+            alt="Logo Étienne Mimard"
+            className="h-12 w-auto mr-3 object-contain" 
+          />
+          <span>AtelierGMAO</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">

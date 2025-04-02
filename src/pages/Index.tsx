@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,11 +6,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { Wrench, CalendarDays, Send, Users, GraduationCap, BarChart } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const Index = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 pt-24 pb-16">
       <div className="text-center mb-10 max-w-3xl mx-auto">
+        <div className="mb-8 flex justify-center">
+          <img 
+            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+            alt="Logo Étienne Mimard"
+            className="h-40 md:h-48 w-auto object-contain" 
+          />
+        </div>
         <h1 className="text-4xl font-bold mb-4">
           Gestion des équipements et maintenance
         </h1>
@@ -32,7 +41,14 @@ const Index = () => {
         </div>
       </div>
 
-      <BlurryCard className="relative overflow-hidden my-12 p-8">
+      <BlurryCard className="relative overflow-hidden my-12 p-8 mimard-gradient-blue">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+          <img 
+            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+            alt="Logo Watermark"
+            className="w-full h-full object-contain" 
+          />
+        </div>
         <div className="relative z-10">
           <h2 className="text-2xl font-bold mb-3">Maintenance préventive systématique</h2>
           <p className="mb-6 max-w-2xl">
@@ -51,7 +67,7 @@ const Index = () => {
 
       <h2 className="text-2xl font-bold mb-6">Fonctionnalités principales</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
+        <Card className="mimard-gradient-blue">
           <CardHeader>
             <Wrench className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Gestion des équipements</CardTitle>
@@ -71,7 +87,7 @@ const Index = () => {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="mimard-gradient-purple">
           <CardHeader>
             <CalendarDays className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Calendrier de maintenance</CardTitle>
@@ -91,7 +107,7 @@ const Index = () => {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="mimard-gradient-green">
           <CardHeader>
             <Send className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Ordres de mission</CardTitle>
@@ -111,7 +127,7 @@ const Index = () => {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="mimard-gradient-orange">
           <CardHeader>
             <BarChart className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Tableau de bord</CardTitle>
@@ -131,7 +147,7 @@ const Index = () => {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="mimard-gradient-purple">
           <CardHeader>
             <GraduationCap className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Gestion des compétences</CardTitle>
@@ -151,7 +167,7 @@ const Index = () => {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="mimard-gradient-blue">
           <CardHeader>
             <Users className="h-8 w-8 text-primary mb-2" />
             <CardTitle>Gestion des utilisateurs</CardTitle>
@@ -170,6 +186,10 @@ const Index = () => {
             </Button>
           </CardFooter>
         </Card>
+      </div>
+      
+      <div className="mt-12 flex justify-center">
+        <SchoolLogo size="large" />
       </div>
     </div>
   );
