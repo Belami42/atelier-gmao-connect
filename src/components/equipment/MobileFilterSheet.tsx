@@ -18,7 +18,7 @@ import {
 
 interface MobileFilterSheetProps {
   isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  setIsOpen: (open: boolean) => void;
   selectedLocation: string | null;
   setSelectedLocation: (location: string | null) => void;
   selectedStatus: string | null;
@@ -29,7 +29,7 @@ interface MobileFilterSheetProps {
 
 const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
   isOpen,
-  onOpenChange,
+  setIsOpen,
   selectedLocation,
   setSelectedLocation,
   selectedStatus,
@@ -38,7 +38,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
   locations,
 }) => {
   return (
-    <Sheet open={isOpen} onOpenChange={onOpenChange}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Filtres</SheetTitle>
@@ -46,7 +46,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
         <div className="mt-6 space-y-6">
           <div className="space-y-2">
             <label className="text-sm font-medium">Localisation</label>
-            <Select value={selectedLocation || ""} onValueChange={(value) => setSelectedLocation(value || null)}>
+            <Select value={selectedLocation || ""} onValueChange={(value) => setSelectedLocation(value === "all" ? null : value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Toutes les localisations" />
               </SelectTrigger>
@@ -61,7 +61,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
           
           <div className="space-y-2">
             <label className="text-sm font-medium">État</label>
-            <Select value={selectedStatus || ""} onValueChange={(value) => setSelectedStatus(value || null)}>
+            <Select value={selectedStatus || ""} onValueChange={(value) => setSelectedStatus(value === "all" ? null : value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Tous les états" />
               </SelectTrigger>
@@ -80,7 +80,7 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
             <Button variant="outline" onClick={resetFilters}>
               Réinitialiser
             </Button>
-            <Button onClick={() => onOpenChange(false)}>
+            <Button onClick={() => setIsOpen(false)}>
               Appliquer
             </Button>
           </div>

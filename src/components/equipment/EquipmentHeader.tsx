@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface EquipmentHeaderProps {
-  searchQuery: string;
+  searchValue: string;
   onSearchChange: (query: string) => void;
   hasFilters: boolean;
   onResetSearch: () => void;
@@ -15,7 +15,7 @@ interface EquipmentHeaderProps {
 }
 
 const EquipmentHeader: React.FC<EquipmentHeaderProps> = ({
-  searchQuery,
+  searchValue,
   onSearchChange,
   hasFilters,
   onResetSearch,
@@ -38,10 +38,10 @@ const EquipmentHeader: React.FC<EquipmentHeaderProps> = ({
             <Input
               placeholder="Rechercher un équipement..."
               className="pl-10"
-              value={searchQuery}
+              value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
             />
-            {searchQuery && (
+            {searchValue && (
               <button
                 onClick={onResetSearch}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"

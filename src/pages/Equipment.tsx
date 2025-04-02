@@ -7,14 +7,14 @@ import EquipmentFilters from "@/components/equipment/EquipmentFilters";
 import MobileFilterSheet from "@/components/equipment/MobileFilterSheet";
 import EquipmentEmptyState from "@/components/equipment/EquipmentEmptyState";
 import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { Button } from "@/components/ui/button";
 import { QrCode, Plus } from "lucide-react";
 import BlurryCard from "@/components/ui/BlurryCard";
 
 const Equipment = () => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const [searchValue, setSearchValue] = useState("");
   const [showQrCode, setShowQrCode] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -22,12 +22,13 @@ const Equipment = () => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const equipmentData = useEquipmentData();
-  const equipment = equipmentData.equipmentData || [];
-  const isLoading = equipmentData.isLoading;
-  const error = equipmentData.error;
+  const {
+    equipmentData,
+    deleteEquipment,
+    locations
+  } = useEquipmentData();
 
-  if (isLoading) {
+  if (!equipmentData) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
         <div className="flex justify-between items-center mb-8">
@@ -46,24 +47,7 @@ const Equipment = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
-            Équipements
-          </h1>
-          <SchoolLogo showDescription={false} className="hidden md:block" />
-        </div>
-        <BlurryCard className="p-8 text-center">
-          <h2 className="text-xl font-semibold text-red-500">Erreur lors du chargement des équipements</h2>
-          <p className="mt-2 text-muted-foreground">Veuillez réessayer plus tard</p>
-        </BlurryCard>
-      </div>
-    );
-  }
-
-  if (!equipment || equipment.length === 0) {
+  if (!equipmentData || equipmentData.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
         <div className="flex justify-between items-center mb-8">
@@ -77,9 +61,9 @@ const Equipment = () => {
     );
   }
 
-  const filteredEquipment = equipment.filter((item) => {
+  const filteredEquipment = equipmentData.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchValue.toLowerCase());
-    const matchesCategory = !selectedCategory || item.category === selectedCategory;
+    const matchesCategory = !selectedCategory || item.brand === selectedCategory;
     const matchesLocation = !selectedLocation || item.location === selectedLocation;
     const matchesStatus = !selectedStatus || item.status === selectedStatus;
 
@@ -143,44 +127,50 @@ const Equipment = () => {
         <div className="md:w-64 space-y-6">
           {!isMobile ? (
             <EquipmentFilters
-              categories={equipmentData.categories || []}
-              locations={equipmentData.locations || []}
-              statuses={equipmentData.statuses || []}
-              onCategoryChange={setSelectedCategory}
-              onLocationChange={setSelectedLocation}
-              onStatusChange={setSelectedStatus}
-              selectedCategoryId={selectedCategory}
-              selectedLocationId={selectedLocation}
-              selectedStatusId={selectedStatus}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
             />
           ) : (
             <MobileFilterSheet
               isOpen={isFilterOpen}
-              onToggle={setIsFilterOpen}
-              categories={equipmentData.categories || []}
-              locations={equipmentData.locations || []}
-              statuses={equipmentData.statuses || []}
-              onCategoryChange={setSelectedCategory}
-              onLocationChange={setSelectedLocation}
-              onStatusChange={setSelectedStatus}
-              selectedCategoryId={selectedCategory}
-              selectedLocationId={selectedLocation}
-              selectedStatusId={selectedStatus}
+              setIsOpen={setIsFilterOpen}
+              selectedLocation={selectedLocation}
+              setSelectedLocation={setSelectedLocation}
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              resetFilters={() => {
+                setSelectedLocation(null);
+                setSelectedStatus(null);
+                setSelectedCategory(null);
+              }}
+              locations={locations || []}
             />
           )}
         </div>
 
         <div className="flex-1">
           <EquipmentHeader
-            onSearch={setSearchValue}
-            searchQuery={searchValue}
-            onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
-            showFilter={isMobile}
-            equipmentCount={filteredEquipment.length}
-            totalCount={equipment.length}
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+            hasFilters={!!(selectedCategory || selectedLocation || selectedStatus)}
+            onResetSearch={() => {
+              setSearchValue("");
+              setSelectedCategory(null);
+              setSelectedLocation(null);
+              setSelectedStatus(null);
+            }}
+            onOpenFilters={() => setIsFilterOpen(!isFilterOpen)}
+            isMobile={isMobile}
           />
 
-          <EquipmentList equipments={filteredEquipment} showQr={showQrCode} />
+          <EquipmentList 
+            equipments={filteredEquipment} 
+            onDeleteEquipment={deleteEquipment} 
+          />
         </div>
       </div>
       
