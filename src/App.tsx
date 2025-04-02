@@ -19,7 +19,15 @@ import Skills from "./pages/Skills";
 import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Créer une instance du QueryClient
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

@@ -1,26 +1,26 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Plus, Search, X } from "lucide-react";
+import { Plus, Search, X, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface EquipmentHeaderProps {
   searchValue: string;
   onSearchChange: (query: string) => void;
-  hasFilters: boolean;
-  onResetSearch: () => void;
-  onOpenFilters: () => void;
-  isMobile: boolean;
+  hasFilters?: boolean;
+  onResetSearch?: () => void;
+  onOpenFilters?: () => void;
+  isMobile?: boolean;
 }
 
 const EquipmentHeader: React.FC<EquipmentHeaderProps> = ({
   searchValue,
   onSearchChange,
-  hasFilters,
-  onResetSearch,
-  onOpenFilters,
-  isMobile
+  hasFilters = false,
+  onResetSearch = () => {},
+  onOpenFilters = () => {},
+  isMobile = false
 }) => {
   return (
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
@@ -60,6 +60,7 @@ const EquipmentHeader: React.FC<EquipmentHeaderProps> = ({
         
         {isMobile && (
           <Button variant="outline" onClick={onOpenFilters}>
+            <Filter size={16} className="mr-2" />
             Filtres
           </Button>
         )}
