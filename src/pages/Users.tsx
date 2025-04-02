@@ -35,9 +35,7 @@ const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeRole, setActiveRole] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Sample data
-  const users = [
+  const [users, setUsers] = useState([
     {
       id: "1",
       name: "Étienne Martin",
@@ -94,7 +92,7 @@ const Users = () => {
       class: "BTS MSPC 2",
       avatar: null
     }
-  ];
+  ]);
 
   // Sample classes
   const classes = [
@@ -123,6 +121,12 @@ const Users = () => {
       studentCount: 16
     }
   ];
+
+  const existingGroups = classes.map(cls => cls.name);
+
+  const handleAddUser = (newUser: any) => {
+    setUsers(prevUsers => [...prevUsers, newUser]);
+  };
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -189,13 +193,11 @@ const Users = () => {
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
-                <DialogDescription>
-                  Ajouter un élève, un enseignant ou un administrateur au système.
-                </DialogDescription>
-              </DialogHeader>
-              <NewUserForm onSubmit={() => setIsDialogOpen(false)} classes={classes} />
+              <NewUserForm 
+                onClose={() => setIsDialogOpen(false)}
+                onUserCreated={handleAddUser}
+                existingGroups={existingGroups}
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -321,13 +323,11 @@ const Users = () => {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
-                      <DialogHeader>
-                        <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
-                        <DialogDescription>
-                          Ajouter un élève, un enseignant ou un administrateur au système.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <NewUserForm onSubmit={() => {}} classes={classes} />
+                      <NewUserForm 
+                        onClose={() => setIsDialogOpen(false)}
+                        onUserCreated={handleAddUser}
+                        existingGroups={existingGroups}
+                      />
                     </DialogContent>
                   </Dialog>
                 </BlurryCard>
