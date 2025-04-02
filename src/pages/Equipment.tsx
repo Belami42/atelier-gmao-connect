@@ -22,7 +22,10 @@ const Equipment = () => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const { data: equipment, isLoading, error } = useEquipmentData();
+  const equipmentData = useEquipmentData();
+  const equipment = equipmentData.equipmentData || [];
+  const isLoading = equipmentData.isLoading;
+  const error = equipmentData.error;
 
   if (isLoading) {
     return (
@@ -69,7 +72,7 @@ const Equipment = () => {
           </h1>
           <SchoolLogo showDescription={false} className="hidden md:block" />
         </div>
-        <EquipmentEmptyState />
+        <EquipmentEmptyState resetSearch={() => setSearchValue("")} />
       </div>
     );
   }
@@ -140,38 +143,44 @@ const Equipment = () => {
         <div className="md:w-64 space-y-6">
           {!isMobile ? (
             <EquipmentFilters
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
+              categories={equipmentData.categories || []}
+              locations={equipmentData.locations || []}
+              statuses={equipmentData.statuses || []}
+              onCategoryChange={setSelectedCategory}
+              onLocationChange={setSelectedLocation}
+              onStatusChange={setSelectedStatus}
+              selectedCategoryId={selectedCategory}
+              selectedLocationId={selectedLocation}
+              selectedStatusId={selectedStatus}
             />
           ) : (
             <MobileFilterSheet
               isOpen={isFilterOpen}
-              setIsOpen={setIsFilterOpen}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              selectedLocation={selectedLocation}
-              setSelectedLocation={setSelectedLocation}
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
+              onToggle={setIsFilterOpen}
+              categories={equipmentData.categories || []}
+              locations={equipmentData.locations || []}
+              statuses={equipmentData.statuses || []}
+              onCategoryChange={setSelectedCategory}
+              onLocationChange={setSelectedLocation}
+              onStatusChange={setSelectedStatus}
+              selectedCategoryId={selectedCategory}
+              selectedLocationId={selectedLocation}
+              selectedStatusId={selectedStatus}
             />
           )}
         </div>
 
         <div className="flex-1">
           <EquipmentHeader
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
-            isFilterOpen={isFilterOpen}
-            setIsFilterOpen={setIsFilterOpen}
+            onSearch={setSearchValue}
+            searchQuery={searchValue}
+            onToggleFilter={() => setIsFilterOpen(!isFilterOpen)}
+            showFilter={isMobile}
             equipmentCount={filteredEquipment.length}
             totalCount={equipment.length}
           />
 
-          <EquipmentList equipment={filteredEquipment} showQrCode={showQrCode} />
+          <EquipmentList equipments={filteredEquipment} showQr={showQrCode} />
         </div>
       </div>
       
