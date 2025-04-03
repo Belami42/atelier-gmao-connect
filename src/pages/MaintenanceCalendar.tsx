@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, GraduationCap, BookOpen } from "lucide-react";
@@ -37,7 +36,6 @@ const MaintenanceCalendar = () => {
     "/maintenance-3.jpg",
   ];
 
-  // All maintenance tasks from all equipment, filtered by niveau if selected
   const allTasks = equipmentData?.flatMap(equipment => 
     (equipment.maintenanceSchedule || [])
       .filter(task => !selectedNiveau || task.niveau === selectedNiveau)
@@ -71,7 +69,6 @@ const MaintenanceCalendar = () => {
   };
 
   const handleCreateMission = () => {
-    // This would navigate to mission creation page with pre-filled data
     toast.info("Fonctionnalité à venir: Création d'ordre de mission");
     setSelectedTask(null);
   };
@@ -86,7 +83,6 @@ const MaintenanceCalendar = () => {
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-    // Adjust for Sunday as the first day of the week
     const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
     const days = [];
@@ -277,7 +273,7 @@ const MaintenanceCalendar = () => {
             
             <div className="mt-6">
               <h3 className="font-medium mb-3 flex gap-2 items-center">
-                <Graduation className="h-4 w-4" />
+                <GraduationCap className="h-4 w-4" />
                 Filtrer par niveau
               </h3>
               <div className="space-y-2">
