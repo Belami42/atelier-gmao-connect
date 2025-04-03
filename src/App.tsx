@@ -17,6 +17,7 @@ import NewMission from "@/pages/NewMission";
 import Users from "@/pages/Users";
 import Skills from "@/pages/Skills";
 import StudentProgress from "@/pages/StudentProgress";
+import Stocks from "@/pages/Stocks";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -36,6 +37,7 @@ function App() {
         <Route path="/missions" element={<Missions />} />
         <Route path="/missions/:id" element={<MissionDetails />} />
         <Route path="/missions/new" element={<NewMission />} />
+        <Route path="/stocks" element={<Stocks />} />
         <Route path="/users" element={<Users />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/student-progress" element={<StudentProgress />} />

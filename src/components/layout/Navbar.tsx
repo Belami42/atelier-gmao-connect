@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,8 @@ import {
   Users,
   BarChart,
   GraduationCap, 
-  CalendarRange
+  CalendarRange,
+  PackageSearch,
 } from "lucide-react";
 import { useMobile } from "@/hooks/use-mobile";
 
@@ -27,6 +29,7 @@ const Navbar = () => {
   const navLinks = [
     { path: "/dashboard", text: "Tableau de bord", icon: <Gauge className="w-5 h-5" /> },
     { path: "/equipment", text: "Équipements", icon: <Wrench className="w-5 h-5" /> },
+    { path: "/stocks", text: "Stocks", icon: <PackageSearch className="w-5 h-5" /> },
     { path: "/maintenance", text: "Maintenance", icon: <CalendarRange className="w-5 h-5" /> },
     { path: "/missions", text: "Missions", icon: <ClipboardList className="w-5 h-5" /> },
     { path: "/skills", text: "Compétences", icon: <BarChart className="w-5 h-5" /> },
