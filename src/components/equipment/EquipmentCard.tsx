@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle, Clock, Info, Wrench, Calendar, QrCode, Edit, Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { AlertCircle, CheckCircle, Clock, Info, Wrench, Calendar, QrCode, FileText, Trash } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import QRCodeGenerator from "./QRCodeGenerator";
+import { CompetenceCode, NiveauFormation } from "@/types/mspc";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +26,16 @@ export type MaintenanceTask = {
   date: Date | string;
   type: "preventive" | "corrective" | "improvement";
   completed: boolean;
-  description?: string; // Added description as optional
+  description?: string;
+  niveau?: NiveauFormation;
+  competences?: CompetenceCode[];
 };
+
+export interface DocumentationItem {
+  nom: string;
+  url: string;
+  type: "pdf" | "image" | "video" | "autre";
+}
 
 export type Equipment = {
   id: string;
@@ -39,6 +47,8 @@ export type Equipment = {
   model?: string;
   status: "operational" | "maintenance" | "faulty";
   maintenanceSchedule?: MaintenanceTask[];
+  niveau?: NiveauFormation;
+  documentation?: DocumentationItem[];
 };
 
 type EquipmentCardProps = {
@@ -72,6 +82,34 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
           <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
             <AlertCircle className="h-3 w-3 mr-1" />
             En panne
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Get niveau badge
+  const getNiveauBadge = () => {
+    if (!equipment.niveau) return null;
+    
+    switch (equipment.niveau) {
+      case "2nde":
+        return (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+            2nde PMIA
+          </Badge>
+        );
+      case "1ère":
+        return (
+          <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
+            1ère MSPC
+          </Badge>
+        );
+      case "Terminale":
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+            Terminale MSPC
           </Badge>
         );
       default:
@@ -125,9 +163,12 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     setShowDeleteDialog(false);
   };
 
+  // Count documentation items
+  const documentationCount = equipment.documentation?.length || 0;
+
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      <Card className="overflow-hidden hover:shadow-md transition-shadow bg-gradient-to-b from-white to-slate-50">
         <CardHeader className="p-4 pb-2">
           <div className="flex justify-between items-start">
             <div>
@@ -139,7 +180,10 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
                 {equipment.tag}
               </CardDescription>
             </div>
-            {getStatusBadge()}
+            <div className="flex flex-col gap-2 items-end">
+              {getStatusBadge()}
+              {getNiveauBadge()}
+            </div>
           </div>
         </CardHeader>
 
@@ -171,11 +215,20 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
                 <p>{getNextMaintenance()}</p>
               </div>
             </div>
+            {documentationCount > 0 && (
+              <div className="flex items-start gap-2 mb-1.5">
+                <FileText className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="text-muted-foreground">Documentation</p>
+                  <p>{documentationCount} document{documentationCount > 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
 
         <CardFooter className="p-4 pt-0 flex flex-wrap gap-2">
-          <Button asChild variant="outline" size="sm">
+          <Button asChild variant="outline" size="sm" className="bg-blue-50 hover:bg-blue-100">
             <Link to={`/equipment/${equipment.id}/maintenance`}>
               Maintenance
             </Link>
@@ -183,7 +236,7 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
 
           <Popover open={showQRCode} onOpenChange={setShowQRCode}>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 bg-blue-50 hover:bg-blue-100">
                 <QrCode className="h-4 w-4" />
                 QR Code
               </Button>

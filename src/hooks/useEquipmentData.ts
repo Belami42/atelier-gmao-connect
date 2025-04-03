@@ -1,12 +1,13 @@
 
 import { useState, useMemo, useEffect } from "react";
 import type { Equipment, MaintenanceTask } from "@/components/equipment/EquipmentCard";
+import { NiveauFormation } from "@/types/mspc";
 import { toast } from "sonner";
 
 // Key for localStorage
 const STORAGE_KEY = "smart-workshop-equipment";
 
-// Demo equipment data
+// Demo equipment data avec aspects pédagogiques MSPC
 const initialEquipmentData: Equipment[] = [
   {
     id: "robot1",
@@ -23,7 +24,22 @@ const initialEquipmentData: Equipment[] = [
         title: "Maintenance préventive trimestrielle",
         date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
         type: "preventive",
-        completed: false
+        completed: false,
+        niveau: "Terminale",
+        competences: ["C2.1", "C3.2", "C4.1", "C5.2"]
+      }
+    ],
+    niveau: "Terminale",
+    documentation: [
+      {
+        nom: "Manuel utilisateur",
+        url: "#",
+        type: "pdf"
+      },
+      {
+        nom: "Schéma électrique",
+        url: "#",
+        type: "pdf"
       }
     ]
   },
@@ -42,7 +58,17 @@ const initialEquipmentData: Equipment[] = [
         title: "Vérification des capteurs",
         date: new Date(new Date().setDate(new Date().getDate() + 7)),
         type: "corrective",
-        completed: false
+        completed: false,
+        niveau: "1ère",
+        competences: ["C1.3", "C2.2", "C3.3", "C5.1"]
+      }
+    ],
+    niveau: "1ère",
+    documentation: [
+      {
+        nom: "Guide maintenance",
+        url: "#",
+        type: "pdf"
       }
     ]
   },
@@ -61,7 +87,17 @@ const initialEquipmentData: Equipment[] = [
         title: "Réparation du système hydraulique",
         date: new Date(new Date().setDate(new Date().getDate() + 3)),
         type: "corrective",
-        completed: false
+        completed: false,
+        niveau: "1ère",
+        competences: ["C1.2", "C2.2", "C3.3", "C4.1", "C5.2"]
+      }
+    ],
+    niveau: "1ère",
+    documentation: [
+      {
+        nom: "Manuel technique",
+        url: "#",
+        type: "pdf"
       }
     ]
   },
@@ -74,7 +110,15 @@ const initialEquipmentData: Equipment[] = [
     brand: "Bosch Rexroth",
     model: "HLP-500",
     status: "operational",
-    maintenanceSchedule: []
+    maintenanceSchedule: [],
+    niveau: "2nde",
+    documentation: [
+      {
+        nom: "Fiche technique",
+        url: "#",
+        type: "pdf"
+      }
+    ]
   },
   {
     id: "conveyor1",
@@ -85,7 +129,25 @@ const initialEquipmentData: Equipment[] = [
     brand: "Interroll",
     model: "CB-200",
     status: "operational",
-    maintenanceSchedule: []
+    maintenanceSchedule: [
+      {
+        id: "maint-conveyor1-1",
+        title: "Graissage des rouleaux",
+        date: new Date(new Date().setDate(new Date().getDate() + 14)),
+        type: "preventive",
+        completed: false,
+        niveau: "2nde",
+        competences: ["C2.1", "C3.2", "C5.2"]
+      }
+    ],
+    niveau: "2nde",
+    documentation: [
+      {
+        nom: "Guide d'entretien",
+        url: "#",
+        type: "pdf"
+      }
+    ]
   },
   {
     id: "plc1",
@@ -96,7 +158,30 @@ const initialEquipmentData: Equipment[] = [
     brand: "Siemens",
     model: "S7-1500",
     status: "operational",
-    maintenanceSchedule: []
+    maintenanceSchedule: [
+      {
+        id: "maint-plc1-1",
+        title: "Mise à jour firmware",
+        date: new Date(new Date().setDate(new Date().getDate() + 21)),
+        type: "improvement",
+        completed: false,
+        niveau: "Terminale",
+        competences: ["C1.4", "C2.1", "C3.4", "C4.3", "C5.3"]
+      }
+    ],
+    niveau: "Terminale",
+    documentation: [
+      {
+        nom: "Manuel programmation",
+        url: "#",
+        type: "pdf"
+      },
+      {
+        nom: "Schéma d'architecture",
+        url: "#",
+        type: "pdf"
+      }
+    ]
   }
 ];
 
@@ -115,11 +200,18 @@ export const useEquipmentData = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedNiveau, setSelectedNiveau] = useState<NiveauFormation | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Extract unique locations for filter options
   const locations = useMemo(() => 
     [...new Set(equipmentData.map(eq => eq.location))],
+    [equipmentData]
+  );
+  
+  // Extract unique niveaux for filter options
+  const niveaux = useMemo(() => 
+    [...new Set(equipmentData.map(eq => eq.niveau).filter(Boolean))] as NiveauFormation[],
     [equipmentData]
   );
   
@@ -133,17 +225,20 @@ export const useEquipmentData = () => {
       
       const matchesStatus = !selectedStatus || equipment.status === selectedStatus;
       
-      return matchesSearch && matchesLocation && matchesStatus;
+      const matchesNiveau = !selectedNiveau || equipment.niveau === selectedNiveau;
+      
+      return matchesSearch && matchesLocation && matchesStatus && matchesNiveau;
     });
-  }, [searchQuery, selectedLocation, selectedStatus, equipmentData]);
+  }, [searchQuery, selectedLocation, selectedStatus, selectedNiveau, equipmentData]);
   
   // Check if any filters are applied
-  const hasActiveFilters = selectedLocation || selectedStatus;
+  const hasActiveFilters = selectedLocation || selectedStatus || selectedNiveau;
   
   // Reset all filters function
   const resetFilters = () => {
     setSelectedLocation(null);
     setSelectedStatus(null);
+    setSelectedNiveau(null);
   };
   
   // Function to reset search and filters
@@ -214,9 +309,12 @@ export const useEquipmentData = () => {
     setSelectedLocation,
     selectedStatus,
     setSelectedStatus,
+    selectedNiveau,
+    setSelectedNiveau,
     isFilterOpen,
     setIsFilterOpen,
     locations,
+    niveaux,
     hasActiveFilters,
     resetFilters,
     resetSearch,

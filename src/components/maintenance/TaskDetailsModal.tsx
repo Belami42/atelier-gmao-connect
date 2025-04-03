@@ -4,12 +4,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar, ClipboardList, Trash, Wrench, CheckCircle, AlertTriangle } from "lucide-react";
+import { Calendar, ClipboardList, Trash, Wrench, CheckCircle, AlertTriangle, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import CompetencesList from "@/components/mspc/CompetencesList";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -85,24 +86,58 @@ const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
         return null;
     }
   };
+
+  // Afficher le badge de niveau
+  const getNiveauBadge = () => {
+    if (!task.niveau) return null;
+    
+    switch (task.niveau) {
+      case "2nde":
+        return (
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 flex items-center gap-1">
+            <GraduationCap className="h-4 w-4" />
+            2nde PMIA
+          </Badge>
+        );
+      case "1ère":
+        return (
+          <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200 flex items-center gap-1">
+            <GraduationCap className="h-4 w-4" />
+            1ère MSPC
+          </Badge>
+        );
+      case "Terminale":
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 flex items-center gap-1">
+            <GraduationCap className="h-4 w-4" />
+            Terminale MSPC
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
   
   const taskDate = task.date instanceof Date ? task.date : new Date(task.date);
   
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl">Détails de la tâche</DialogTitle>
           </DialogHeader>
           
           <div className="py-4">
-            <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between flex-wrap gap-2">
               <h3 className="text-lg font-semibold">{task.title}</h3>
-              <Badge variant="outline" className={`${getBadgeVariant()} flex items-center gap-1`}>
-                {getTypeIcon()}
-                {getTypeLabel()}
-              </Badge>
+              <div className="flex gap-2 flex-wrap">
+                <Badge variant="outline" className={`${getBadgeVariant()} flex items-center gap-1`}>
+                  {getTypeIcon()}
+                  {getTypeLabel()}
+                </Badge>
+                {getNiveauBadge()}
+              </div>
             </div>
             
             <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
@@ -123,6 +158,18 @@ const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {task.description}
                 </p>
+              </div>
+            )}
+            
+            {task.competences && task.competences.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h4 className="font-medium">Compétences associées</h4>
+                <div className="bg-slate-50 p-3 rounded-md">
+                  <CompetencesList 
+                    selectedCompetences={task.competences} 
+                    readOnly={true}
+                  />
+                </div>
               </div>
             )}
             

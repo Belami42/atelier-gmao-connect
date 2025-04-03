@@ -12,9 +12,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { Equipment } from "@/components/equipment/EquipmentCard";
+import { CompetenceCode, NiveauFormation } from "@/types/mspc";
+import CompetencesList from "@/components/mspc/CompetencesList";
 
 type MaintenanceTaskModalProps = {
   isOpen: boolean;
@@ -44,6 +47,9 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
   const [type, setType] = useState<"preventive" | "corrective" | "improvement">("preventive");
   const [date, setDate] = useState<Date | undefined>(selectedDate || undefined);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(equipmentId || "");
+  const [niveau, setNiveau] = useState<NiveauFormation>("2nde");
+  const [selectedCompetences, setSelectedCompetences] = useState<CompetenceCode[]>([]);
+  const [activeTab, setActiveTab] = useState("details");
   
   useEffect(() => {
     if (isOpen) {
@@ -52,6 +58,8 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         setDescription(existingTask.description || "");
         setType(existingTask.type);
         setDate(existingTask.date instanceof Date ? existingTask.date : new Date(existingTask.date));
+        setNiveau(existingTask.niveau || "2nde");
+        setSelectedCompetences(existingTask.competences || []);
         if (equipmentId) {
           setSelectedEquipmentId(equipmentId);
         }
@@ -61,10 +69,20 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         setDescription("");
         setType("preventive");
         setDate(selectedDate || undefined);
+        setNiveau("2nde");
+        setSelectedCompetences([]);
         setSelectedEquipmentId(equipmentId || (equipmentOptions.length > 0 ? equipmentOptions[0].id : ""));
       }
     }
   }, [isOpen, editMode, existingTask, selectedDate, equipmentOptions, equipmentId]);
+  
+  const handleCompetenceSelect = (code: CompetenceCode, selected: boolean) => {
+    if (selected) {
+      setSelectedCompetences(prev => [...prev, code]);
+    } else {
+      setSelectedCompetences(prev => prev.filter(c => c !== code));
+    }
+  };
   
   const handleSubmit = () => {
     if (!title || !date || !selectedEquipmentId) return;
@@ -75,120 +93,189 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
       description,
       date,
       type,
-      completed: existingTask ? existingTask.completed : false
+      completed: existingTask ? existingTask.completed : false,
+      niveau,
+      competences: selectedCompetences
     };
     
     onSave(selectedEquipmentId, newTask);
     onClose();
   };
   
+  // Retrouver le niveau de l'équipement sélectionné
+  const getEquipmentNiveau = (): NiveauFormation => {
+    if (equipmentId) {
+      const equipment = equipmentOptions.find(eq => eq.id === equipmentId);
+      return equipment?.niveau || "2nde";
+    } else if (selectedEquipmentId) {
+      const equipment = equipmentOptions.find(eq => eq.id === selectedEquipmentId);
+      return equipment?.niveau || "2nde"; 
+    }
+    return "2nde";
+  };
+  
+  useEffect(() => {
+    if (!editMode) {
+      setNiveau(getEquipmentNiveau());
+    }
+  }, [selectedEquipmentId]);
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{editMode ? "Modifier la tâche" : "Nouvelle tâche de maintenance"}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          {!equipmentId && equipmentOptions.length > 0 && (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-2 mb-4">
+            <TabsTrigger value="details">Détails</TabsTrigger>
+            <TabsTrigger value="competences">Compétences MSPC</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="details" className="space-y-4">
+            {!equipmentId && equipmentOptions.length > 0 && (
+              <div className="grid gap-2">
+                <Label htmlFor="equipment">Équipement</Label>
+                <Select 
+                  value={selectedEquipmentId} 
+                  onValueChange={setSelectedEquipmentId}
+                  disabled={editMode || !!equipmentId}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un équipement" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {equipmentOptions.map(equipment => (
+                      <SelectItem key={equipment.id} value={equipment.id}>
+                        {equipment.name} {equipment.niveau ? `(${equipment.niveau})` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {equipmentId && equipmentName && (
+              <div className="grid gap-2">
+                <Label htmlFor="equipment">Équipement</Label>
+                <div className="p-2 border rounded-md bg-muted/40">
+                  {equipmentName}
+                </div>
+              </div>
+            )}
+            
             <div className="grid gap-2">
-              <Label htmlFor="equipment">Équipement</Label>
+              <Label htmlFor="title">Titre</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Vérification des niveaux d'huile"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description (optionnelle)</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Détails de la maintenance à effectuer..."
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Type de maintenance</Label>
+              <RadioGroup 
+                value={type} 
+                onValueChange={(value) => setType(value as "preventive" | "corrective" | "improvement")}
+                className="flex space-x-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="preventive" id="preventive" />
+                  <Label htmlFor="preventive" className="text-sm font-normal cursor-pointer">Préventive</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="corrective" id="corrective" />
+                  <Label htmlFor="corrective" className="text-sm font-normal cursor-pointer">Corrective</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="improvement" id="improvement" />
+                  <Label htmlFor="improvement" className="text-sm font-normal cursor-pointer">Améliorative</Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Date planifiée</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP", { locale: fr }) : "Sélectionner une date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label>Niveau de formation</Label>
               <Select 
-                value={selectedEquipmentId} 
-                onValueChange={setSelectedEquipmentId}
-                disabled={editMode || !!equipmentId}
+                value={niveau} 
+                onValueChange={(value) => setNiveau(value as NiveauFormation)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un équipement" />
+                  <SelectValue placeholder="Sélectionner un niveau" />
                 </SelectTrigger>
                 <SelectContent>
-                  {equipmentOptions.map(equipment => (
-                    <SelectItem key={equipment.id} value={equipment.id}>
-                      {equipment.name}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="2nde">2nde PMIA</SelectItem>
+                  <SelectItem value="1ère">1ère MSPC</SelectItem>
+                  <SelectItem value="Terminale">Terminale MSPC</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          )}
+          </TabsContent>
           
-          {equipmentId && equipmentName && (
-            <div className="grid gap-2">
-              <Label htmlFor="equipment">Équipement</Label>
-              <div className="p-2 border rounded-md bg-muted/40">
-                {equipmentName}
+          <TabsContent value="competences">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium mb-2">Compétences mobilisées</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Sélectionnez les compétences du référentiel MSPC associées à cette tâche de maintenance.
+                </p>
+                
+                <div className="bg-slate-50 p-2 rounded-md border">
+                  <CompetencesList 
+                    selectedCompetences={selectedCompetences}
+                    onSelectCompetence={handleCompetenceSelect}
+                    niveau={niveau}
+                  />
+                </div>
+                
+                <div className="mt-4">
+                  <p className="text-sm">
+                    <span className="font-medium">{selectedCompetences.length}</span> compétence(s) sélectionnée(s)
+                  </p>
+                </div>
               </div>
             </div>
-          )}
-          
-          <div className="grid gap-2">
-            <Label htmlFor="title">Titre</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Vérification des niveaux d'huile"
-            />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description (optionnelle)</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Détails de la maintenance à effectuer..."
-            />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label>Type de maintenance</Label>
-            <RadioGroup 
-              value={type} 
-              onValueChange={(value) => setType(value as "preventive" | "corrective" | "improvement")}
-              className="flex space-x-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="preventive" id="preventive" />
-                <Label htmlFor="preventive" className="text-sm font-normal cursor-pointer">Préventive</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="corrective" id="corrective" />
-                <Label htmlFor="corrective" className="text-sm font-normal cursor-pointer">Corrective</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="improvement" id="improvement" />
-                <Label htmlFor="improvement" className="text-sm font-normal cursor-pointer">Améliorative</Label>
-              </div>
-            </RadioGroup>
-          </div>
-          
-          <div className="grid gap-2">
-            <Label>Date planifiée</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP", { locale: fr }) : "Sélectionner une date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Annuler</Button>
