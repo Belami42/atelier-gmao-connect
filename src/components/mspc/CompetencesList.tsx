@@ -48,14 +48,14 @@ const CompetencesList: React.FC<CompetencesListProps> = ({
   const getNiveauBadge = (niveaux: NiveauFormation[]) => {
     return (
       <div className="flex gap-1">
-        {niveaux.includes("2nde") && (
-          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">2nde</Badge>
+        {niveaux.includes("2PMIA") && (
+          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">2PMIA</Badge>
         )}
-        {niveaux.includes("1ère") && (
-          <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700">1ère</Badge>
+        {niveaux.includes("1MSPC") && (
+          <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700">1MSPC</Badge>
         )}
-        {niveaux.includes("Terminale") && (
-          <Badge variant="outline" className="text-xs bg-green-50 text-green-700">Tle</Badge>
+        {niveaux.includes("TMSPC") && (
+          <Badge variant="outline" className="text-xs bg-green-50 text-green-700">TMSPC</Badge>
         )}
       </div>
     );

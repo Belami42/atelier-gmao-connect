@@ -1,166 +1,110 @@
-
 import React from "react";
-import { Search, X, Map, CheckCircle, AlertTriangle, Wrench } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { CheckIcon, FilterIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
-interface EquipmentFiltersProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  selectedLocation: string | null;
-  setSelectedLocation: (location: string | null) => void;
-  selectedStatus: string | null;
-  setSelectedStatus: (status: string | null) => void;
-  resetFilters: () => void;
+export interface EquipmentFiltersProps {
   locations: string[];
-  hasActiveFilters: boolean;
-  isFilterOpen: boolean;
-  setIsFilterOpen: (isOpen: boolean) => void;
+  onLocationChange?: (location: string) => void;
+  onStatusChange?: (status: string) => void;
+  selectedLocation?: string;
+  selectedStatus?: string;
 }
 
 const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
-  searchQuery,
-  setSearchQuery,
-  selectedLocation,
-  setSelectedLocation,
-  selectedStatus,
-  setSelectedStatus,
-  resetFilters,
   locations,
-  hasActiveFilters,
-  isFilterOpen,
-  setIsFilterOpen
+  onLocationChange,
+  onStatusChange,
+  selectedLocation,
+  selectedStatus
 }) => {
+  const statuses = ["Tous", "En service", "En panne", "En maintenance", "Hors service"];
+
+  
   return (
-    <div className="bg-white/70 backdrop-blur-md rounded-xl border p-4 mb-8 smooth-transition shadow-sm">
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-          <Input
-            placeholder="Rechercher un équipement..."
-            className="pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground smooth-transition"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-        
-        <div className="flex gap-2">
-          {/* Filtres sur desktop */}
-          <div className="hidden md:flex gap-2">
-            <Select value={selectedLocation || ""} onValueChange={(value) => setSelectedLocation(value || null)}>
-              <SelectTrigger className="w-40 gap-2">
-                <Map size={14} />
-                <SelectValue placeholder="Localisation" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes les localisations</SelectItem>
-                {locations.map(location => (
-                  <SelectItem key={location} value={location}>{location}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Select value={selectedStatus || ""} onValueChange={(value) => setSelectedStatus(value || null)}>
-              <SelectTrigger className="w-40 gap-2">
-                <CheckCircle size={14} />
-                <SelectValue placeholder="État" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les états</SelectItem>
-                <SelectItem value="operational">Opérationnel</SelectItem>
-                <SelectItem value="maintenance">En maintenance</SelectItem>
-                <SelectItem value="faulty">En panne</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {hasActiveFilters && (
-              <Button variant="ghost" size="icon" onClick={resetFilters} title="Réinitialiser les filtres">
-                <X size={16} />
-              </Button>
-            )}
-          </div>
-          
-          {/* Mobile filter button (Sheet component will be used in the main Equipment component) */}
-          <Button 
-            variant="outline" 
-            className="md:hidden gap-2"
-            onClick={() => setIsFilterOpen(true)}
-          >
-            <Wrench size={16} />
-            <span>Filtres</span>
-            {hasActiveFilters && (
-              <Badge className="h-5 w-5 p-0 text-xs flex items-center justify-center">
-                {(selectedLocation ? 1 : 0) + (selectedStatus ? 1 : 0)}
+    <div className="flex flex-wrap gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-8 gap-1 border-dashed">
+            <FilterIcon className="h-3.5 w-3.5" />
+            <span>Localisation</span>
+            {selectedLocation && (
+              <Badge variant="secondary" className="ml-1 rounded-sm px-1 font-normal">
+                {selectedLocation}
               </Badge>
             )}
           </Button>
-        </div>
-      </div>
-      
-      {/* Active filters display */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2 mt-4">
-          {selectedLocation && (
-            <Badge variant="secondary" className="gap-1 px-3 py-1">
-              <Map size={12} />
-              <span>{selectedLocation}</span>
-              <button 
-                onClick={() => setSelectedLocation(null)}
-                className="ml-1 hover:text-foreground smooth-transition"
-              >
-                <X size={12} />
-              </button>
-            </Badge>
-          )}
-          
-          {selectedStatus && (
-            <Badge variant="secondary" className="gap-1 px-3 py-1">
-              {selectedStatus === "operational" ? (
-                <CheckCircle size={12} />
-              ) : selectedStatus === "faulty" ? (
-                <AlertTriangle size={12} />
-              ) : (
-                <Wrench size={12} />
-              )}
-              <span>
-                {selectedStatus === "operational" ? "Opérationnel" : 
-                 selectedStatus === "maintenance" ? "En maintenance" : "En panne"}
-              </span>
-              <button 
-                onClick={() => setSelectedStatus(null)}
-                className="ml-1 hover:text-foreground smooth-transition"
-              >
-                <X size={12} />
-              </button>
-            </Badge>
-          )}
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={resetFilters} 
-            className="h-7 text-xs text-muted-foreground hover:text-foreground"
-          >
-            Effacer tous les filtres
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0" align="start">
+          <Command>
+            <CommandList>
+              <CommandEmpty>Aucune localisation trouvée.</CommandEmpty>
+              <CommandGroup>
+                <CommandItem
+                  onSelect={() => onLocationChange && onLocationChange("Tous")}
+                  className="flex items-center gap-2"
+                >
+                  <span>Tous</span>
+                  {selectedLocation === "Tous" && (
+                    <CheckIcon className="h-4 w-4 ml-auto" />
+                  )}
+                </CommandItem>
+                <Separator />
+                {locations.map((location) => (
+                  <CommandItem
+                    key={location}
+                    onSelect={() => onLocationChange && onLocationChange(location)}
+                    className="flex items-center gap-2"
+                  >
+                    <span>{location}</span>
+                    {selectedLocation === location && (
+                      <CheckIcon className="h-4 w-4 ml-auto" />
+                    )}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-8 gap-1 border-dashed">
+            <FilterIcon className="h-3.5 w-3.5" />
+            <span>État</span>
+            {selectedStatus && (
+              <Badge variant="secondary" className="ml-1 rounded-sm px-1 font-normal">
+                {selectedStatus}
+              </Badge>
+            )}
           </Button>
-        </div>
-      )}
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0" align="start">
+          <Command>
+            <CommandList>
+              <CommandEmpty>Aucun état trouvé.</CommandEmpty>
+              <CommandGroup>
+                {statuses.map((status) => (
+                  <CommandItem
+                    key={status}
+                    onSelect={() => onStatusChange && onStatusChange(status)}
+                    className="flex items-center gap-2"
+                  >
+                    <span>{status}</span>
+                    {selectedStatus === status && (
+                      <CheckIcon className="h-4 w-4 ml-auto" />
+                    )}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

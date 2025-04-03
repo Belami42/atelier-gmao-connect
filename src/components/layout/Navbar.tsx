@@ -1,108 +1,113 @@
 
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Home, LayoutDashboard, Wrench, CalendarDays, Send, GraduationCap, Users, Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Menu, 
+  X, 
+  Gauge, 
+  Cog, 
+  Wrench, 
+  ClipboardList, 
+  Users,
+  BarChart,
+  GraduationCap, 
+  CalendarRange
+} from "lucide-react";
+import useMobile from "@/hooks/use-mobile";
 
 const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const isMobile = useIsMobile();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const isMobile = useMobile();
 
-  const links = [
-    { href: "/", label: "Accueil", icon: Home },
-    { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-    { href: "/equipment", label: "Équipements", icon: Wrench },
-    { href: "/maintenance-calendar", label: "Calendrier maintenance", icon: CalendarDays },
-    { href: "/missions", label: "Missions", icon: Send },
-    { href: "/skills", label: "Compétences", icon: GraduationCap },
-    { href: "/users", label: "Utilisateurs", icon: Users },
+  // Close the menu when navigating or changing view size
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location, isMobile]);
+
+  const navLinks = [
+    { path: "/dashboard", text: "Tableau de bord", icon: <Gauge className="w-5 h-5" /> },
+    { path: "/equipment", text: "Équipements", icon: <Wrench className="w-5 h-5" /> },
+    { path: "/maintenance", text: "Maintenance", icon: <CalendarRange className="w-5 h-5" /> },
+    { path: "/missions", text: "Missions", icon: <ClipboardList className="w-5 h-5" /> },
+    { path: "/skills", text: "Compétences", icon: <BarChart className="w-5 h-5" /> },
+    { path: "/student-progress", text: "Suivi élèves", icon: <GraduationCap className="w-5 h-5" /> },
+    { path: "/users", text: "Utilisateurs", icon: <Users className="w-5 h-5" /> },
+    { path: "/settings", text: "Paramètres", icon: <Cog className="w-5 h-5" /> },
   ];
 
-  if (isMobile) {
-    return (
-      <header className="fixed w-full top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b mimard-gradient-blue">
-        <div className="flex items-center justify-between p-4">
-          <Link to="/" className="font-bold text-lg flex items-center">
-            <img 
-              src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-              alt="Logo Étienne Mimard"
-              className="h-10 w-auto mr-2 object-contain" 
-            />
-            <span>AtelierGMAO</span>
-          </Link>
-
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="mimard-gradient-blue">
-              <div className="flex flex-col items-center mb-8 pt-4">
-                <img 
-                  src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-                  alt="Logo Étienne Mimard"
-                  className="h-24 w-auto object-contain mb-4" 
-                />
-                <h3 className="text-lg font-medium">Lycée Étienne Mimard</h3>
-              </div>
-              <div className="flex flex-col gap-5">
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
-                    className="flex items-center gap-3 text-base"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <link.icon className="h-5 w-5" />
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </header>
-    );
-  }
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="fixed w-full top-0 left-0 z-50 bg-white/90 backdrop-blur-md border-b mimard-gradient-blue">
-      <div className="flex items-center justify-between p-4 container mx-auto">
-        <Link to="/" className="font-bold text-lg flex items-center">
-          <img 
-            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-            alt="Logo Étienne Mimard"
-            className="h-12 w-auto mr-3 object-contain" 
-          />
-          <span>AtelierGMAO</span>
-        </Link>
+    <nav className="fixed top-0 z-40 w-full bg-white/80 backdrop-blur-sm dark:bg-gray-950/80 border-b">
+      <div className="px-4 mx-auto max-w-7xl">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <img
+                src="/favicon.ico"
+                alt="Logo"
+                className="w-8 h-8 mr-2"
+              />
+              <span className="text-xl font-bold tech-gradient bg-clip-text text-transparent">
+                MSPC-GMAO
+              </span>
+            </Link>
+          </div>
 
-        <nav className="hidden md:flex items-center gap-1">
-          {links.map((link) => {
-            const isActive = location.pathname === link.href;
-            return (
-              <Button
-                key={link.href}
-                variant={isActive ? "default" : "ghost"}
-                size="sm"
-                asChild
-              >
-                <Link to={link.href} className="flex items-center gap-2">
-                  <link.icon className="h-4 w-4" />
-                  {link.label}
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-1">
+              {navLinks.map((link) => (
+                <Link key={link.path} to={link.path}>
+                  <Button
+                    variant={isActive(link.path) ? "default" : "ghost"}
+                    size="sm"
+                    className="gap-2"
+                  >
+                    {link.icon}
+                    <span>{link.text}</span>
+                  </Button>
                 </Link>
-              </Button>
-            );
-          })}
-        </nav>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="flex md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
+          </div>
+        </div>
       </div>
-    </header>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-950 border-b pb-4">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navLinks.map((link) => (
+              <Link key={link.path} to={link.path} className="block">
+                <Button
+                  variant={isActive(link.path) ? "default" : "ghost"}
+                  size="sm"
+                  className="w-full justify-start gap-2"
+                >
+                  {link.icon}
+                  <span>{link.text}</span>
+                </Button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </nav>
   );
 };
 
