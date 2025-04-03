@@ -180,7 +180,7 @@ const StudentProgress = () => {
             <div className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
               <div className="absolute inset-0 bg-black/30 z-10"></div>
               <img 
-                src="/maintenance-1.jpg" 
+                src="/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png" 
                 alt="Élève en maintenance"
                 className="h-full w-full object-cover" 
               />
@@ -188,7 +188,7 @@ const StudentProgress = () => {
             <div className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
               <div className="absolute inset-0 bg-black/30 z-10"></div>
               <img 
-                src="/maintenance-2.jpg" 
+                src="/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png" 
                 alt="Formation maintenance"
                 className="h-full w-full object-cover" 
               />
@@ -196,7 +196,7 @@ const StudentProgress = () => {
             <div className="relative h-28 w-40 overflow-hidden rounded-lg shadow-lg">
               <div className="absolute inset-0 bg-black/30 z-10"></div>
               <img 
-                src="/maintenance-3.jpg" 
+                src="/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png" 
                 alt="Travaux pratiques"
                 className="h-full w-full object-cover" 
               />

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { 
@@ -79,18 +78,16 @@ const EquipmentMaintenance = () => {
   };
 
   const handleCreateMission = () => {
-    // This would navigate to mission creation page with pre-filled data
     toast.info("Fonctionnalité à venir: Création d'ordre de mission");
     setSelectedTask(null);
   };
 
   const maintenanceImages = [
-    "/maintenance-1.jpg",
-    "/maintenance-2.jpg",
-    "/maintenance-3.jpg",
+    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
+    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
+    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
 
-  // Stats for the equipment
   const stats = [
     {
       title: "Temps moyen entre pannes",

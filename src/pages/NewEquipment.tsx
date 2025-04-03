@@ -34,9 +34,9 @@ const NewEquipment = () => {
   };
 
   const maintenanceImages = [
-    "/maintenance-1.jpg",
-    "/maintenance-2.jpg",
-    "/maintenance-3.jpg",
+    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
+    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
+    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
 
   return (
