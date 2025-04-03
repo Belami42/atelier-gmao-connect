@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,14 +13,13 @@ import {
   GraduationCap, 
   CalendarRange
 } from "lucide-react";
-import useMobile from "@/hooks/use-mobile";
+import { useMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const isMobile = useMobile();
 
-  // Close the menu when navigating or changing view size
   useEffect(() => {
     setIsOpen(false);
   }, [location, isMobile]);
@@ -56,7 +54,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="flex items-center space-x-1">
               {navLinks.map((link) => (
@@ -74,7 +71,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="flex md:hidden">
             <Button
               variant="ghost"
@@ -88,7 +84,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       {isOpen && (
         <div className="md:hidden bg-white dark:bg-gray-950 border-b pb-4">
           <div className="px-2 pt-2 pb-3 space-y-1">
