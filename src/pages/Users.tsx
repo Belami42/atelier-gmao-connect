@@ -37,12 +37,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import NewUserForm from "@/components/users/NewUserForm";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { toast } from "sonner";
-import { NiveauFormation } from "@/types/niveauFormation";
+import { NiveauFormation, getDisplayFromNiveauFormation } from "@/types/niveauFormation";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,7 +116,6 @@ const Users = () => {
     }
   ]);
 
-  // Sample classes
   const [classes, setClasses] = useState([
     {
       id: "1",
@@ -140,14 +140,12 @@ const Users = () => {
   const existingGroups = classes.map(cls => cls.name);
 
   const handleAddUser = (newUser: any) => {
-    // Add creator information
     newUser.createdBy = currentUserRole === "admin" ? 
       (newUser.role === "admin" ? "self" : "admin") : 
       "teacher";
 
     setUsers(prevUsers => [...prevUsers, newUser]);
     
-    // Update student count for class if applicable
     if (newUser.role === "student" && newUser.class) {
       setClasses(prevClasses => prevClasses.map(cls => 
         cls.name === newUser.class 
@@ -170,7 +168,6 @@ const Users = () => {
     
     setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
     
-    // Update student count for class if applicable
     if (userToDelete && userToDelete.role === "student" && userToDelete.class) {
       setClasses(prevClasses => prevClasses.map(cls => 
         cls.name === userToDelete.class
@@ -183,12 +180,10 @@ const Users = () => {
   };
 
   const handleDeleteClass = (classId: string) => {
-    // Find class to be deleted
     const classToDelete = classes.find(cls => cls.id === classId);
     
     if (!classToDelete) return;
     
-    // Check if there are students in this class
     const studentsInClass = users.filter(user => 
       user.role === "student" && user.class === classToDelete.name
     );
@@ -210,7 +205,6 @@ const Users = () => {
     return matchesSearch && matchesRole;
   });
 
-  // Group students by class
   const studentsByClass = classes.map(cls => {
     const students = users.filter(user => 
       user.role === "student" && user.class === cls.name
@@ -223,7 +217,6 @@ const Users = () => {
   });
 
   const canManageUser = (userRole: string) => {
-    // Admin can manage everyone, teachers can only manage students
     if (currentUserRole === "admin") return true;
     if (currentUserRole === "teacher" && userRole === "student") return true;
     return false;
@@ -560,12 +553,11 @@ const Users = () => {
                       {cls.studentCount} élèves
                     </Badge>
                   </div>
-                  <CardDescription>Niveau: {cls.level.toUpperCase()}</CardDescription>
+                  <CardDescription>Niveau: {cls.level}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
-                      <AvatarImage src={cls.avatar || ""} />
                       <AvatarFallback>{getInitials(cls.name)}</AvatarFallback>
                     </Avatar>
                     <div className="text-sm">Sophie Dubois (Responsable)</div>
