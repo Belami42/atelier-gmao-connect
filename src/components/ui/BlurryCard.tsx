@@ -21,13 +21,13 @@ const BlurryCard = ({
       className={cn(
         "glass-card rounded-2xl overflow-hidden smooth-transition relative",
         hoverEffect && "hover:shadow-xl hover:translate-y-[-2px]",
-        hightlight && "ring-2 ring-primary/20",
+        hightlight && "ring-2 ring-primary/30",
         className
       )}
       {...props}
     >
       {hightlight && (
-        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+        <div className="absolute inset-0 bg-indigo-500/10 pointer-events-none" />
       )}
       <div className="relative z-10">{children}</div>
     </div>

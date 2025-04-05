@@ -15,7 +15,7 @@ const NotFound = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
-      <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
+      <div className="relative mb-6 overflow-hidden rounded-xl h-40 bg-indigo-700">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex space-x-4 px-4">
             {maintenanceImages.map((img, idx) => (
@@ -37,8 +37,8 @@ const NotFound = () => {
 
       <BlurryCard className="p-8 md:p-12 max-w-2xl mx-auto text-center">
         <div className="flex justify-center mb-6">
-          <div className="h-24 w-24 bg-primary/10 rounded-full flex items-center justify-center">
-            <AlertTriangle size={48} className="text-primary" />
+          <div className="h-24 w-24 bg-indigo-100 rounded-full flex items-center justify-center">
+            <AlertTriangle size={48} className="text-indigo-600" />
           </div>
         </div>
         
@@ -46,7 +46,7 @@ const NotFound = () => {
           404
         </h1>
         
-        <h2 className="text-2xl font-semibold mb-4">Page non trouvée</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-indigo-900">Page non trouvée</h2>
         
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
           La page que vous recherchez n'existe pas ou a été déplacée.
@@ -54,14 +54,14 @@ const NotFound = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button asChild className="gap-2 w-full sm:w-auto">
+          <Button asChild className="gap-2 w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700">
             <Link to="/">
               <Home size={16} />
               <span>Retour à l'accueil</span>
             </Link>
           </Button>
           
-          <Button asChild variant="outline" className="gap-2 w-full sm:w-auto">
+          <Button asChild variant="outline" className="gap-2 w-full sm:w-auto border-indigo-300 hover:bg-indigo-50">
             <Link to="#" onClick={() => window.history.back()}>
               <ArrowLeft size={16} />
               <span>Page précédente</span>

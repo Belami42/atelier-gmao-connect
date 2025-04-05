@@ -54,14 +54,14 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: 'hsl(var(--sidebar-background, 246 80% 14%))',
+					foreground: 'hsl(var(--sidebar-foreground, 210 40% 98%))',
+					primary: 'hsl(var(--sidebar-primary, 217 91% 60%))',
+					'primary-foreground': 'hsl(var(--sidebar-primary-foreground, 222 47% 11%))',
+					accent: 'hsl(var(--sidebar-accent, 246 60% 20%))',
+					'accent-foreground': 'hsl(var(--sidebar-accent-foreground, 210 40% 98%))',
+					border: 'hsl(var(--sidebar-border, 246 60% 18%))',
+					ring: 'hsl(var(--sidebar-ring, 224 76% 48%))'
 				}
 			},
 			borderRadius: {
