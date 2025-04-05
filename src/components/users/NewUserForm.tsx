@@ -34,15 +34,21 @@ interface NewUserFormProps {
   onClose: () => void;
   onUserCreated: (user: any) => void;
   existingGroups: string[];
+  currentUserRole?: string;
+  defaultRole?: string;
+  defaultClass?: string;
 }
 
 const NewUserForm: React.FC<NewUserFormProps> = ({ 
   onClose, 
   onUserCreated,
-  existingGroups = []
+  existingGroups = [],
+  currentUserRole = "admin",
+  defaultRole,
+  defaultClass
 }) => {
   const [step, setStep] = useState<'user' | 'class'>('user');
-  const [selectedRole, setSelectedRole] = useState<string>("student");
+  const [selectedRole, setSelectedRole] = useState<string>(defaultRole || (currentUserRole === "admin" ? "teacher" : "student"));
   const [newGroup, setNewGroup] = useState<string>("");
   const [isCreatingGroup, setIsCreatingGroup] = useState<boolean>(false);
   
@@ -51,8 +57,8 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
       name: "",
       username: "",
       email: "",
-      role: "student",
-      group: "",
+      role: defaultRole || (currentUserRole === "admin" ? "teacher" : "student"),
+      group: defaultClass || "",
     }
   });
   
@@ -64,7 +70,8 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
       username: data.username,
       role: data.role,
       email: data.email,
-      group: data.role === "student" ? data.group : undefined,
+      class: data.role === "student" ? data.group : undefined,
+      avatar: null,
       status: "active"
     };
     
@@ -123,6 +130,18 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
         return "Élève";
       default:
         return "Utilisateur";
+    }
+  };
+
+  // Only show allowed roles based on current user role
+  const getAllowedRoles = () => {
+    switch (currentUserRole) {
+      case "admin":
+        return ["admin", "teacher", "student"];
+      case "teacher":
+        return ["student"];
+      default:
+        return ["student"];
     }
   };
 
@@ -193,6 +212,7 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
                         field.onChange(value);
                         setSelectedRole(value);
                       }}
+                      disabled={getAllowedRoles().length === 1}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full gap-2">
@@ -201,24 +221,30 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="admin" className="flex items-center gap-2">
-                          <div className="flex items-center gap-2">
-                            <Shield size={16} />
-                            <span>Administrateur</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="teacher" className="flex items-center gap-2">
-                          <div className="flex items-center gap-2">
-                            <UserCog size={16} />
-                            <span>Enseignant</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="student" className="flex items-center gap-2">
-                          <div className="flex items-center gap-2">
-                            <GraduationCap size={16} />
-                            <span>Élève</span>
-                          </div>
-                        </SelectItem>
+                        {getAllowedRoles().includes("admin") && (
+                          <SelectItem value="admin" className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <Shield size={16} />
+                              <span>Administrateur</span>
+                            </div>
+                          </SelectItem>
+                        )}
+                        {getAllowedRoles().includes("teacher") && (
+                          <SelectItem value="teacher" className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <UserCog size={16} />
+                              <span>Enseignant</span>
+                            </div>
+                          </SelectItem>
+                        )}
+                        {getAllowedRoles().includes("student") && (
+                          <SelectItem value="student" className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
+                              <GraduationCap size={16} />
+                              <span>Élève</span>
+                            </div>
+                          </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />

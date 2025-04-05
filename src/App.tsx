@@ -18,6 +18,7 @@ import Users from "@/pages/Users";
 import Skills from "@/pages/Skills";
 import StudentProgress from "@/pages/StudentProgress";
 import Stocks from "@/pages/Stocks";
+import Settings from "@/pages/Settings";
 
 import { Toaster } from "@/components/ui/sonner";
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/users" element={<Users />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/student-progress" element={<StudentProgress />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
