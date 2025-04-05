@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FilePdf } from "lucide-react";
+import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FileUp as FilePdf } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
