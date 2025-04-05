@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import BlurryCard from "@/components/ui/BlurryCard";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import GenerateOrdersModal from "@/components/stocks/GenerateOrdersModal";
 import {
   AlertTriangle,
   FileText,
@@ -37,6 +37,7 @@ import {
 
 const Stocks = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
   // Sample data for demonstration
   const lowStockItems = [
@@ -78,7 +79,6 @@ const Stocks = () => {
     { id: 3, name: "Variateur de fréquence", reference: "VF-7.5-3", specs: "7.5kW, triphasé, IP54", location: "Magasin Principal" },
   ];
 
-  // Inventory analysis data
   const inventoryStats = {
     totalItems: 1720,
     totalValue: 87650,
@@ -87,7 +87,6 @@ const Stocks = () => {
     fastMovers: 245,
   };
 
-  // Stock valuation data
   const valuationData = [
     { category: "Pièces mécaniques", value: 35840, percentage: 41 },
     { category: "Électronique", value: 22350, percentage: 25 },
@@ -95,6 +94,14 @@ const Stocks = () => {
     { category: "Fluides", value: 8740, percentage: 10 },
     { category: "Outillage", value: 5400, percentage: 6 },
   ];
+
+  const openOrderModal = () => {
+    setIsOrderModalOpen(true);
+  };
+
+  const closeOrderModal = () => {
+    setIsOrderModalOpen(false);
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -144,7 +151,6 @@ const Stocks = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Tab: Réapprovisionnements */}
         <TabsContent value="reapprovisionnements">
           <BlurryCard>
             <div className="p-6">
@@ -155,7 +161,7 @@ const Stocks = () => {
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Actualiser
                   </Button>
-                  <Button>
+                  <Button onClick={openOrderModal}>
                     <Clipboard className="w-4 h-4 mr-2" />
                     Générer commandes
                   </Button>
@@ -227,7 +233,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Mouvements */}
         <TabsContent value="mouvements">
           <BlurryCard>
             <div className="p-6">
@@ -350,7 +355,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Inventaires */}
         <TabsContent value="inventaires">
           <BlurryCard>
             <div className="p-6">
@@ -502,7 +506,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Valorisation */}
         <TabsContent value="valorisation">
           <BlurryCard>
             <div className="p-6">
@@ -607,7 +610,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Fournisseurs */}
         <TabsContent value="fournisseurs">
           <BlurryCard>
             <div className="p-6">
@@ -666,7 +668,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Historique */}
         <TabsContent value="historique">
           <BlurryCard>
             <div className="p-6">
@@ -747,7 +748,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Multi-magasins */}
         <TabsContent value="magasins">
           <BlurryCard>
             <div className="p-6">
@@ -839,7 +839,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Dangerosité */}
         <TabsContent value="dangerosite">
           <BlurryCard>
             <div className="p-6">
@@ -947,7 +946,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Données techniques */}
         <TabsContent value="techniques">
           <BlurryCard>
             <div className="p-6">
@@ -1056,7 +1054,6 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
 
-        {/* Tab: Localisation */}
         <TabsContent value="localisation">
           <BlurryCard>
             <div className="p-6">
@@ -1246,6 +1243,12 @@ const Stocks = () => {
           </BlurryCard>
         </TabsContent>
       </Tabs>
+      
+      <GenerateOrdersModal 
+        isOpen={isOrderModalOpen}
+        onClose={closeOrderModal}
+        lowStockItems={lowStockItems}
+      />
     </div>
   );
 };
