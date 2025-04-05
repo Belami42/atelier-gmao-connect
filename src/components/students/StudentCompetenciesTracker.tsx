@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,7 +7,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { GraduationCap, Calendar, Award, ClipboardList, BookOpen, ArrowRight } from "lucide-react";
-import { COMPETENCES_MSPC, CompetenceCode, Eleve, CompetenceAcquise, NiveauFormation } from "@/types/mspc";
+import { COMPETENCES_MSPC, CompetenceCode, Eleve, CompetenceAcquise } from "@/types/mspc";
+import { NiveauFormation } from "@/types/niveauFormation";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 

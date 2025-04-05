@@ -1,4 +1,3 @@
-
 // Types pour les compétences du référentiel Bac Pro MSPC
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 
@@ -167,7 +166,7 @@ export interface Eleve {
   prenom: string;
   classe: NiveauFormation;
   competencesAcquises: CompetenceAcquise[];
-  ordresTravauxRealises: string[]; // IDs des ordres de travail complétés
+  ordresTravauxRealises: string[];
 }
 
 export interface CompetenceAcquise {

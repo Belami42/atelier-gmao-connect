@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, GraduationCap, BookOpen } from "lucide-react";
@@ -10,7 +9,7 @@ import TaskDetailsModal from "@/components/maintenance/TaskDetailsModal";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { NiveauFormation } from "@/types/mspc";
+import { NiveauFormation } from "@/types/niveauFormation";
 import { toast } from "sonner";
 
 const MaintenanceCalendar = () => {
@@ -288,30 +287,30 @@ const MaintenanceCalendar = () => {
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "2nde" ? "default" : "outline"} 
+                  variant={selectedNiveau === "2PMIA" ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-blue-50 hover:bg-blue-100 text-blue-800 border-blue-200"
-                  onClick={() => setSelectedNiveau("2nde")}
+                  onClick={() => setSelectedNiveau("2PMIA")}
                 >
                   2nde PMIA
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "1ère" ? "default" : "outline"} 
+                  variant={selectedNiveau === "1MSPC" ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-purple-50 hover:bg-purple-100 text-purple-800 border-purple-200"
-                  onClick={() => setSelectedNiveau("1ère")}
+                  onClick={() => setSelectedNiveau("1MSPC")}
                 >
                   1ère MSPC
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "Terminale" ? "default" : "outline"} 
+                  variant={selectedNiveau === "TMSPC" ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-green-50 hover:bg-green-100 text-green-800 border-green-200"
-                  onClick={() => setSelectedNiveau("Terminale")}
+                  onClick={() => setSelectedNiveau("TMSPC")}
                 >
-                  Terminale MSPC
+                  Term. MSPC
                 </Button>
               </div>
             </div>

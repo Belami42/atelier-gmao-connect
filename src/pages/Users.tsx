@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Users as UsersIcon, 
@@ -12,8 +11,6 @@ import {
   BookOpen,
   Shield,
   UserCog,
-  AlertCircle,
-  CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,12 +37,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import NewUserForm from "@/components/users/NewUserForm";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { toast } from "sonner";
+import { NiveauFormation } from "@/types/niveauFormation";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,7 +82,7 @@ const Users = () => {
       name: "Marie Lambert",
       email: "m.lambert@etudiant.mimard.fr",
       role: "student",
-      class: "BTS MSPC 1",
+      class: "2PMIA",
       avatar: null,
       createdBy: "teacher"
     },
@@ -94,7 +91,7 @@ const Users = () => {
       name: "Thomas Moreau",
       email: "t.moreau@etudiant.mimard.fr",
       role: "student",
-      class: "BTS MSPC 1",
+      class: "1MSPC",
       avatar: null,
       createdBy: "teacher"
     },
@@ -103,7 +100,7 @@ const Users = () => {
       name: "Léa Bernard",
       email: "l.bernard@etudiant.mimard.fr",
       role: "student",
-      class: "BTS MSPC 2",
+      class: "TMSPC",
       avatar: null,
       createdBy: "teacher"
     },
@@ -112,7 +109,7 @@ const Users = () => {
       name: "Lucas Girard",
       email: "l.girard@etudiant.mimard.fr",
       role: "student",
-      class: "BTS MSPC 2",
+      class: "TMSPC",
       avatar: null,
       createdBy: "teacher"
     }
@@ -122,27 +119,21 @@ const Users = () => {
   const [classes, setClasses] = useState([
     {
       id: "1",
-      name: "BTS MSPC 1",
-      level: "bts1",
+      name: "2PMIA",
+      level: "2PMIA",
       studentCount: 14
     },
     {
       id: "2",
-      name: "BTS MSPC 2",
-      level: "bts2",
+      name: "1MSPC",
+      level: "1MSPC",
       studentCount: 12
     },
     {
       id: "3",
-      name: "BAC PRO MSPC 1",
-      level: "bac1",
+      name: "TMSPC",
+      level: "TMSPC",
       studentCount: 18
-    },
-    {
-      id: "4",
-      name: "BAC PRO MSPC 2",
-      level: "bac2",
-      studentCount: 16
     }
   ]);
 
@@ -275,7 +266,7 @@ const Users = () => {
 
   const [isClassDialogOpen, setIsClassDialogOpen] = useState(false);
   const [newClassName, setNewClassName] = useState("");
-  const [newClassLevel, setNewClassLevel] = useState("bac1");
+  const [newClassLevel, setNewClassLevel] = useState<NiveauFormation>("2PMIA");
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -521,13 +512,12 @@ const Users = () => {
                     <select 
                       id="classLevel" 
                       value={newClassLevel}
-                      onChange={(e) => setNewClassLevel(e.target.value)}
+                      onChange={(e) => setNewClassLevel(e.target.value as NiveauFormation)}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      <option value="bac1">BAC PRO 1ère année</option>
-                      <option value="bac2">BAC PRO 2ème année</option>
-                      <option value="bts1">BTS 1ère année</option>
-                      <option value="bts2">BTS 2ème année</option>
+                      <option value="2PMIA">2nde PMIA</option>
+                      <option value="1MSPC">1ère MSPC</option>
+                      <option value="TMSPC">Terminale MSPC</option>
                     </select>
                   </div>
                 </div>
@@ -575,7 +565,8 @@ const Users = () => {
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
-                      <AvatarFallback>S</AvatarFallback>
+                      <AvatarImage src={cls.avatar || ""} />
+                      <AvatarFallback>{getInitials(cls.name)}</AvatarFallback>
                     </Avatar>
                     <div className="text-sm">Sophie Dubois (Responsable)</div>
                   </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { 
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { NiveauFormation } from "@/types/niveauFormation";
 
 interface NewUserFormProps {
   onClose: () => void;
@@ -63,7 +63,6 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
   });
   
   const handleCreateUser = (data: any) => {
-    // Création d'un nouvel utilisateur avec un ID unique
     const newUser = {
       id: Date.now().toString(),
       name: data.name,
@@ -96,7 +95,6 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
       return;
     }
     
-    // Soumettre le formulaire avec le nouveau groupe
     form.setValue("group", newGroup);
     setIsCreatingGroup(false);
     setNewGroup("");
@@ -133,7 +131,6 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
     }
   };
 
-  // Only show allowed roles based on current user role
   const getAllowedRoles = () => {
     switch (currentUserRole) {
       case "admin":
@@ -351,7 +348,7 @@ const NewUserForm: React.FC<NewUserFormProps> = ({
               <Input 
                 value={newGroup}
                 onChange={(e) => setNewGroup(e.target.value)}
-                placeholder="Ex: MSPC1"
+                placeholder="Ex: 2PMIA"
               />
             </div>
             
