@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import BlurryCard from "@/components/ui/BlurryCard";
@@ -38,6 +38,7 @@ import {
 const Stocks = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("reapprovisionnements");
 
   // Sample data for demonstration
   const lowStockItems = [
@@ -107,49 +108,99 @@ const Stocks = () => {
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-6">Gestion des Stocks</h1>
       
-      <Tabs defaultValue="reapprovisionnements" className="w-full">
-        <TabsList className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          <TabsTrigger value="reapprovisionnements" className="w-full">
-            <AlertTriangle className="w-4 h-4 mr-2" />
-            Réapprovisionnements
-          </TabsTrigger>
-          <TabsTrigger value="mouvements" className="w-full">
-            <FileText className="w-4 h-4 mr-2" />
-            Mouvements
-          </TabsTrigger>
-          <TabsTrigger value="inventaires" className="w-full">
-            <ChartBar className="w-4 h-4 mr-2" />
-            Inventaires
-          </TabsTrigger>
-          <TabsTrigger value="valorisation" className="w-full">
-            <EuroIcon className="w-4 h-4 mr-2" />
-            Valorisation
-          </TabsTrigger>
-          <TabsTrigger value="fournisseurs" className="w-full">
-            <Users className="w-4 h-4 mr-2" />
-            Fournisseurs
-          </TabsTrigger>
-          <TabsTrigger value="historique" className="w-full">
-            <History className="w-4 h-4 mr-2" />
-            Historique
-          </TabsTrigger>
-          <TabsTrigger value="magasins" className="w-full">
-            <Building2 className="w-4 h-4 mr-2" />
-            Multi-magasins
-          </TabsTrigger>
-          <TabsTrigger value="dangerosite" className="w-full">
-            <AlertOctagon className="w-4 h-4 mr-2" />
-            Dangerosité
-          </TabsTrigger>
-          <TabsTrigger value="techniques" className="w-full">
-            <Settings2 className="w-4 h-4 mr-2" />
-            Données techniques
-          </TabsTrigger>
-          <TabsTrigger value="localisation" className="w-full">
-            <MapPin className="w-4 h-4 mr-2" />
-            Localisation
-          </TabsTrigger>
-        </TabsList>
+      <Tabs 
+        defaultValue="reapprovisionnements" 
+        className="w-full"
+        value={activeTab}
+        onValueChange={setActiveTab}
+      >
+        <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
+          <h2 className="text-lg font-medium mb-4 px-2">Modules de gestion des stocks</h2>
+          
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 w-full">
+            <TabsTrigger 
+              value="reapprovisionnements" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "reapprovisionnements" ? "bg-primary/20" : ""}`}
+            >
+              <AlertTriangle className="w-6 h-6 mb-2" />
+              <span className="text-center">Réapprovisionnements</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="mouvements" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "mouvements" ? "bg-primary/20" : ""}`}
+            >
+              <FileText className="w-6 h-6 mb-2" />
+              <span className="text-center">Mouvements</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="inventaires" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "inventaires" ? "bg-primary/20" : ""}`}
+            >
+              <ChartBar className="w-6 h-6 mb-2" />
+              <span className="text-center">Inventaires</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="valorisation" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "valorisation" ? "bg-primary/20" : ""}`}
+            >
+              <EuroIcon className="w-6 h-6 mb-2" />
+              <span className="text-center">Valorisation</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="fournisseurs" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "fournisseurs" ? "bg-primary/20" : ""}`}
+            >
+              <Users className="w-6 h-6 mb-2" />
+              <span className="text-center">Fournisseurs</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 w-full mt-2">
+            <TabsTrigger 
+              value="historique" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "historique" ? "bg-primary/20" : ""}`}
+            >
+              <History className="w-6 h-6 mb-2" />
+              <span className="text-center">Historique</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="magasins" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "magasins" ? "bg-primary/20" : ""}`}
+            >
+              <Building2 className="w-6 h-6 mb-2" />
+              <span className="text-center">Multi-magasins</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="dangerosite" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "dangerosite" ? "bg-primary/20" : ""}`}
+            >
+              <AlertOctagon className="w-6 h-6 mb-2" />
+              <span className="text-center">Dangerosité</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="techniques" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "techniques" ? "bg-primary/20" : ""}`}
+            >
+              <Settings2 className="w-6 h-6 mb-2" />
+              <span className="text-center">Données techniques</span>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="localisation" 
+              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "localisation" ? "bg-primary/20" : ""}`}
+            >
+              <MapPin className="w-6 h-6 mb-2" />
+              <span className="text-center">Localisation</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="reapprovisionnements">
           <BlurryCard>
