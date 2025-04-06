@@ -1,3 +1,4 @@
+
 import React from "react";
 import { CheckIcon, FilterIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { standardLocations } from "@/hooks/useEquipmentData";
 
 export interface EquipmentFiltersProps {
   locations: string[];
@@ -22,7 +24,6 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
   selectedStatus
 }) => {
   const statuses = ["Tous", "En service", "En panne", "En maintenance", "Hors service"];
-
   
   return (
     <div className="flex flex-wrap gap-2">
@@ -38,7 +39,7 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start">
+        <PopoverContent className="w-[250px] p-0" align="start">
           <Command>
             <CommandList>
               <CommandEmpty>Aucune localisation trouvée.</CommandEmpty>
@@ -53,7 +54,9 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
                   )}
                 </CommandItem>
                 <Separator />
-                {locations.map((location) => (
+                
+                {/* Ajout des emplacements standard en premier */}
+                {standardLocations.map((location) => (
                   <CommandItem
                     key={location}
                     onSelect={() => onLocationChange && onLocationChange(location)}
@@ -65,6 +68,24 @@ const EquipmentFilters: React.FC<EquipmentFiltersProps> = ({
                     )}
                   </CommandItem>
                 ))}
+                
+                {/* Ajout des emplacements personnalisés qui ne font pas partie des standardLocations */}
+                <Separator />
+                {locations
+                  .filter(loc => !standardLocations.includes(loc))
+                  .map((location) => (
+                    <CommandItem
+                      key={location}
+                      onSelect={() => onLocationChange && onLocationChange(location)}
+                      className="flex items-center gap-2"
+                    >
+                      <span>{location}</span>
+                      {selectedLocation === location && (
+                        <CheckIcon className="h-4 w-4 ml-auto" />
+                      )}
+                    </CommandItem>
+                  ))
+                }
               </CommandGroup>
             </CommandList>
           </Command>

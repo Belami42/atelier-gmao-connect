@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import EquipmentHeader from "@/components/equipment/EquipmentHeader";
@@ -24,7 +25,8 @@ const Equipment = () => {
   const {
     equipmentData,
     deleteEquipment,
-    locations
+    locations,
+    standardLocations
   } = useEquipmentData();
 
   if (!equipmentData) {
@@ -76,6 +78,16 @@ const Equipment = () => {
     "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
     "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
+
+  // Fonction pour transformer la valeur de localisation
+  const handleLocationChange = (location: string) => {
+    setSelectedLocation(location === "Tous" ? null : location);
+  };
+
+  // Fonction pour transformer la valeur de statut
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status === "Tous" ? null : status);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -129,8 +141,10 @@ const Equipment = () => {
           {!isMobile && brands && locations && (
             <EquipmentFilters
               locations={locations}
-              onLocationChange={setSelectedLocation}
-              onStatusChange={setSelectedStatus}
+              onLocationChange={handleLocationChange}
+              onStatusChange={handleStatusChange}
+              selectedLocation={selectedLocation || undefined}
+              selectedStatus={selectedStatus || undefined}
             />
           )}
           {isMobile && (
