@@ -26,15 +26,16 @@ const Navbar = () => {
     setIsOpen(false);
   }, [location, isMobile]);
 
+  // Reordered navigation links as requested
   const navLinks = [
     { path: "/dashboard", text: "Tableau de bord", icon: <Gauge className="w-5 h-5" /> },
+    { path: "/missions", text: "Missions", icon: <ClipboardList className="w-5 h-5" /> },
+    { path: "/maintenance", text: "Maintenance", icon: <CalendarRange className="w-5 h-5" /> },
     { path: "/equipment", text: "Équipements", icon: <Wrench className="w-5 h-5" /> },
     { path: "/stocks", text: "Stocks", icon: <PackageSearch className="w-5 h-5" /> },
-    { path: "/maintenance", text: "Maintenance", icon: <CalendarRange className="w-5 h-5" /> },
-    { path: "/missions", text: "Missions", icon: <ClipboardList className="w-5 h-5" /> },
-    { path: "/skills", text: "Compétences", icon: <BarChart className="w-5 h-5" /> },
     { path: "/student-progress", text: "Suivi élèves", icon: <GraduationCap className="w-5 h-5" /> },
     { path: "/users", text: "Utilisateurs", icon: <Users className="w-5 h-5" /> },
+    { path: "/skills", text: "Compétences", icon: <BarChart className="w-5 h-5" /> },
     { path: "/settings", text: "Paramètres", icon: <Cog className="w-5 h-5" /> },
   ];
 
@@ -42,7 +43,7 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 z-40 w-full bg-indigo-900 dark:bg-gray-950 border-b border-indigo-700">
-      <div className="px-4 mx-auto max-w-7xl">
+      <div className="px-4 mx-auto max-w-full">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
@@ -57,14 +58,14 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block overflow-x-auto">
             <div className="flex items-center space-x-1">
               {navLinks.map((link) => (
                 <Link key={link.path} to={link.path}>
                   <Button
                     variant={isActive(link.path) ? "default" : "ghost"}
                     size="sm"
-                    className={`gap-2 ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'}`}
+                    className={`gap-2 whitespace-nowrap ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'}`}
                   >
                     {link.icon}
                     <span>{link.text}</span>
@@ -74,7 +75,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="flex md:hidden">
+          <div className="flex lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -89,7 +90,7 @@ const Navbar = () => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden bg-indigo-900 dark:bg-gray-950 border-b border-indigo-700 pb-4">
+        <div className="lg:hidden bg-indigo-900 dark:bg-gray-950 border-b border-indigo-700 pb-4">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <Link key={link.path} to={link.path} className="block">

@@ -24,9 +24,6 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./App.css";
 
-// Import the NiveauFormation type
-import "./types/niveauFormation";
-
 function App() {
   return (
     <BrowserRouter>
