@@ -65,7 +65,7 @@ const Navbar = () => {
                   <Button
                     variant={isActive(link.path) ? "default" : "ghost"}
                     size="sm"
-                    className={`gap-2 whitespace-nowrap ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'}`}
+                    className={`gap-2 whitespace-nowrap font-semibold text-base ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-white hover:bg-indigo-800 hover:text-white'}`}
                   >
                     {link.icon}
                     <span>{link.text}</span>
@@ -97,7 +97,7 @@ const Navbar = () => {
                 <Button
                   variant={isActive(link.path) ? "default" : "ghost"}
                   size="sm"
-                  className={`w-full justify-start gap-2 ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-indigo-100 hover:bg-indigo-800 hover:text-white'}`}
+                  className={`w-full justify-start gap-2 text-base font-semibold ${isActive(link.path) ? 'bg-indigo-700 text-white hover:bg-indigo-600' : 'text-white hover:bg-indigo-800 hover:text-white'}`}
                 >
                   {link.icon}
                   <span>{link.text}</span>
