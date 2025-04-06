@@ -1,7 +1,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import type { Equipment, MaintenanceTask } from "@/components/equipment/EquipmentCard";
-import { NiveauFormation } from "@/types/mspc";
+import { NiveauFormation } from "@/types/niveauFormation";
 import { toast } from "sonner";
 
 // Key for localStorage
@@ -25,11 +25,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
         type: "preventive",
         completed: false,
-        niveau: "Terminale",
+        niveau: "TMSPC" as NiveauFormation,
         competences: ["C2.1", "C3.2", "C4.1", "C5.2"]
       }
     ],
-    niveau: "Terminale",
+    niveau: "TMSPC" as NiveauFormation,
     documentation: [
       {
         nom: "Manuel utilisateur",
@@ -47,7 +47,7 @@ const initialEquipmentData: Equipment[] = [
     id: "line1",
     tag: "LIGNE-01",
     name: "Ligne d'embouteillage Festo",
-    location: "Ilot Production",
+    location: "Zone Fabrication",
     image: "https://images.unsplash.com/photo-1601055283742-8b27e81b5553?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80",
     brand: "Festo",
     model: "LP-2020",
@@ -59,11 +59,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 7)),
         type: "corrective",
         completed: false,
-        niveau: "1ère",
+        niveau: "1MSPC" as NiveauFormation,
         competences: ["C1.3", "C2.2", "C3.3", "C5.1"]
       }
     ],
-    niveau: "1ère",
+    niveau: "1MSPC" as NiveauFormation,
     documentation: [
       {
         nom: "Guide maintenance",
@@ -76,7 +76,7 @@ const initialEquipmentData: Equipment[] = [
     id: "cnc1",
     tag: "CNC-01",
     name: "Machine CNC Haas",
-    location: "Atelier Usinage",
+    location: "Zone Système",
     image: "https://images.unsplash.com/photo-1565087918595-611722c7c6e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80",
     brand: "Haas",
     model: "VF-2",
@@ -88,11 +88,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 3)),
         type: "corrective",
         completed: false,
-        niveau: "1ère",
+        niveau: "1MSPC" as NiveauFormation,
         competences: ["C1.2", "C2.2", "C3.3", "C4.1", "C5.2"]
       }
     ],
-    niveau: "1ère",
+    niveau: "1MSPC" as NiveauFormation,
     documentation: [
       {
         nom: "Manuel technique",
@@ -105,13 +105,13 @@ const initialEquipmentData: Equipment[] = [
     id: "pump1",
     tag: "HYDRAU-01",
     name: "Système hydraulique",
-    location: "Zone Énergies",
+    location: "Zone Expérimentation",
     image: "https://images.unsplash.com/photo-1624028302737-bee3682be1ec?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80",
     brand: "Bosch Rexroth",
     model: "HLP-500",
     status: "operational",
     maintenanceSchedule: [],
-    niveau: "2nde",
+    niveau: "2PMIA" as NiveauFormation,
     documentation: [
       {
         nom: "Fiche technique",
@@ -124,7 +124,7 @@ const initialEquipmentData: Equipment[] = [
     id: "conveyor1",
     tag: "CONV-01",
     name: "Convoyeur à bande",
-    location: "Ilot Production",
+    location: "Zone Démontage",
     image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80",
     brand: "Interroll",
     model: "CB-200",
@@ -136,11 +136,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 14)),
         type: "preventive",
         completed: false,
-        niveau: "2nde",
+        niveau: "2PMIA" as NiveauFormation,
         competences: ["C2.1", "C3.2", "C5.2"]
       }
     ],
-    niveau: "2nde",
+    niveau: "2PMIA" as NiveauFormation,
     documentation: [
       {
         nom: "Guide d'entretien",
@@ -153,7 +153,7 @@ const initialEquipmentData: Equipment[] = [
     id: "plc1",
     tag: "PLC-01",
     name: "Automate Siemens S7",
-    location: "Zone Contrôle",
+    location: "Magasin",
     image: "https://images.unsplash.com/photo-1620283085861-47d9bb7b0308?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80",
     brand: "Siemens",
     model: "S7-1500",
@@ -165,11 +165,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 21)),
         type: "improvement",
         completed: false,
-        niveau: "Terminale",
+        niveau: "TMSPC" as NiveauFormation,
         competences: ["C1.4", "C2.1", "C3.4", "C4.3", "C5.3"]
       }
     ],
-    niveau: "Terminale",
+    niveau: "TMSPC" as NiveauFormation,
     documentation: [
       {
         nom: "Manuel programmation",
@@ -183,6 +183,17 @@ const initialEquipmentData: Equipment[] = [
       }
     ]
   }
+];
+
+// Standard locations list to use across the application
+export const standardLocations = [
+  "Zone système",
+  "Zone expérimentation",
+  "Zone fabrication",
+  "Zone démontage",
+  "Magasin",
+  "Zone de stockage",
+  "Zone stockage petits composants"
 ];
 
 export const useEquipmentData = () => {
@@ -321,6 +332,7 @@ export const useEquipmentData = () => {
     deleteEquipment,
     addMaintenanceTask,
     deleteMaintenanceTask,
-    updateMaintenanceTask
+    updateMaintenanceTask,
+    standardLocations
   };
 };

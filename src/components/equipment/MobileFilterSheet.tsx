@@ -37,6 +37,17 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
   resetFilters,
   locations,
 }) => {
+  // Define standard locations
+  const standardLocations = [
+    "Zone système",
+    "Zone expérimentation",
+    "Zone fabrication",
+    "Zone démontage",
+    "Magasin",
+    "Zone de stockage",
+    "Zone stockage petits composants"
+  ];
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent>
@@ -52,9 +63,15 @@ const MobileFilterSheet: React.FC<MobileFilterSheetProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes les localisations</SelectItem>
-                {locations.map(location => (
+                {standardLocations.map(location => (
                   <SelectItem key={location} value={location}>{location}</SelectItem>
                 ))}
+                {locations
+                  .filter(loc => !standardLocations.includes(loc))
+                  .map(location => (
+                    <SelectItem key={location} value={location}>{location}</SelectItem>
+                  ))
+                }
               </SelectContent>
             </Select>
           </div>

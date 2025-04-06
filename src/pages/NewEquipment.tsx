@@ -152,11 +152,13 @@ const NewEquipment = () => {
                         <SelectValue placeholder="Sélectionner" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="workshop1">Atelier 1</SelectItem>
-                        <SelectItem value="workshop2">Atelier 2</SelectItem>
-                        <SelectItem value="lab1">Laboratoire 1</SelectItem>
-                        <SelectItem value="lab2">Laboratoire 2</SelectItem>
-                        <SelectItem value="storage">Stockage</SelectItem>
+                        <SelectItem value="zone_systeme">Zone système</SelectItem>
+                        <SelectItem value="zone_experimentation">Zone expérimentation</SelectItem>
+                        <SelectItem value="zone_fabrication">Zone fabrication</SelectItem>
+                        <SelectItem value="zone_demontage">Zone démontage</SelectItem>
+                        <SelectItem value="magasin">Magasin</SelectItem>
+                        <SelectItem value="zone_stockage">Zone de stockage</SelectItem>
+                        <SelectItem value="zone_stockage_petit">Zone stockage petits composants</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
