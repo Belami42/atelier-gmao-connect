@@ -1,7 +1,6 @@
-
 import { useState, useMemo, useEffect } from "react";
 import type { Equipment, MaintenanceTask } from "@/components/equipment/EquipmentCard";
-import { NiveauFormation } from "@/types/niveauFormation";
+import { NiveauFormationType } from "@/types/niveauFormation";
 import { toast } from "sonner";
 
 // Key for localStorage
@@ -25,11 +24,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setMonth(new Date().getMonth() + 1)),
         type: "preventive",
         completed: false,
-        niveau: "TMSPC" as NiveauFormation,
+        niveau: "TMSPC",
         competences: ["C2.1", "C3.2", "C4.1", "C5.2"]
       }
     ],
-    niveau: "TMSPC" as NiveauFormation,
+    niveau: "TMSPC",
     documentation: [
       {
         nom: "Manuel utilisateur",
@@ -59,11 +58,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 7)),
         type: "corrective",
         completed: false,
-        niveau: "1MSPC" as NiveauFormation,
+        niveau: "1MSPC",
         competences: ["C1.3", "C2.2", "C3.3", "C5.1"]
       }
     ],
-    niveau: "1MSPC" as NiveauFormation,
+    niveau: "1MSPC",
     documentation: [
       {
         nom: "Guide maintenance",
@@ -88,11 +87,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 3)),
         type: "corrective",
         completed: false,
-        niveau: "1MSPC" as NiveauFormation,
+        niveau: "1MSPC",
         competences: ["C1.2", "C2.2", "C3.3", "C4.1", "C5.2"]
       }
     ],
-    niveau: "1MSPC" as NiveauFormation,
+    niveau: "1MSPC",
     documentation: [
       {
         nom: "Manuel technique",
@@ -111,7 +110,7 @@ const initialEquipmentData: Equipment[] = [
     model: "HLP-500",
     status: "operational",
     maintenanceSchedule: [],
-    niveau: "2PMIA" as NiveauFormation,
+    niveau: "2PMIA",
     documentation: [
       {
         nom: "Fiche technique",
@@ -136,11 +135,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 14)),
         type: "preventive",
         completed: false,
-        niveau: "2PMIA" as NiveauFormation,
+        niveau: "2PMIA",
         competences: ["C2.1", "C3.2", "C5.2"]
       }
     ],
-    niveau: "2PMIA" as NiveauFormation,
+    niveau: "2PMIA",
     documentation: [
       {
         nom: "Guide d'entretien",
@@ -165,11 +164,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 21)),
         type: "improvement",
         completed: false,
-        niveau: "TMSPC" as NiveauFormation,
+        niveau: "TMSPC",
         competences: ["C1.4", "C2.1", "C3.4", "C4.3", "C5.3"]
       }
     ],
-    niveau: "TMSPC" as NiveauFormation,
+    niveau: "TMSPC",
     documentation: [
       {
         nom: "Manuel programmation",
@@ -211,7 +210,7 @@ export const useEquipmentData = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [selectedNiveau, setSelectedNiveau] = useState<NiveauFormation | null>(null);
+  const [selectedNiveau, setSelectedNiveau] = useState<NiveauFormationType | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Extract unique locations for filter options
@@ -222,7 +221,7 @@ export const useEquipmentData = () => {
   
   // Extract unique niveaux for filter options
   const niveaux = useMemo(() => 
-    [...new Set(equipmentData.map(eq => eq.niveau).filter(Boolean))] as NiveauFormation[],
+    [...new Set(equipmentData.map(eq => eq.niveau).filter(Boolean))] as NiveauFormationType[],
     [equipmentData]
   );
   

@@ -20,7 +20,7 @@ export const getNiveauFormationLabel = (niveau: NiveauFormationType): string => 
   }
 };
 
-// Add the missing function that's referenced in Users.tsx
+// Function to get display name from NiveauFormation enum or string
 export const getDisplayFromNiveauFormation = (niveau: NiveauFormationType): string => {
   return getNiveauFormationLabel(niveau);
 };

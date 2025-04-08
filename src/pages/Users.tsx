@@ -45,6 +45,14 @@ import SchoolLogo from "@/components/shared/SchoolLogo";
 import { toast } from "sonner";
 import { NiveauFormation, getDisplayFromNiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 
+interface ClassInfo {
+  id: string;
+  name: string;
+  level: string;
+  studentCount: number;
+  avatar?: string; // Added missing avatar property
+}
+
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeRole, setActiveRole] = useState("all");

@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { Equipment } from "@/components/equipment/EquipmentCard";
 import { CompetenceCode } from "@/types/mspc";
-import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
+import { NiveauFormationType } from "@/types/niveauFormation";
 import CompetencesList from "@/components/mspc/CompetencesList";
 
 type MaintenanceTaskModalProps = {
@@ -47,7 +47,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
   const [type, setType] = useState<"preventive" | "corrective" | "improvement">("preventive");
   const [date, setDate] = useState<Date | undefined>(selectedDate || undefined);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(equipmentId || "");
-  const [niveau, setNiveau] = useState<NiveauFormation>("2PMIA");
+  const [niveau, setNiveau] = useState<NiveauFormationType>("2PMIA");
   const [selectedCompetences, setSelectedCompetences] = useState<CompetenceCode[]>([]);
   const [activeTab, setActiveTab] = useState("details");
   
@@ -101,7 +101,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
     onClose();
   };
   
-  const getEquipmentNiveau = (): NiveauFormation => {
+  const getEquipmentNiveau = (): NiveauFormationType => {
     if (equipmentId) {
       const equipment = equipmentOptions.find(eq => eq.id === equipmentId);
       return equipment?.niveau || "2PMIA";
@@ -235,7 +235,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
               <Label>Niveau de formation</Label>
               <Select 
                 value={niveau} 
-                onValueChange={(value) => setNiveau(value as NiveauFormation)}
+                onValueChange={(value) => setNiveau(value as NiveauFormationType)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un niveau" />

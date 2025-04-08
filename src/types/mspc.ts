@@ -1,9 +1,9 @@
-
 // Types pour les compétences du référentiel Bac Pro MSPC
 import { NiveauFormationType, NiveauFormation } from './niveauFormation';
 
 // Re-export these types so other files importing from mspc.ts can use them
-export { NiveauFormation, NiveauFormationType };
+export { NiveauFormation };
+export type { NiveauFormationType };
 
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 

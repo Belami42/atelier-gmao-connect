@@ -28,7 +28,7 @@ export type MaintenanceTask = {
   type: "preventive" | "corrective" | "improvement";
   completed: boolean;
   description?: string;
-  niveau?: NiveauFormation;
+  niveau?: NiveauFormationType;
   competences?: CompetenceCode[];
 };
 
@@ -48,7 +48,7 @@ export type Equipment = {
   model?: string;
   status: "operational" | "maintenance" | "faulty";
   maintenanceSchedule?: MaintenanceTask[];
-  niveau?: NiveauFormation;
+  niveau?: NiveauFormationType;
   documentation?: DocumentationItem[];
 };
 
@@ -95,19 +95,19 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     if (!equipment.niveau) return null;
     
     switch (equipment.niveau) {
-      case "2nde":
+      case "2PMIA":
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
             2nde PMIA
           </Badge>
         );
-      case "1ère":
+      case "1MSPC":
         return (
           <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
             1ère MSPC
           </Badge>
         );
-      case "Terminale":
+      case "TMSPC":
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
             Terminale MSPC
