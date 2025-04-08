@@ -36,7 +36,7 @@ const Equipment = () => {
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Équipements
           </h1>
-          <SchoolLogo showDescription={false} className="hidden md:block" />
+          <SchoolLogo className="hidden md:block" />
         </div>
         <BlurryCard className="p-8 text-center">
           <div className="animate-pulse">
@@ -55,7 +55,7 @@ const Equipment = () => {
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Équipements
           </h1>
-          <SchoolLogo showDescription={false} className="hidden md:block" />
+          <SchoolLogo className="hidden md:block" />
         </div>
         <EquipmentEmptyState resetSearch={() => setSearchValue("")} />
       </div>
@@ -123,7 +123,7 @@ const Equipment = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <SchoolLogo className="hidden md:block" showDescription={true} size="small" />
+          <SchoolLogo className="hidden md:block" size="small" />
           <Button variant="secondary" className="gap-2" onClick={() => setShowQrCode(!showQrCode)}>
             <QrCode size={16} />
             <span>{showQrCode ? "Masquer QR" : "Afficher QR"}</span>

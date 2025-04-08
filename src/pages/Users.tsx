@@ -137,6 +137,23 @@ const Users = () => {
     }
   ]);
 
+  const teachers = [
+    {
+      id: "teacher1",
+      name: "Jean Dupont",
+      level: "MSPC",
+      studentCount: 24,
+      avatar: "/placeholder.svg"
+    },
+    {
+      id: "teacher2",
+      name: "Marie Leclerc",
+      level: "PMIA",
+      studentCount: 18,
+      avatar: "/placeholder.svg"
+    }
+  ];
+
   const existingGroups = classes.map(cls => cls.name);
 
   const handleAddUser = (newUser: any) => {

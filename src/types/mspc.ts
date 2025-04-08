@@ -1,5 +1,7 @@
 // Types pour les compétences du référentiel Bac Pro MSPC
-import { NiveauFormationType } from './niveauFormation';
+import { NiveauFormation, NiveauFormationType } from './niveauFormation';
+export type { NiveauFormationType };
+export { NiveauFormation };
 
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 

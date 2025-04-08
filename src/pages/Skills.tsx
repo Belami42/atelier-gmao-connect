@@ -41,6 +41,7 @@ const Skills = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [activityModalOpen, setActivityModalOpen] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   const skills = [
     {
