@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Gauge, ClipboardList, CalendarRange, Wrench, PackageSearch, BarChart, GraduationCap, FileText } from "lucide-react";
+import { Gauge, ClipboardList, CalendarRange, Wrench, PackageSearch, BarChart, GraduationCap, FileText, Settings } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarSeparator } from "@/components/ui/sidebar";
 
 const AppSidebar = () => {
@@ -48,6 +48,11 @@ const AppSidebar = () => {
       path: "/missions",
       text: "Rapports d'intervention",
       icon: <FileText className="w-5 h-5" />
+    },
+    {
+      path: "/settings",
+      text: "Paramètres",
+      icon: <Settings className="w-5 h-5" />
     }
   ];
   
