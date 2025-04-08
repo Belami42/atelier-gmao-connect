@@ -1,13 +1,14 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FileUp as FilePdf } from "lucide-react";
+import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FileUp as FilePdf, BookOpen, Calendar, CheckCircle2, XCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import StudentCompetenciesTracker from "@/components/students/StudentCompetenciesTracker";
-import { Eleve, NiveauFormation, NiveauFormationType } from "@/types/mspc";
-import { Card } from "@/components/ui/card";
+import { Eleve, NiveauFormation, NiveauFormationType, Activity, CompetenceCode } from "@/types/mspc";
+import { Card, CardContent } from "@/components/ui/card";
 import { 
   Dialog,
   DialogContent,
@@ -16,22 +17,28 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-
-import { PieChart as PieChartComponent, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import StudentSkillsChart from "@/components/students/StudentSkillsChart";
+import NewStudentForm from "@/components/students/NewStudentForm";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getDisplayFromNiveauFormation } from "@/types/niveauFormation";
 
 const StudentProgress = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState<string | undefined>(undefined);
-  const [viewMode, setViewMode] = useState<"competencies" | "activities" | "summary">("competencies");
+  const [viewMode, setViewMode] = useState<"competencies" | "activities" | "summary">("summary");
   const [exportOpen, setExportOpen] = useState(false);
+  const [newStudentModalOpen, setNewStudentModalOpen] = useState(false);
+  const [filterClass, setFilterClass] = useState<NiveauFormationType | "all">("all");
+  const [filterTeacher, setFilterTeacher] = useState<string | "all">("all");
   
   // Données fictives d'élèves pour la démonstration
-  const mockStudents: Eleve[] = [
+  const [students, setStudents] = useState<Eleve[]>([
     {
       id: "1",
       nom: "Dupont",
       prenom: "Thomas",
-      classe: "2PMIA",
+      classe: NiveauFormation.SECONDE,
       competencesAcquises: [
         {
           code: "C1.1",
@@ -58,13 +65,14 @@ const StudentProgress = () => {
           ordresTravaux: ["ot-125"]
         }
       ],
-      ordresTravauxRealises: ["ot-123", "ot-124", "ot-125"]
+      ordresTravauxRealises: ["ot-123", "ot-124", "ot-125"],
+      referent: "1" // M. Martin
     },
     {
       id: "2",
       nom: "Martin",
       prenom: "Julie",
-      classe: "1MSPC",
+      classe: NiveauFormation.PREMIERE,
       competencesAcquises: [
         {
           code: "C1.1",
@@ -99,13 +107,14 @@ const StudentProgress = () => {
           ordresTravaux: ["ot-226"]
         }
       ],
-      ordresTravauxRealises: ["ot-223", "ot-224", "ot-225", "ot-226"]
+      ordresTravauxRealises: ["ot-223", "ot-224", "ot-225", "ot-226"],
+      referent: "3" // M. Dubois
     },
     {
       id: "3",
       nom: "Dubois",
       prenom: "Lucas",
-      classe: "TMSPC",
+      classe: NiveauFormation.TERMINALE,
       competencesAcquises: [
         {
           code: "C1.1",
@@ -156,8 +165,17 @@ const StudentProgress = () => {
           ordresTravaux: ["ot-328"]
         }
       ],
-      ordresTravauxRealises: ["ot-323", "ot-324", "ot-325", "ot-326", "ot-327", "ot-328"]
+      ordresTravauxRealises: ["ot-323", "ot-324", "ot-325", "ot-326", "ot-327", "ot-328"],
+      referent: "2" // Mme Robert
     }
+  ]);
+
+  // Liste des enseignants
+  const teachers = [
+    { id: "1", name: "M. Martin" },
+    { id: "2", name: "Mme Robert" },
+    { id: "3", name: "M. Dubois" },
+    { id: "4", name: "Mme Bernard" }
   ];
   
   // Activities data
@@ -169,7 +187,9 @@ const StudentProgress = () => {
       type: "preventive",
       equipment: "Système de ventilation",
       status: "completed",
-      competences: ["C1.1"]
+      competences: ["C1.1" as CompetenceCode],
+      student: "1",
+      result: "success"
     },
     {
       id: "ot-124",
@@ -178,7 +198,9 @@ const StudentProgress = () => {
       type: "preparation",
       equipment: "Convoyeur",
       status: "completed",
-      competences: ["C2.1"]
+      competences: ["C2.1" as CompetenceCode],
+      student: "1",
+      result: "success"
     },
     {
       id: "ot-125",
@@ -187,7 +209,9 @@ const StudentProgress = () => {
       type: "monitoring",
       equipment: "Pompe hydraulique",
       status: "completed",
-      competences: ["C3.1"]
+      competences: ["C3.1" as CompetenceCode],
+      student: "1",
+      result: "success"
     },
     {
       id: "ot-223",
@@ -196,7 +220,9 @@ const StudentProgress = () => {
       type: "analysis",
       equipment: "Système automatisé",
       status: "completed",
-      competences: ["C1.1"]
+      competences: ["C1.1" as CompetenceCode],
+      student: "2",
+      result: "success"
     },
     {
       id: "ot-224",
@@ -205,7 +231,9 @@ const StudentProgress = () => {
       type: "study",
       equipment: "Système de convoyage",
       status: "completed",
-      competences: ["C1.2"]
+      competences: ["C1.2" as CompetenceCode],
+      student: "2",
+      result: "success"
     },
     {
       id: "ot-225",
@@ -214,7 +242,9 @@ const StudentProgress = () => {
       type: "corrective",
       equipment: "Moteur électrique",
       status: "completed",
-      competences: ["C2.1"]
+      competences: ["C2.1" as CompetenceCode],
+      student: "2",
+      result: "success"
     },
     {
       id: "ot-226",
@@ -223,58 +253,92 @@ const StudentProgress = () => {
       type: "preventive",
       equipment: "Moteur",
       status: "completed",
-      competences: ["C3.2"]
+      competences: ["C3.2" as CompetenceCode],
+      student: "2",
+      result: "success"
+    },
+    {
+      id: "ot-325",
+      title: "Diagnostic de panne",
+      date: "2023-10-12",
+      type: "diagnostic",
+      equipment: "Automate programmable",
+      status: "completed",
+      competences: ["C2.2" as CompetenceCode],
+      student: "3",
+      result: "success"
+    },
+    {
+      id: "ot-326",
+      title: "Réparation système",
+      date: "2023-11-03",
+      type: "corrective",
+      equipment: "Système automatisé",
+      status: "completed",
+      competences: ["C3.3" as CompetenceCode],
+      student: "3",
+      result: "success"
+    },
+    {
+      id: "ot-400",
+      title: "Test de performance",
+      date: "2024-01-15",
+      type: "testing",
+      equipment: "Banc d'essai",
+      status: "completed",
+      competences: ["C4.3" as CompetenceCode],
+      student: "3",
+      result: "failed"
     }
   ];
   
-  // Filtrer les élèves selon la recherche
-  const filteredStudents = mockStudents.filter(student => 
-    student.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    student.prenom.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filtrer les élèves selon la recherche et les filtres
+  const filteredStudents = students.filter(student => {
+    const matchesSearch = (
+      student.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.prenom.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    const matchesClassFilter = filterClass === "all" || student.classe === filterClass;
+    const matchesTeacherFilter = filterTeacher === "all" || student.referent === filterTeacher;
+    
+    return matchesSearch && matchesClassFilter && matchesTeacherFilter;
+  });
   
-  const selectedStudent = selectedStudentId ? mockStudents.find(s => s.id === selectedStudentId) : undefined;
+  const selectedStudent = selectedStudentId ? students.find(s => s.id === selectedStudentId) : undefined;
   
   // Get student's activities
   const getStudentActivities = (studentId: string) => {
-    const student = mockStudents.find(s => s.id === studentId);
-    if (!student) return [];
-    
-    return activities.filter(act => student.ordresTravauxRealises.includes(act.id));
+    if (!studentId) return [];
+    return activities.filter(act => act.student === studentId);
   };
   
   // Calculate competence stats for a student
   const getCompetenceStats = (studentId: string) => {
-    const student = mockStudents.find(s => s.id === studentId);
-    if (!student) return { total: 0, acquired: 0, discovery: 0, application: 0, mastery: 0 };
+    const student = students.find(s => s.id === studentId);
+    if (!student) return { total: 0, acquired: 0, discovery: 0, application: 0, mastery: 0, failed: 0 };
     
-    const totalCompetences = 15; // There would be a fixed total in the real app
-    const acquired = student.competencesAcquises.length;
-    const discovery = student.competencesAcquises.filter(c => c.niveau === "découverte").length;
-    const application = student.competencesAcquises.filter(c => c.niveau === "application").length;
-    const mastery = student.competencesAcquises.filter(c => c.niveau === "maîtrise").length;
+    const totalCompetences = 18; // Total number of competences in the MSPC reference
+    const acquired = student.competencesAcquises
+      .filter(c => c.niveau === "maîtrise").length;
+    const discovery = student.competencesAcquises
+      .filter(c => c.niveau === "découverte").length;
+    const application = student.competencesAcquises
+      .filter(c => c.niveau === "application").length;
     
-    return { total: totalCompetences, acquired, discovery, application, mastery };
-  };
-  
-  // Generate chart data
-  const generateChartData = (studentId: string) => {
-    const stats = getCompetenceStats(studentId);
+    // Count failed activities
+    const failed = activities
+      .filter(a => a.student === studentId && a.result === "failed")
+      .length;
     
-    return [
-      { name: "Acquises", value: stats.acquired, color: "#4ade80" },
-      { name: "Non acquises", value: stats.total - stats.acquired, color: "#f87171" }
-    ];
-  };
-  
-  const generateLevelChartData = (studentId: string) => {
-    const stats = getCompetenceStats(studentId);
-    
-    return [
-      { name: "Découverte", value: stats.discovery, color: "#60a5fa" },
-      { name: "Application", value: stats.application, color: "#818cf8" },
-      { name: "Maîtrise", value: stats.mastery, color: "#34d399" }
-    ];
+    return { 
+      total: totalCompetences, 
+      acquired,
+      discovery, 
+      application, 
+      mastery: acquired, 
+      failed
+    };
   };
 
   const handlePrint = () => {
@@ -312,6 +376,21 @@ const StudentProgress = () => {
         return "bg-gray-100";
     }
   };
+
+  const getTeacherName = (teacherId: string) => {
+    const teacher = teachers.find(t => t.id === teacherId);
+    return teacher ? teacher.name : "Non défini";
+  };
+  
+  const countStudentsByClass = (classe: NiveauFormation) => {
+    return students.filter(s => s.classe === classe).length;
+  };
+  
+  const handleAddStudent = (newStudent: Eleve) => {
+    setStudents([...students, newStudent]);
+    setSelectedStudentId(newStudent.id);
+    setViewMode("summary");
+  };
   
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -327,7 +406,7 @@ const StudentProgress = () => {
         
         <div className="flex items-center gap-4">
           <SchoolLogo className="hidden md:block" variant="mspc" />
-          <Button className="gap-2 bg-primary hover:bg-primary/90">
+          <Button className="gap-2 bg-primary hover:bg-primary/90" onClick={() => setNewStudentModalOpen(true)}>
             <Plus size={16} />
             <span>Nouvel élève</span>
           </Button>
@@ -372,7 +451,7 @@ const StudentProgress = () => {
       </div>
 
       <BlurryCard className="mb-6 p-4 bg-gradient-to-r from-gray-50 to-indigo-50">
-        <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
             <Input
@@ -383,16 +462,36 @@ const StudentProgress = () => {
             />
           </div>
           
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
-              <Filter size={16} />
-              <span>Filtres</span>
-            </Button>
+          <div className="flex gap-2 flex-wrap md:flex-nowrap">
+            <Select value={filterClass as string} onValueChange={(value) => setFilterClass(value === "all" ? "all" : value as NiveauFormation)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Classe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les classes</SelectItem>
+                <SelectItem value={NiveauFormation.SECONDE}>2nde PMIA</SelectItem>
+                <SelectItem value={NiveauFormation.PREMIERE}>1ère MSPC</SelectItem>
+                <SelectItem value={NiveauFormation.TERMINALE}>Term. MSPC</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={filterTeacher} onValueChange={setFilterTeacher}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Enseignant" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les enseignants</SelectItem>
+                {teachers.map(teacher => (
+                  <SelectItem key={teacher.id} value={teacher.id}>{teacher.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="gap-2" 
+                className="gap-2 whitespace-nowrap" 
                 disabled={!selectedStudentId}
                 onClick={() => setExportOpen(true)}
               >
@@ -427,10 +526,6 @@ const StudentProgress = () => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Users size={16} />
-              <span>Groupe</span>
-            </Button>
           </div>
         </div>
       </BlurryCard>
@@ -439,27 +534,72 @@ const StudentProgress = () => {
         <BlurryCard className="h-fit">
           <div className="p-4 border-b">
             <h3 className="font-medium">Élèves</h3>
+            <div className="flex justify-between items-center mt-2">
+              <div className="text-xs text-muted-foreground">
+                {filteredStudents.length} élève(s)
+              </div>
+              <div className="text-xs">
+                <Badge className="bg-blue-100 text-blue-800 border-blue-200 mr-2">
+                  2nde: {countStudentsByClass(NiveauFormation.SECONDE)}/30
+                </Badge>
+                <Badge className="bg-purple-100 text-purple-800 border-purple-200 mr-2">
+                  1ère: {countStudentsByClass(NiveauFormation.PREMIERE)}/30
+                </Badge>
+                <Badge className="bg-green-100 text-green-800 border-green-200">
+                  Term: {countStudentsByClass(NiveauFormation.TERMINALE)}/30
+                </Badge>
+              </div>
+            </div>
           </div>
+          
           <div className="p-4 space-y-2">
-            {filteredStudents.map(student => (
-              <button
-                key={student.id}
-                className={`w-full text-left p-3 rounded-md transition-colors ${
-                  selectedStudentId === student.id 
-                    ? "bg-primary/20 text-primary"
-                    : "hover:bg-accent/50"
-                }`}
-                onClick={() => setSelectedStudentId(student.id)}
+            {filteredStudents.length > 0 ? (
+              filteredStudents.map(student => (
+                <button
+                  key={student.id}
+                  className={`w-full text-left p-3 rounded-md transition-colors ${
+                    selectedStudentId === student.id 
+                      ? "bg-primary/20 text-primary"
+                      : "hover:bg-accent/50"
+                  }`}
+                  onClick={() => setSelectedStudentId(student.id)}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">{student.prenom} {student.nom}</span>
+                    <Badge className={`
+                      ${student.classe === NiveauFormation.SECONDE ? "bg-blue-100 text-blue-800 border-blue-200" : 
+                        student.classe === NiveauFormation.PREMIERE ? "bg-purple-100 text-purple-800 border-purple-200" : 
+                        "bg-green-100 text-green-800 border-green-200"}
+                    `}>
+                      {getDisplayFromNiveauFormation(student.classe as NiveauFormation)}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1 flex justify-between">
+                    <span>
+                      {getCompetenceStats(student.id).acquired} compétences acquises
+                    </span>
+                    <span>
+                      {getTeacherName(student.referent || "")}
+                    </span>
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                Aucun élève ne correspond aux critères de recherche
+              </div>
+            )}
+            
+            <div className="mt-4 pt-4 border-t">
+              <Button 
+                className="w-full gap-2" 
+                variant="outline"
+                onClick={() => setNewStudentModalOpen(true)}
               >
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">{student.prenom} {student.nom}</span>
-                  <span className="text-xs bg-primary/10 px-2 py-1 rounded-full">{student.classe}</span>
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {getCompetenceStats(student.id).acquired} compétences acquises sur {getCompetenceStats(student.id).total}
-                </div>
-              </button>
-            ))}
+                <Plus size={16} />
+                <span>Nouvel élève</span>
+              </Button>
+            </div>
           </div>
         </BlurryCard>
 
@@ -470,18 +610,28 @@ const StudentProgress = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-xl font-medium">{selectedStudent.prenom} {selectedStudent.nom}</h2>
-                    <p className="text-muted-foreground">{selectedStudent.classe}</p>
+                    <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                      <Badge className={`
+                        ${selectedStudent.classe === NiveauFormation.SECONDE ? "bg-blue-100 text-blue-800 border-blue-200" : 
+                          selectedStudent.classe === NiveauFormation.PREMIERE ? "bg-purple-100 text-purple-800 border-purple-200" : 
+                          "bg-green-100 text-green-800 border-green-200"}
+                      `}>
+                        {getDisplayFromNiveauFormation(selectedStudent.classe as NiveauFormation)}
+                      </Badge>
+                      <span>•</span>
+                      <span>Référent: {getTeacherName(selectedStudent.referent || "")}</span>
+                    </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setViewMode("summary")}>
+                    <Button variant={viewMode === "summary" ? "default" : "outline"} size="sm" className="gap-2" onClick={() => setViewMode("summary")}>
                       <PieChart size={16} />
                       <span>Synthèse</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setViewMode("competencies")}>
+                    <Button variant={viewMode === "competencies" ? "default" : "outline"} size="sm" className="gap-2" onClick={() => setViewMode("competencies")}>
                       <Check size={16} />
                       <span>Compétences</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="gap-2" onClick={() => setViewMode("activities")}>
+                    <Button variant={viewMode === "activities" ? "default" : "outline"} size="sm" className="gap-2" onClick={() => setViewMode("activities")}>
                       <FileText size={16} />
                       <span>Activités</span>
                     </Button>
@@ -491,60 +641,7 @@ const StudentProgress = () => {
               
               {viewMode === "summary" && (
                 <div className="p-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="text-lg font-medium mb-4">Progression globale</h3>
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChartComponent>
-                            <Pie
-                              data={generateChartData(selectedStudent.id)}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="value"
-                              nameKey="name"
-                              label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            >
-                              {generateChartData(selectedStudent.id).map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                          </PieChartComponent>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium mb-4">Niveaux d'acquisition</h3>
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChartComponent>
-                            <Pie
-                              data={generateLevelChartData(selectedStudent.id)}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="value"
-                              nameKey="name"
-                              label={({name, value}) => `${name}: ${value}`}
-                            >
-                              {generateLevelChartData(selectedStudent.id).map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                          </PieChartComponent>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
+                  <StudentSkillsChart student={selectedStudent} />
                   
                   <div className="mt-8">
                     <h3 className="text-lg font-medium mb-4">Statistiques</h3>
@@ -569,6 +666,36 @@ const StudentProgress = () => {
                           {Math.round((getCompetenceStats(selectedStudent.id).acquired / getCompetenceStats(selectedStudent.id).total) * 100)}%
                         </div>
                       </Card>
+                    </div>
+                  </div>
+
+                  <div className="mt-8">
+                    <h3 className="text-lg font-medium mb-4">Activités récentes</h3>
+                    <div className="space-y-2">
+                      {getStudentActivities(selectedStudent.id).slice(0, 3).map((activity) => (
+                        <div key={activity.id} className="p-3 border rounded-lg flex justify-between items-center">
+                          <div>
+                            <div className="font-medium">{activity.title}</div>
+                            <div className="text-sm text-muted-foreground">{activity.date}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {activity.competences.map(code => (
+                              <Badge key={code} variant="outline" className="bg-blue-50">{code}</Badge>
+                            ))}
+                            {activity.result === "success" ? (
+                              <CheckCircle2 size={18} className="text-green-500" />
+                            ) : activity.result === "failed" ? (
+                              <XCircle size={18} className="text-red-500" />
+                            ) : null}
+                          </div>
+                        </div>
+                      ))}
+                      {getStudentActivities(selectedStudent.id).length > 3 && (
+                        <Button variant="outline" className="w-full gap-2 mt-2" onClick={() => setViewMode("activities")}>
+                          <FileText size={16} />
+                          <span>Voir toutes les activités ({getStudentActivities(selectedStudent.id).length})</span>
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -597,11 +724,20 @@ const StudentProgress = () => {
                   
                   <div className="space-y-4">
                     {getStudentActivities(selectedStudent.id).length > 0 ? (
-                      getStudentActivities(selectedStudent.id).map(activity => (
-                        <div key={activity.id} className="border rounded-lg p-4 hover:bg-accent/5">
+                      getStudentActivities(selectedStudent.id).map((activity) => (
+                        <div key={activity.id} className={`border rounded-lg p-4 hover:bg-accent/5 ${
+                          activity.result === "failed" ? "border-red-200 bg-red-50" : ""
+                        }`}>
                           <div className="flex justify-between">
                             <h4 className="font-medium">{activity.title}</h4>
-                            <span className="text-sm bg-primary/10 px-2 py-1 rounded-full">{activity.date}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm bg-primary/10 px-2 py-1 rounded-full">{activity.date}</span>
+                              {activity.result === "success" ? (
+                                <Badge className="bg-green-100 text-green-800 border-green-200">Réussie</Badge>
+                              ) : activity.result === "failed" ? (
+                                <Badge className="bg-red-100 text-red-800 border-red-200">Échouée</Badge>
+                              ) : null}
+                            </div>
                           </div>
                           <p className="text-sm text-muted-foreground mt-1">Équipement: {activity.equipment}</p>
                           
@@ -612,16 +748,26 @@ const StudentProgress = () => {
                                 <div key={comp} className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(competence.niveau)}`}>
                                   {comp} - {getStatus(competence.niveau)}
                                 </div>
-                              ) : null;
+                              ) : (
+                                <div key={comp} className="text-xs px-2 py-1 rounded-full border bg-gray-100">
+                                  {comp} - Non évaluée
+                                </div>
+                              );
                             })}
                           </div>
                           
-                          <div className="mt-3 text-xs text-right">
-                            Validé par: <span className="font-medium">
-                              {selectedStudent.competencesAcquises.find(c => 
-                                activity.competences.includes(c.code)
-                              )?.valideePar || "Non spécifié"}
-                            </span>
+                          <div className="mt-3 pt-3 border-t flex justify-between items-center">
+                            <div className="flex items-center gap-2 text-xs">
+                              <Calendar size={14} className="text-muted-foreground" />
+                              <span className="text-muted-foreground">{activity.date}</span>
+                            </div>
+                            <div className="text-xs">
+                              Validé par: <span className="font-medium">
+                                {selectedStudent.competencesAcquises.find(c => 
+                                  activity.competences.includes(c.code)
+                                )?.valideePar || "Non spécifié"}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       ))
@@ -643,9 +789,25 @@ const StudentProgress = () => {
             <p className="text-muted-foreground mt-2">
               Cliquez sur un élève dans la liste pour afficher sa progression
             </p>
+            <Button 
+              className="mt-6 gap-2" 
+              variant="outline"
+              onClick={() => setNewStudentModalOpen(true)}
+            >
+              <Plus size={16} />
+              <span>Ajouter un nouvel élève</span>
+            </Button>
           </BlurryCard>
         )}
       </div>
+      
+      {/* New Student Modal */}
+      <NewStudentForm 
+        open={newStudentModalOpen}
+        onOpenChange={setNewStudentModalOpen}
+        onStudentCreated={handleAddStudent}
+        existingStudents={students}
+      />
     </div>
   );
 };

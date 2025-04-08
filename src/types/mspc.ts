@@ -170,6 +170,7 @@ export interface Eleve {
   classe: NiveauFormationType;
   competencesAcquises: CompetenceAcquise[];
   ordresTravauxRealises: string[];
+  referent?: string; // ID or name of the teacher responsible for this student
 }
 
 export interface CompetenceAcquise {
@@ -199,4 +200,15 @@ export interface Activity {
   isValidated: boolean;
   validatedBy?: string;
   createdAt: string;
+  status?: "success" | "failed" | "in_progress";
+}
+
+// Interface for a teacher/instructor 
+export interface Enseignant {
+  id: string;
+  nom: string;
+  prenom: string;
+  specialites: string[];
+  classes: NiveauFormationType[];
+  email?: string;
 }
