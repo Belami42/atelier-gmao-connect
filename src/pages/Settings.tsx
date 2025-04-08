@@ -9,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import BlurryCard from "@/components/ui/BlurryCard"; // Updated import path
+import BlurryCard from "@/components/ui/BlurryCard"; // Corrected import path
 import { PageHeader } from "@/components/ui/page-header";
+import UserManagementTab from "@/components/settings/UserManagementTab";
+import ActivitiesManagementTab from "@/components/settings/ActivitiesManagementTab";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -41,10 +43,12 @@ const Settings = () => {
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
+        <TabsList className="w-full">
           <TabsTrigger value="general">Général</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="appearance">Apparence</TabsTrigger>
+          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+          <TabsTrigger value="activities">Activités</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="space-y-4">
@@ -165,6 +169,14 @@ const Settings = () => {
               <Button onClick={handleSaveAppearance}>Enregistrer</Button>
             </div>
           </BlurryCard>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-4">
+          <UserManagementTab />
+        </TabsContent>
+
+        <TabsContent value="activities" className="space-y-4">
+          <ActivitiesManagementTab />
         </TabsContent>
       </Tabs>
     </div>
