@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +34,7 @@ import {
   Calendar,
   Check,
   Clipboard,
+  PackageOpen,
 } from "lucide-react";
 
 const Stocks = () => {
@@ -106,7 +108,10 @@ const Stocks = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">Gestion des Stocks</h1>
+      <div className="flex items-center mb-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+        <PackageOpen className="h-10 w-10 text-primary mr-4" />
+        <h1 className="text-3xl font-bold">Gestion des Stocks</h1>
+      </div>
       
       <Tabs 
         defaultValue="reapprovisionnements" 
@@ -114,90 +119,90 @@ const Stocks = () => {
         value={activeTab}
         onValueChange={setActiveTab}
       >
-        <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-          <h2 className="text-lg font-medium mb-4 px-2">Modules de gestion des stocks</h2>
+        <div className="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-5">
+          <h2 className="text-xl font-bold mb-4 px-2 text-primary">Modules de gestion des stocks</h2>
           
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 w-full">
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-3 w-full">
             <TabsTrigger 
               value="reapprovisionnements" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "reapprovisionnements" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "reapprovisionnements" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <AlertTriangle className="w-6 h-6 mb-2" />
-              <span className="text-center">Réapprovisionnements</span>
+              <AlertTriangle className={`w-7 h-7 mb-2 ${activeTab === "reapprovisionnements" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Réapprovisionnements</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="mouvements" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "mouvements" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "mouvements" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <FileText className="w-6 h-6 mb-2" />
-              <span className="text-center">Mouvements</span>
+              <FileText className={`w-7 h-7 mb-2 ${activeTab === "mouvements" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Mouvements</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="inventaires" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "inventaires" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "inventaires" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <ChartBar className="w-6 h-6 mb-2" />
-              <span className="text-center">Inventaires</span>
+              <ChartBar className={`w-7 h-7 mb-2 ${activeTab === "inventaires" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Inventaires</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="valorisation" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "valorisation" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "valorisation" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <EuroIcon className="w-6 h-6 mb-2" />
-              <span className="text-center">Valorisation</span>
+              <EuroIcon className={`w-7 h-7 mb-2 ${activeTab === "valorisation" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Valorisation</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="fournisseurs" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "fournisseurs" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "fournisseurs" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <Users className="w-6 h-6 mb-2" />
-              <span className="text-center">Fournisseurs</span>
+              <Users className={`w-7 h-7 mb-2 ${activeTab === "fournisseurs" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Fournisseurs</span>
             </TabsTrigger>
           </TabsList>
           
-          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 w-full mt-2">
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-3 w-full mt-3">
             <TabsTrigger 
               value="historique" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "historique" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "historique" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <History className="w-6 h-6 mb-2" />
-              <span className="text-center">Historique</span>
+              <History className={`w-7 h-7 mb-2 ${activeTab === "historique" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Historique</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="magasins" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "magasins" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "magasins" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <Building2 className="w-6 h-6 mb-2" />
-              <span className="text-center">Multi-magasins</span>
+              <Building2 className={`w-7 h-7 mb-2 ${activeTab === "magasins" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Multi-magasins</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="dangerosite" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "dangerosite" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "dangerosite" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <AlertOctagon className="w-6 h-6 mb-2" />
-              <span className="text-center">Dangerosité</span>
+              <AlertOctagon className={`w-7 h-7 mb-2 ${activeTab === "dangerosite" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Dangerosité</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="techniques" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "techniques" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "techniques" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <Settings2 className="w-6 h-6 mb-2" />
-              <span className="text-center">Données techniques</span>
+              <Settings2 className={`w-7 h-7 mb-2 ${activeTab === "techniques" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Données techniques</span>
             </TabsTrigger>
             
             <TabsTrigger 
               value="localisation" 
-              className={`flex flex-col items-center justify-center p-4 h-24 ${activeTab === "localisation" ? "bg-primary/20" : ""}`}
+              className={`flex flex-col items-center justify-center p-4 h-24 rounded-lg ${activeTab === "localisation" ? "bg-primary/20 border border-primary/30" : "hover:bg-muted/50"}`}
             >
-              <MapPin className="w-6 h-6 mb-2" />
-              <span className="text-center">Localisation</span>
+              <MapPin className={`w-7 h-7 mb-2 ${activeTab === "localisation" ? "text-primary" : ""}`} />
+              <span className="text-center font-medium">Localisation</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -205,72 +210,75 @@ const Stocks = () => {
         <TabsContent value="reapprovisionnements">
           <BlurryCard>
             <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold">Articles sous le seuil d'alerte</h2>
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm">
+              <div className="flex justify-between items-center mb-5">
+                <h2 className="text-2xl font-bold text-primary flex items-center">
+                  <AlertTriangle className="mr-3 h-6 w-6" />
+                  Articles sous le seuil d'alerte
+                </h2>
+                <div className="flex space-x-3">
+                  <Button variant="outline" size="sm" className="flex items-center">
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Actualiser
                   </Button>
-                  <Button onClick={openOrderModal}>
+                  <Button onClick={openOrderModal} className="bg-primary hover:bg-primary/90 flex items-center">
                     <Clipboard className="w-4 h-4 mr-2" />
                     Générer commandes
                   </Button>
                 </div>
               </div>
 
-              <Alert className="mb-4">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Attention</AlertTitle>
-                <AlertDescription>
+              <Alert className="mb-5 border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800">
+                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <AlertTitle className="font-bold text-base">Attention</AlertTitle>
+                <AlertDescription className="text-sm mt-1">
                   {lowStockItems.length} articles sont en dessous du seuil minimal. Une commande est recommandée.
                 </AlertDescription>
               </Alert>
 
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex justify-between items-center mb-5">
                 <div className="relative w-64">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher..."
-                    className="pl-8"
+                    placeholder="Rechercher un article..."
+                    className="pl-10"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex items-center">
                   <Filter className="w-4 h-4 mr-2" />
                   Filtres
                 </Button>
               </div>
 
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-hidden shadow-sm">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-muted/50">
-                      <th className="text-left p-3 font-medium">Désignation</th>
-                      <th className="text-right p-3 font-medium">Stock actuel</th>
-                      <th className="text-right p-3 font-medium">Seuil</th>
-                      <th className="text-left p-3 font-medium">Unité</th>
-                      <th className="text-left p-3 font-medium">Fournisseur</th>
-                      <th className="text-center p-3 font-medium">Actions</th>
+                    <tr className="bg-primary/5 border-b">
+                      <th className="text-left p-4 font-semibold">Désignation</th>
+                      <th className="text-right p-4 font-semibold">Stock actuel</th>
+                      <th className="text-right p-4 font-semibold">Seuil</th>
+                      <th className="text-left p-4 font-semibold">Unité</th>
+                      <th className="text-left p-4 font-semibold">Fournisseur</th>
+                      <th className="text-center p-4 font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {lowStockItems.map((item) => (
-                      <tr key={item.id} className="border-t">
-                        <td className="p-3">{item.name}</td>
-                        <td className="p-3 text-right">
-                          <Badge variant="destructive">{item.currentStock}</Badge>
+                      <tr key={item.id} className="border-t hover:bg-muted/30 transition-colors">
+                        <td className="p-4 font-medium">{item.name}</td>
+                        <td className="p-4 text-right">
+                          <Badge variant="destructive" className="font-bold">{item.currentStock}</Badge>
                         </td>
-                        <td className="p-3 text-right">{item.threshold}</td>
-                        <td className="p-3">{item.unit}</td>
-                        <td className="p-3">{item.supplier}</td>
-                        <td className="p-3 text-center">
+                        <td className="p-4 text-right">{item.threshold}</td>
+                        <td className="p-4">{item.unit}</td>
+                        <td className="p-4">{item.supplier}</td>
+                        <td className="p-4 text-center">
                           <div className="flex justify-center space-x-2">
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Ajouter au stock">
                               <Plus className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Modifier l'article">
                               <Edit className="w-4 h-4" />
                             </Button>
                           </div>
