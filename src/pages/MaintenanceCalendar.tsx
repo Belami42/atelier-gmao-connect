@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, GraduationCap, BookOpen } from "lucide-react";
@@ -125,7 +126,8 @@ const MaintenanceCalendar = () => {
               >
                 {task.niveau && (
                   <Badge variant="outline" className="text-[10px] h-4 px-1 py-0">
-                    {task.niveau === "2nde" ? "2" : task.niveau === "1ère" ? "1" : "T"}
+                    {task.niveau === NiveauFormation.SECONDE ? "2" : 
+                     task.niveau === NiveauFormation.PREMIERE ? "1" : "T"}
                   </Badge>
                 )}
                 <span className="truncate">{task.title}</span>
@@ -147,7 +149,7 @@ const MaintenanceCalendar = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+    <div className="max-w-7xl mx-auto px-4 py-6 pt-6 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
@@ -287,28 +289,28 @@ const MaintenanceCalendar = () => {
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "2PMIA" ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.SECONDE ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-blue-50 hover:bg-blue-100 text-blue-800 border-blue-200"
-                  onClick={() => setSelectedNiveau("2PMIA")}
+                  onClick={() => setSelectedNiveau(NiveauFormation.SECONDE)}
                 >
                   2nde PMIA
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "1MSPC" ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.PREMIERE ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-purple-50 hover:bg-purple-100 text-purple-800 border-purple-200"
-                  onClick={() => setSelectedNiveau("1MSPC")}
+                  onClick={() => setSelectedNiveau(NiveauFormation.PREMIERE)}
                 >
                   1ère MSPC
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === "TMSPC" ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.TERMINALE ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-green-50 hover:bg-green-100 text-green-800 border-green-200"
-                  onClick={() => setSelectedNiveau("TMSPC")}
+                  onClick={() => setSelectedNiveau(NiveauFormation.TERMINALE)}
                 >
                   Term. MSPC
                 </Button>

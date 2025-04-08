@@ -39,7 +39,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+    <div className="max-w-7xl mx-auto px-4 py-6 pt-6 pb-16">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">

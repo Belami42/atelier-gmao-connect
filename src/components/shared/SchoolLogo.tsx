@@ -6,7 +6,7 @@ interface SchoolLogoProps {
   className?: string;
   showDescription?: boolean;
   size?: "small" | "medium" | "large" | "xlarge";
-  variant?: "default" | "mspc";
+  variant?: "default" | "mspc" | "top";
 }
 
 const SchoolLogo: React.FC<SchoolLogoProps> = ({ 
@@ -20,6 +20,29 @@ const SchoolLogo: React.FC<SchoolLogoProps> = ({
     size === "large" ? "w-32 h-32" : 
     size === "small" ? "w-16 h-16" : 
     "w-24 h-24"; // medium
+  
+  // Different styling for the top of page variant
+  if (variant === "top") {
+    return (
+      <div className={`bg-gradient-to-r from-gray-800 to-blue-900 w-full py-2 px-4 flex justify-center items-center ${className}`}>
+        <div className="flex items-center gap-3">
+          <img 
+            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+            alt="Logo du Lycée"
+            className="h-12 w-12 drop-shadow-md" 
+          />
+          <div className="text-white">
+            <h3 className="text-lg font-medium">Lycée Professionnel</h3>
+            {variant === "mspc" && (
+              <p className="text-xs text-white/80">
+                Bac Pro Maintenance des Systèmes de Production Connectés
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   const gradientClass = variant === "mspc" 
     ? "bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600" 

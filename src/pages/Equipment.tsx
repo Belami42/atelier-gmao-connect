@@ -31,7 +31,7 @@ const Equipment = () => {
 
   if (!equipmentData) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-6 pb-16">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Équipements
@@ -50,7 +50,7 @@ const Equipment = () => {
 
   if (!equipmentData || equipmentData.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-6 pb-16">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
             Équipements
@@ -90,7 +90,7 @@ const Equipment = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+    <div className="max-w-7xl mx-auto px-4 py-6 pt-6 pb-16">
       {/* Technical Equipment Banner - Now at the top */}
       <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
         <div className="absolute inset-0 flex items-center justify-center">

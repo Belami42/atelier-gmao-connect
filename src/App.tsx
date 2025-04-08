@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppSidebar from "@/components/layout/AppSidebar";
 import Footer from "@/components/layout/Footer";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
@@ -32,6 +33,8 @@ function App() {
         <div className="flex min-h-screen w-full bg-background">
           <AppSidebar />
           <SidebarInset className="pb-12">
+            {/* Top logo banner that appears on every page */}
+            <SchoolLogo variant="top" className="sticky top-0 z-50" />
             <div className="container px-4 py-6 md:px-6 lg:px-8">
               <Routes>
                 <Route path="/" element={<Index />} />

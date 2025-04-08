@@ -10,7 +10,7 @@ import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const Index = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 pt-24 pb-16">
+    <div className="max-w-7xl mx-auto px-4 py-8 pt-6 pb-16">
       <div className="text-center mb-10 max-w-3xl mx-auto">
         <div className="mb-8 flex justify-center">
           <img 

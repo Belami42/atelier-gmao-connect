@@ -85,7 +85,7 @@ const Missions = () => {
   const displayMissions = missions.length > 0 ? filteredMissions : [...sampleMissions, ...filteredMissions];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 pt-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
