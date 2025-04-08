@@ -1,13 +1,12 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FileUp as FilePdf, BookOpen, Calendar, CheckCircle2, XCircle } from "lucide-react";
+import { Search, Plus, FileText, Users, Filter, FileUp, Printer, PieChart, Check, FileSpreadsheet, FileUp as FilePdf, BookOpen, Calendar, CheckCircle2, XCircle, ChevronDown, List, Activity } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import StudentCompetenciesTracker from "@/components/students/StudentCompetenciesTracker";
-import { Eleve, NiveauFormation, NiveauFormationType, Activity, CompetenceCode } from "@/types/mspc";
+import { Eleve, NiveauFormation, NiveauFormationType, Activity as ActivityType, CompetenceCode } from "@/types/mspc";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Dialog,
@@ -22,6 +21,14 @@ import NewStudentForm from "@/components/students/NewStudentForm";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getDisplayFromNiveauFormation } from "@/types/niveauFormation";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const StudentProgress = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,7 +39,6 @@ const StudentProgress = () => {
   const [filterClass, setFilterClass] = useState<NiveauFormationType | "all">("all");
   const [filterTeacher, setFilterTeacher] = useState<string | "all">("all");
   
-  // Données fictives d'élèves pour la démonstration
   const [students, setStudents] = useState<Eleve[]>([
     {
       id: "1",
@@ -170,7 +176,6 @@ const StudentProgress = () => {
     }
   ]);
 
-  // Liste des enseignants
   const teachers = [
     { id: "1", name: "M. Martin" },
     { id: "2", name: "Mme Robert" },
@@ -178,7 +183,6 @@ const StudentProgress = () => {
     { id: "4", name: "Mme Bernard" }
   ];
   
-  // Activities data
   const activities = [
     {
       id: "ot-123",
@@ -292,7 +296,6 @@ const StudentProgress = () => {
     }
   ];
   
-  // Filtrer les élèves selon la recherche et les filtres
   const filteredStudents = students.filter(student => {
     const matchesSearch = (
       student.nom.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -307,18 +310,16 @@ const StudentProgress = () => {
   
   const selectedStudent = selectedStudentId ? students.find(s => s.id === selectedStudentId) : undefined;
   
-  // Get student's activities
   const getStudentActivities = (studentId: string) => {
     if (!studentId) return [];
     return activities.filter(act => act.student === studentId);
   };
   
-  // Calculate competence stats for a student
   const getCompetenceStats = (studentId: string) => {
     const student = students.find(s => s.id === studentId);
     if (!student) return { total: 0, acquired: 0, discovery: 0, application: 0, mastery: 0, failed: 0 };
     
-    const totalCompetences = 18; // Total number of competences in the MSPC reference
+    const totalCompetences = 18;
     const acquired = student.competencesAcquises
       .filter(c => c.niveau === "maîtrise").length;
     const discovery = student.competencesAcquises
@@ -326,7 +327,6 @@ const StudentProgress = () => {
     const application = student.competencesAcquises
       .filter(c => c.niveau === "application").length;
     
-    // Count failed activities
     const failed = activities
       .filter(a => a.student === studentId && a.result === "failed")
       .length;
@@ -622,6 +622,59 @@ const StudentProgress = () => {
                       <span>Référent: {getTeacherName(selectedStudent.referent || "")}</span>
                     </div>
                   </div>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="gap-2">
+                        <Activity size={16} />
+                        <span>Activités</span>
+                        <ChevronDown size={14} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[350px]">
+                      <DropdownMenuLabel>Activités de l'élève</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {getStudentActivities(selectedStudent.id).length > 0 ? (
+                        getStudentActivities(selectedStudent.id).map((activity) => (
+                          <DropdownMenuItem key={activity.id} className="py-2 px-3 cursor-pointer">
+                            <div className="flex flex-col w-full">
+                              <div className="flex justify-between items-center">
+                                <span className="font-medium">{activity.title}</span>
+                                {activity.result === "success" ? (
+                                  <Badge variant="outline" className="bg-green-50 text-green-700">Réussie</Badge>
+                                ) : activity.result === "failed" ? (
+                                  <Badge variant="outline" className="bg-red-50 text-red-700">Échouée</Badge>
+                                ) : null}
+                              </div>
+                              <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                                <Calendar size={12} /> 
+                                <span>{activity.date}</span>
+                                <span className="px-1">•</span>
+                                <span>{activity.equipment}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {activity.competences.map(code => (
+                                  <Badge key={code} variant="outline" className="text-xs px-1 py-0 h-5 bg-blue-50">{code}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </DropdownMenuItem>
+                        ))
+                      ) : (
+                        <div className="text-center py-4 px-2 text-muted-foreground text-sm">
+                          Aucune activité enregistrée pour cet élève
+                        </div>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="cursor-pointer justify-center" 
+                        onClick={() => setViewMode("activities")}
+                      >
+                        <span className="text-primary font-medium">Voir toutes les activités</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
                   <div className="flex gap-2">
                     <Button variant={viewMode === "summary" ? "default" : "outline"} size="sm" className="gap-2" onClick={() => setViewMode("summary")}>
                       <PieChart size={16} />
@@ -801,7 +854,6 @@ const StudentProgress = () => {
         )}
       </div>
       
-      {/* New Student Modal */}
       <NewStudentForm 
         open={newStudentModalOpen}
         onOpenChange={setNewStudentModalOpen}

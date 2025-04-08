@@ -2,13 +2,13 @@
 export enum NiveauFormation {
   SECONDE = "2PMIA",
   PREMIERE = "1MSPC",
-  TERMINALE = "TMSPC",
+  TERMINALE = "TMSPC"
 }
 
-export type NiveauFormationType = NiveauFormation | null;
+export type NiveauFormationType = NiveauFormation;
 
-export const getDisplayFromNiveauFormation = (niveau: NiveauFormation): string => {
-  switch (niveau) {
+export function getDisplayFromNiveauFormation(niveau: NiveauFormation): string {
+  switch(niveau) {
     case NiveauFormation.SECONDE:
       return "2nde PMIA";
     case NiveauFormation.PREMIERE:
@@ -16,6 +16,6 @@ export const getDisplayFromNiveauFormation = (niveau: NiveauFormation): string =
     case NiveauFormation.TERMINALE:
       return "Term. MSPC";
     default:
-      return "Non défini";
+      return niveau;
   }
-};
+}

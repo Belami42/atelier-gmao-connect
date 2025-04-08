@@ -1,168 +1,156 @@
+export enum NiveauFormation {
+  SECONDE = "2PMIA",
+  PREMIERE = "1MSPC",
+  TERMINALE = "TMSPC"
+}
 
-// Types pour les compétences du référentiel Bac Pro MSPC
-import { NiveauFormation, NiveauFormationType } from './niveauFormation';
-export { NiveauFormation };
-export type { NiveauFormationType };
+export type NiveauFormationType = NiveauFormation;
 
-export type CompetenceCode = 
-  | "C1.1" | "C1.2" | "C1.3" | "C1.4" 
-  | "C2.1" | "C2.2" | "C2.3" | "C2.4" 
-  | "C3.1" | "C3.2" | "C3.3" | "C3.4" 
-  | "C4.1" | "C4.2" | "C4.3" 
-  | "C5.1" | "C5.2" | "C5.3";
+export function getDisplayFromNiveauFormation(niveau: NiveauFormation): string {
+  switch(niveau) {
+    case NiveauFormation.SECONDE:
+      return "2nde PMIA";
+    case NiveauFormation.PREMIERE:
+      return "1ère MSPC";
+    case NiveauFormation.TERMINALE:
+      return "Term. MSPC";
+    default:
+      return niveau;
+  }
+}
 
-export type TypeMaintenance = "correctif" | "preventif_systematique" | "preventif_conditionnel" | "amelioratif";
+export type CompetenceCode =
+  | "C1.1"
+  | "C1.2"
+  | "C1.3"
+  | "C2.1"
+  | "C2.2"
+  | "C2.3"
+  | "C3.1"
+  | "C3.2"
+  | "C3.3"
+  | "C4.1"
+  | "C4.2"
+  | "C4.3"
+  | "C5.1"
+  | "C5.2"
+  | "C5.3";
 
 export interface Competence {
   code: CompetenceCode;
   libelle: string;
   description: string;
-  niveau: NiveauFormationType[];
+  niveau: ("2PMIA" | "1MSPC" | "TMSPC")[];
 }
 
-// Liste des compétences du référentiel
 export const COMPETENCES_MSPC: Competence[] = [
   {
     code: "C1.1",
-    libelle: "Analyser le fonctionnement et l'organisation d'un système",
-    description: "Observer et analyser le fonctionnement d'un système pour comprendre sa structure et son organisation.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Analyser le fonctionnement d’un système",
+    description:
+      "Identifier les constituants et leurs liaisons, les entrées/sorties, les fonctions assurées.",
+    niveau: ["2PMIA", "1MSPC", "TMSPC"],
   },
   {
     code: "C1.2",
-    libelle: "Analyser les solutions mécaniques réalisant les fonctions techniques",
-    description: "Étudier les mécanismes et composants mécaniques pour comprendre leur rôle et fonctionnement.",
-    niveau: [NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Énoncer des hypothèses",
+    description:
+      "Proposer des causes possibles suite à un dysfonctionnement observé.",
+    niveau: ["1MSPC", "TMSPC"],
   },
   {
     code: "C1.3",
-    libelle: "Analyser les solutions de gestion, de distribution, de conversion des énergies pneumatique, hydraulique et électrique",
-    description: "Comprendre les systèmes de distribution d'énergie et leur fonctionnement.",
-    niveau: [NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
-  },
-  {
-    code: "C1.4",
-    libelle: "Analyser les solutions de traitement des informations",
-    description: "Étudier les systèmes d'acquisition, traitement et transmission des informations.",
-    niveau: [NiveauFormation.TERMINALE]
+    libelle: "Valider une solution technique",
+    description:
+      "Comparer les performances attendues et mesurées, contrôler la conformité par rapport au cahier des charges.",
+    niveau: ["TMSPC"],
   },
   {
     code: "C2.1",
-    libelle: "Préparer son intervention",
-    description: "Rassembler les informations, outils et pièces nécessaires avant d'intervenir.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Organiser une intervention",
+    description:
+      "Préparer les outils, les équipements de contrôle, les pièces de rechange, les documents techniques.",
+    niveau: ["2PMIA", "1MSPC"],
   },
   {
     code: "C2.2",
-    libelle: "Émettre des hypothèses, rechercher et identifier la ou les causes d'un dysfonctionnement",
-    description: "Analyser les symptômes et chercher l'origine d'une panne.",
-    niveau: [NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Planifier une activité",
+    description:
+      "Établir un planning des tâches à réaliser en tenant compte des contraintes de temps, de ressources et de sécurité.",
+    niveau: ["1MSPC", "TMSPC"],
   },
   {
     code: "C2.3",
-    libelle: "Organiser son intervention en toute sécurité",
-    description: "Planifier les étapes d'intervention en respectant les consignes de sécurité.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
-  },
-  {
-    code: "C2.4",
-    libelle: "Proposer et justifier une solution d'amélioration",
-    description: "Suggérer des modifications pour optimiser le système.",
-    niveau: [NiveauFormation.TERMINALE]
+    libelle: "Gérer les priorités",
+    description:
+      "Identifier les actions urgentes et importantes, adapter l’organisation en fonction des aléas.",
+    niveau: ["TMSPC"],
   },
   {
     code: "C3.1",
-    libelle: "Réaliser des opérations de surveillance et d'inspection",
-    description: "Effectuer des relevés, mesures et observations régulières sur un équipement.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Réaliser une intervention suivant un protocole",
+    description:
+      "Appliquer les procédures de maintenance, utiliser les instruments de mesure, respecter les consignes de sécurité.",
+    niveau: ["2PMIA", "1MSPC"],
   },
   {
     code: "C3.2",
-    libelle: "Réaliser des opérations de maintenance préventive",
-    description: "Effectuer les tâches d'entretien planifiées selon un calendrier établi.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Mettre en œuvre une amélioration",
+    description:
+      "Modifier un réglage, remplacer un composant, optimiser un paramètre pour améliorer les performances.",
+    niveau: ["1MSPC", "TMSPC"],
   },
   {
     code: "C3.3",
-    libelle: "Réaliser des opérations de maintenance corrective",
-    description: "Réparer un équipement suite à une panne ou dysfonctionnement.",
-    niveau: [NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
-  },
-  {
-    code: "C3.4",
-    libelle: "Réaliser des opérations d'adaptation et d'amélioration",
-    description: "Mettre en œuvre des modifications pour optimiser un système.",
-    niveau: [NiveauFormation.TERMINALE]
+    libelle: "Effectuer une remise en service",
+    description:
+      "Contrôler le bon fonctionnement après une intervention, réinitialiser les systèmes, vérifier les sécurités.",
+    niveau: ["TMSPC"],
   },
   {
     code: "C4.1",
-    libelle: "Réaliser les contrôles et mesures liés à l'intervention",
-    description: "Vérifier le bon fonctionnement après intervention.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Contrôler la qualité d’une intervention",
+    description:
+      "Vérifier la conformité par rapport aux normes, aux spécifications constructeur, aux règles de l’art.",
+    niveau: ["2PMIA", "1MSPC"],
   },
   {
     code: "C4.2",
-    libelle: "Analyser les résultats des mesures et des contrôles",
-    description: "Interpréter les données mesurées pour évaluer l'état du système.",
-    niveau: [NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Diagnostiquer un dysfonctionnement",
+    description:
+      "Identifier les causes possibles, localiser la panne, proposer des solutions de réparation.",
+    niveau: ["1MSPC", "TMSPC"],
   },
   {
     code: "C4.3",
-    libelle: "Valider le bon fonctionnement du système",
-    description: "Confirmer que le système fonctionne correctement après intervention.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Valider le résultat d’un contrôle",
+    description:
+      "Interpréter les données mesurées, comparer avec les seuils d’acceptabilité, conclure sur la validité.",
+    niveau: ["TMSPC"],
   },
   {
     code: "C5.1",
-    libelle: "Signaler, communiquer, rendre compte",
-    description: "Transmettre les informations pertinentes suite à une intervention.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Communiquer oralement",
+    description:
+      "Décrire une situation, expliquer une démarche, argumenter un choix.",
+    niveau: ["2PMIA", "1MSPC"],
   },
   {
     code: "C5.2",
-    libelle: "Renseigner les documents de maintenance",
-    description: "Compléter les fiches d'intervention et autres documents de suivi.",
-    niveau: [NiveauFormation.SECONDE, NiveauFormation.PREMIERE, NiveauFormation.TERMINALE]
+    libelle: "Rédiger un compte rendu",
+    description:
+      "Décrire les opérations réalisées, les résultats obtenus, les problèmes rencontrés.",
+    niveau: ["1MSPC", "TMSPC"],
   },
   {
     code: "C5.3",
-    libelle: "Actualiser les documents techniques",
-    description: "Mettre à jour les schémas et documentations suite à des modifications.",
-    niveau: [NiveauFormation.TERMINALE]
-  }
+    libelle: "Transmettre des informations",
+    description:
+      "Utiliser les outils numériques, les supports visuels, les schémas, les notices.",
+    niveau: ["TMSPC"],
+  },
 ];
 
-// Types pour les ordres de travail MSPC
-export interface OrdreTravail {
-  id: string;
-  numero: string;
-  equipementId: string;
-  typeMaintenance: TypeMaintenance;
-  description: string;
-  priorite: "basse" | "normale" | "haute" | "urgente";
-  dateCreation: Date | string;
-  dateSouhaitee: Date | string;
-  technicienAssigne?: string;
-  statut: "cree" | "assigne" | "en_cours" | "attente_pieces" | "realise" | "cloture" | "valide";
-  rapport?: RapportIntervention;
-  competencesRequises: CompetenceCode[];
-  niveau: NiveauFormationType;
-}
-
-export interface RapportIntervention {
-  dateDebut: Date | string;
-  dateFin: Date | string;
-  diagnostic?: string;
-  actionsRealisees: string[];
-  piecesUtilisees: string[];
-  tempsPasse: number; // en minutes
-  observations?: string;
-  competencesMobilisees: CompetenceCode[];
-  valide: boolean;
-  validePar?: string;
-}
-
-// Structure pour le suivi des élèves
 export interface Eleve {
   id: string;
   nom: string;
@@ -170,45 +158,26 @@ export interface Eleve {
   classe: NiveauFormationType;
   competencesAcquises: CompetenceAcquise[];
   ordresTravauxRealises: string[];
-  referent?: string; // ID or name of the teacher responsible for this student
+  referent: string;
 }
 
 export interface CompetenceAcquise {
   code: CompetenceCode;
-  dateValidation: Date | string;
+  dateValidation: string;
   niveau: "découverte" | "application" | "maîtrise";
-  contexte: string; // Description brève du contexte dans lequel la compétence a été validée
-  valideePar: string; // ID ou nom de l'enseignant ayant validé
-  ordresTravaux: string[]; // IDs des ordres de travail liés à cette compétence
+  contexte: string;
+  valideePar: string;
+  ordresTravaux: string[];
 }
 
-// Define interface for Activity
-export interface Activity {
+export type Activity = {
   id: string;
   title: string;
   date: string;
-  student: {
-    id: string;
-    name: string;
-    classe: NiveauFormationType;
-  };
+  type: string;
   equipment: string;
-  maintenanceType: TypeMaintenance;
-  description: string;
+  status: string;
   competences: CompetenceCode[];
-  report?: string;
-  isValidated: boolean;
-  validatedBy?: string;
-  createdAt: string;
-  status?: "success" | "failed" | "in_progress";
-}
-
-// Interface for a teacher/instructor 
-export interface Enseignant {
-  id: string;
-  nom: string;
-  prenom: string;
-  specialites: string[];
-  classes: NiveauFormationType[];
-  email?: string;
-}
+  student: string;
+  result: "success" | "failed" | "pending";
+};
