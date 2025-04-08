@@ -47,7 +47,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
   const [type, setType] = useState<"preventive" | "corrective" | "improvement">("preventive");
   const [date, setDate] = useState<Date | undefined>(selectedDate || undefined);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(equipmentId || "");
-  const [niveau, setNiveau] = useState<NiveauFormation>("2PMIA");
+  const [niveau, setNiveau] = useState<NiveauFormation>(NiveauFormation.SECONDE);
   const [selectedCompetences, setSelectedCompetences] = useState<CompetenceCode[]>([]);
   const [activeTab, setActiveTab] = useState("details");
   
@@ -58,7 +58,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         setDescription(existingTask.description || "");
         setType(existingTask.type);
         setDate(existingTask.date instanceof Date ? existingTask.date : new Date(existingTask.date));
-        setNiveau(existingTask.niveau || "2PMIA");
+        setNiveau(existingTask.niveau || NiveauFormation.SECONDE);
         setSelectedCompetences(existingTask.competences || []);
         if (equipmentId) {
           setSelectedEquipmentId(equipmentId);
@@ -68,7 +68,7 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
         setDescription("");
         setType("preventive");
         setDate(selectedDate || undefined);
-        setNiveau("2PMIA");
+        setNiveau(NiveauFormation.SECONDE);
         setSelectedCompetences([]);
         setSelectedEquipmentId(equipmentId || (equipmentOptions.length > 0 ? equipmentOptions[0].id : ""));
       }
@@ -104,12 +104,12 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
   const getEquipmentNiveau = (): NiveauFormation => {
     if (equipmentId) {
       const equipment = equipmentOptions.find(eq => eq.id === equipmentId);
-      return equipment?.niveau || "2PMIA";
+      return equipment?.niveau || NiveauFormation.SECONDE;
     } else if (selectedEquipmentId) {
       const equipment = equipmentOptions.find(eq => eq.id === selectedEquipmentId);
-      return equipment?.niveau || "2PMIA"; 
+      return equipment?.niveau || NiveauFormation.SECONDE; 
     }
-    return "2PMIA";
+    return NiveauFormation.SECONDE;
   };
   
   useEffect(() => {
@@ -241,9 +241,9 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
                   <SelectValue placeholder="Sélectionner un niveau" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="2PMIA">2nde PMIA</SelectItem>
-                  <SelectItem value="1MSPC">1ère MSPC</SelectItem>
-                  <SelectItem value="TMSPC">Terminale MSPC</SelectItem>
+                  <SelectItem value={NiveauFormation.SECONDE}>2nde PMIA</SelectItem>
+                  <SelectItem value={NiveauFormation.PREMIERE}>1ère MSPC</SelectItem>
+                  <SelectItem value={NiveauFormation.TERMINALE}>Terminale MSPC</SelectItem>
                 </SelectContent>
               </Select>
             </div>

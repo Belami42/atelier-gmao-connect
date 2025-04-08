@@ -1,3 +1,4 @@
+
 import { NiveauFormation } from "./niveauFormation";
 import type { NiveauFormationType } from "./niveauFormation";
 
@@ -8,12 +9,14 @@ export type CompetenceCode =
   | "C1.1"
   | "C1.2"
   | "C1.3"
+  | "C1.4"
   | "C2.1"
   | "C2.2"
   | "C2.3"
   | "C3.1"
   | "C3.2"
   | "C3.3"
+  | "C3.4"
   | "C4.1"
   | "C4.2"
   | "C4.3"
@@ -172,7 +175,11 @@ export type Activity = {
   equipment: string;
   status: string;
   competences: CompetenceCode[];
-  student: string;
+  student: {
+    id: string;
+    name: string;
+    classe: NiveauFormation;
+  };
   result: "success" | "failed" | "pending";
   maintenanceType?: TypeMaintenance;
   isValidated?: boolean;

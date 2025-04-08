@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Equipment, MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { NiveauFormation } from "@/types/niveauFormation";
+import { CompetenceCode } from "@/types/mspc";
 import { toast } from "sonner";
 
 // Key for localStorage
@@ -165,11 +166,11 @@ const initialEquipmentData: Equipment[] = [
         date: new Date(new Date().setDate(new Date().getDate() + 21)),
         type: "improvement",
         completed: false,
-        niveau: "TMSPC" as NiveauFormation,
-        competences: ["C1.4", "C2.1", "C3.4", "C4.3", "C5.3"]
+        niveau: NiveauFormation.TERMINALE,
+        competences: ["C1.3", "C2.1", "C3.3", "C4.3", "C5.3"]
       }
     ],
-    niveau: "TMSPC" as NiveauFormation,
+    niveau: NiveauFormation.TERMINALE,
     documentation: [
       {
         nom: "Manuel programmation",

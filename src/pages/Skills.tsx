@@ -25,7 +25,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
-import { NiveauFormation } from "@/types/niveauFormation";
+import { NiveauFormation, TypeMaintenance } from "@/types/mspc";
 import NewActivityModal from "@/components/mspc/NewActivityModal";
 import { toast } from "sonner";
 import { Activity } from "@/types/mspc";
@@ -45,13 +45,15 @@ const Skills = () => {
         classe: NiveauFormation.SECONDE,
       },
       equipment: "Banc de test hydraulique",
-      maintenanceType: "preventif_systematique",
+      maintenanceType: TypeMaintenance.PREVENTIF_SYSTEMATIQUE,
       description: "Vérification et remplacement des filtres du système hydraulique",
       competences: ["C3.2", "C4.1"],
       report: "L'intervention s'est déroulée conformément à la procédure. Remplacement des filtres effectué.",
       isValidated: true,
       validatedBy: "M. Durand",
-      createdAt: "2024-04-02T10:30:00Z",
+      status: "completed",
+      type: "maintenance",
+      result: "success",
     }
   ]);
 
@@ -189,10 +191,10 @@ const Skills = () => {
 
   const getMaintenanceTypeLabel = (type: string) => {
     switch (type) {
-      case 'correctif': return 'Maintenance corrective';
-      case 'preventif_systematique': return 'Maintenance préventive systématique';
-      case 'preventif_conditionnel': return 'Maintenance préventive conditionnelle';
-      case 'amelioratif': return 'Maintenance améliorative';
+      case TypeMaintenance.CORRECTIF: return 'Maintenance corrective';
+      case TypeMaintenance.PREVENTIF_SYSTEMATIQUE: return 'Maintenance préventive systématique';
+      case TypeMaintenance.PREVENTIF_CONDITIONNEL: return 'Maintenance préventive conditionnelle';
+      case TypeMaintenance.AMELIORATIF: return 'Maintenance améliorative';
       default: return type;
     }
   };
@@ -297,7 +299,7 @@ const Skills = () => {
                             ? "bg-green-100 text-green-800 border-green-200" 
                             : "bg-amber-100 text-amber-800 border-amber-200"
                         }>
-                          {activity.isValidated ? "Validé" : "En attente"}
+                          {activity.isValidated ? "Validée" : "En attente"}
                         </Badge>
                       </div>
                       

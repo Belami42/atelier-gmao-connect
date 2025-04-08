@@ -7,7 +7,7 @@ import { AlertCircle, CheckCircle, Clock, Info, Wrench, Calendar, QrCode, FileTe
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import QRCodeGenerator from "./QRCodeGenerator";
-import { CompetenceCode, NiveauFormation, NiveauFormationType } from "@/types/mspc";
+import { CompetenceCode, NiveauFormation, NiveauFormationType, NIVEAU_LABELS } from "@/types/mspc";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -59,7 +59,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
   const [showQRCode, setShowQRCode] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Get status badge
   const getStatusBadge = () => {
     switch (equipment.status) {
       case "operational":
@@ -88,27 +87,26 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     }
   };
 
-  // Get niveau badge
   const getNiveauBadge = () => {
     if (!equipment.niveau) return null;
     
     switch (equipment.niveau) {
-      case "2nde":
+      case NiveauFormation.SECONDE:
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
-            2nde PMIA
+            {NIVEAU_LABELS[NiveauFormation.SECONDE]}
           </Badge>
         );
-      case "1ère":
+      case NiveauFormation.PREMIERE:
         return (
           <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
-            1ère MSPC
+            {NIVEAU_LABELS[NiveauFormation.PREMIERE]}
           </Badge>
         );
-      case "Terminale":
+      case NiveauFormation.TERMINALE:
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
-            Terminale MSPC
+            {NIVEAU_LABELS[NiveauFormation.TERMINALE]}
           </Badge>
         );
       default:
@@ -116,7 +114,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     }
   };
 
-  // Get next maintenance date
   const getNextMaintenance = () => {
     if (!equipment.maintenanceSchedule || equipment.maintenanceSchedule.length === 0) {
       return "Aucune maintenance planifiée";
@@ -162,7 +159,6 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     setShowDeleteDialog(false);
   };
 
-  // Count documentation items
   const documentationCount = equipment.documentation?.length || 0;
 
   return (

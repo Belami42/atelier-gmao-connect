@@ -5,9 +5,10 @@ export enum NiveauFormation {
   TERMINALE = "TMSPC"
 }
 
-// Use export type for re-exporting types when isolatedModules is enabled
+// Exporting NiveauFormationType as both a type and an enum reference
 export type NiveauFormationType = NiveauFormation;
 
+// French display strings that should be used for UI rendering
 export function getDisplayFromNiveauFormation(niveau: NiveauFormation): string {
   switch(niveau) {
     case NiveauFormation.SECONDE:
@@ -20,3 +21,10 @@ export function getDisplayFromNiveauFormation(niveau: NiveauFormation): string {
       return niveau;
   }
 }
+
+// String values sometimes used in the UI
+export const NIVEAU_LABELS = {
+  [NiveauFormation.SECONDE]: "2nde PMIA",
+  [NiveauFormation.PREMIERE]: "1ère MSPC",
+  [NiveauFormation.TERMINALE]: "Term. MSPC"
+};
