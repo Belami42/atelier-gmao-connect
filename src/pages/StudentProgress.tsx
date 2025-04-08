@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import StudentCompetenciesTracker from "@/components/students/StudentCompetenciesTracker";
-import { Eleve, NiveauFormation } from "@/types/mspc";
+import { Eleve, NiveauFormation, NiveauFormationType } from "@/types/mspc";
 import { Card } from "@/components/ui/card";
 import { 
   Dialog,

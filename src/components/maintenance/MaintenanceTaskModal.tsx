@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { Equipment } from "@/components/equipment/EquipmentCard";
 import { CompetenceCode, NiveauFormation } from "@/types/mspc";
 import CompetencesList from "@/components/mspc/CompetencesList";
+import { NiveauFormationType } from "@/types/niveauFormation";
 
 type MaintenanceTaskModalProps = {
   isOpen: boolean;
@@ -64,7 +64,6 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
           setSelectedEquipmentId(equipmentId);
         }
       } else {
-        // En mode création, initialiser avec les valeurs par défaut
         setTitle("");
         setDescription("");
         setType("preventive");
@@ -102,7 +101,6 @@ const MaintenanceTaskModal: React.FC<MaintenanceTaskModalProps> = ({
     onClose();
   };
   
-  // Retrouver le niveau de l'équipement sélectionné
   const getEquipmentNiveau = (): NiveauFormation => {
     if (equipmentId) {
       const equipment = equipmentOptions.find(eq => eq.id === equipmentId);

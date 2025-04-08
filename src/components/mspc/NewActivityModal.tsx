@@ -29,7 +29,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import CompetencesList from "./CompetencesList";
-import { CompetenceCode, TypeMaintenance, NiveauFormation } from "@/types/mspc";
+import { CompetenceCode, TypeMaintenance } from "@/types/mspc";
+import { NiveauFormationType } from "@/types/niveauFormation";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -48,7 +49,7 @@ interface NewActivityModalProps {
 interface Student {
   id: string;
   name: string;
-  classe: NiveauFormation;
+  classe: NiveauFormationType;
 }
 
 const mockStudents: Student[] = [
@@ -82,7 +83,7 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
 }) => {
   const [selectedCompetences, setSelectedCompetences] = useState<CompetenceCode[]>([]);
   const [date, setDate] = useState<Date>(new Date());
-  const [classe, setClasse] = useState<NiveauFormation>("2PMIA");
+  const [classe, setClasse] = useState<NiveauFormationType>("2PMIA");
   const [filteredStudents, setFilteredStudents] = useState(mockStudents.filter(s => s.classe === "2PMIA"));
   
   const form = useForm({
@@ -106,7 +107,7 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
     }
   };
 
-  const handleClassChange = (value: NiveauFormation) => {
+  const handleClassChange = (value: NiveauFormationType) => {
     setClasse(value);
     setFilteredStudents(mockStudents.filter(s => s.classe === value));
     form.setValue("student", "");
@@ -206,7 +207,7 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
 
                 <div className="space-y-2">
                   <Label>Classe</Label>
-                  <Select value={classe} onValueChange={(value: NiveauFormation) => handleClassChange(value)}>
+                  <Select value={classe} onValueChange={(value: NiveauFormationType) => handleClassChange(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner une classe" />
                     </SelectTrigger>
@@ -336,7 +337,7 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
 
                 <div>
                   <FormLabel>Compétences validées</FormLabel>
-                  <div className="border rounded-md p-2 h-[200px] overflow-y-auto bg-white">
+                  <div className="border rounded-md p-2 h-[300px] overflow-y-auto bg-white">
                     <CompetencesList 
                       selectedCompetences={selectedCompetences}
                       onSelectCompetence={handleCompetenceSelect}
@@ -344,8 +345,19 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
                     />
                   </div>
                   {selectedCompetences.length > 0 && (
-                    <div className="mt-2 text-sm text-muted-foreground">
-                      {selectedCompetences.length} compétence(s) sélectionnée(s)
+                    <div className="mt-2 text-sm flex items-center justify-between">
+                      <span className="text-muted-foreground">
+                        {selectedCompetences.length} compétence(s) sélectionnée(s)
+                      </span>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setSelectedCompetences([])}
+                        className="text-xs h-7 px-2"
+                      >
+                        Effacer la sélection
+                      </Button>
                     </div>
                   )}
                 </div>

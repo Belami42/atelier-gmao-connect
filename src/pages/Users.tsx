@@ -43,7 +43,7 @@ import NewUserForm from "@/components/users/NewUserForm";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { toast } from "sonner";
-import { NiveauFormation, getDisplayFromNiveauFormation } from "@/types/niveauFormation";
+import { NiveauFormation, getDisplayFromNiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -259,7 +259,7 @@ const Users = () => {
 
   const [isClassDialogOpen, setIsClassDialogOpen] = useState(false);
   const [newClassName, setNewClassName] = useState("");
-  const [newClassLevel, setNewClassLevel] = useState<NiveauFormation>("2PMIA");
+  const [newClassLevel, setNewClassLevel] = useState<NiveauFormationType>("2PMIA");
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -505,7 +505,7 @@ const Users = () => {
                     <select 
                       id="classLevel" 
                       value={newClassLevel}
-                      onChange={(e) => setNewClassLevel(e.target.value as NiveauFormation)}
+                      onChange={(e) => setNewClassLevel(e.target.value as NiveauFormationType)}
                       className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <option value="2PMIA">2nde PMIA</option>
@@ -558,6 +558,7 @@ const Users = () => {
                 <CardContent>
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
+                      <AvatarImage src={cls.avatar || ""} />
                       <AvatarFallback>{getInitials(cls.name)}</AvatarFallback>
                     </Avatar>
                     <div className="text-sm">Sophie Dubois (Responsable)</div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
-import { NiveauFormation } from "@/types/mspc";
+import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 import NewActivityModal from "@/components/mspc/NewActivityModal";
 import { toast } from "sonner";
 
@@ -86,6 +85,24 @@ const Skills = () => {
     }
   ];
 
+  const mockStudents: { id: string; name: string; classe: NiveauFormationType }[] = [
+    {
+      id: "1",
+      name: "Martin Dubois",
+      classe: "2PMIA"
+    },
+    {
+      id: "2",
+      name: "Léa Bernard",
+      classe: "1MSPC"
+    },
+    {
+      id: "3",
+      name: "Thomas Petit",
+      classe: "TMSPC"
+    }
+  ];
+
   const studentSkills = [
     {
       id: "1",
@@ -116,8 +133,7 @@ const Skills = () => {
     }
   ];
 
-  // State for activities list
-  const [activities, setActivities] = useState<any[]>([
+  const activities = [
     {
       id: "act-1",
       title: "Maintenance préventive système hydraulique",
@@ -136,7 +152,7 @@ const Skills = () => {
       validatedBy: "M. Durand",
       createdAt: "2024-04-02T10:30:00Z",
     }
-  ]);
+  ];
 
   const filteredSkills = skills.filter(skill => {
     const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -491,4 +507,3 @@ const Skills = () => {
 };
 
 export default Skills;
-
