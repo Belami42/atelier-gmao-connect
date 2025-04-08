@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { NiveauFormationType } from "@/types/niveauFormation";
 
 type TaskDetailsModalProps = {
   isOpen: boolean;
@@ -92,21 +92,21 @@ const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
     if (!task.niveau) return null;
     
     switch (task.niveau) {
-      case "2PMIA":
+      case "2nde":
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 flex items-center gap-1">
             <GraduationCap className="h-4 w-4" />
             2nde PMIA
           </Badge>
         );
-      case "1MSPC":
+      case "1ère":
         return (
           <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200 flex items-center gap-1">
             <GraduationCap className="h-4 w-4" />
             1ère MSPC
           </Badge>
         );
-      case "TMSPC":
+      case "Terminale":
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 flex items-center gap-1">
             <GraduationCap className="h-4 w-4" />

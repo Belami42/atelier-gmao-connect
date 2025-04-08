@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,8 +7,7 @@ import { AlertCircle, CheckCircle, Clock, Info, Wrench, Calendar, QrCode, FileTe
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import QRCodeGenerator from "./QRCodeGenerator";
-import { CompetenceCode } from "@/types/mspc";
-import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
+import { CompetenceCode, NiveauFormation, NiveauFormationType } from "@/types/mspc";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -28,7 +26,7 @@ export type MaintenanceTask = {
   type: "preventive" | "corrective" | "improvement";
   completed: boolean;
   description?: string;
-  niveau?: NiveauFormationType;
+  niveau?: NiveauFormation;
   competences?: CompetenceCode[];
 };
 
@@ -48,7 +46,7 @@ export type Equipment = {
   model?: string;
   status: "operational" | "maintenance" | "faulty";
   maintenanceSchedule?: MaintenanceTask[];
-  niveau?: NiveauFormationType;
+  niveau?: NiveauFormation;
   documentation?: DocumentationItem[];
 };
 
@@ -95,19 +93,19 @@ const EquipmentCard: React.FC<EquipmentCardProps> = ({ equipment, onDelete }) =>
     if (!equipment.niveau) return null;
     
     switch (equipment.niveau) {
-      case "2PMIA":
+      case "2nde":
         return (
           <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
             2nde PMIA
           </Badge>
         );
-      case "1MSPC":
+      case "1ère":
         return (
           <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
             1ère MSPC
           </Badge>
         );
-      case "TMSPC":
+      case "Terminale":
         return (
           <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
             Terminale MSPC

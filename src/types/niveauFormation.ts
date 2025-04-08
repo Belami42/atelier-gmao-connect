@@ -1,26 +1,20 @@
 
+// Define as constant enum values for use in comparisons
 export enum NiveauFormation {
-  SECONDE_PMIA = "2PMIA",
-  PREMIERE_MSPC = "1MSPC",
-  TERMINALE_MSPC = "TMSPC"
+  SECONDE = "2PMIA",
+  PREMIERE = "1MSPC",
+  TERMINALE = "TMSPC"
 }
 
 export type NiveauFormationType = "2PMIA" | "1MSPC" | "TMSPC";
 
-export const getNiveauFormationLabel = (niveau: NiveauFormationType): string => {
-  switch (niveau) {
-    case "2PMIA":
-      return "2nde PMIA";
-    case "1MSPC":
-      return "1ère MSPC";
-    case "TMSPC":
-      return "Terminale MSPC";
-    default:
-      return niveau;
-  }
+export const niveauDisplayNames: Record<NiveauFormationType, string> = {
+  "2PMIA": "2nde PMIA",
+  "1MSPC": "1ère MSPC",
+  "TMSPC": "Term. MSPC"
 };
 
-// Function to get display name from NiveauFormation enum or string
-export const getDisplayFromNiveauFormation = (niveau: NiveauFormationType): string => {
-  return getNiveauFormationLabel(niveau);
+// Helper function to get display name from enum
+export const getDisplayFromNiveauFormation = (niveau: NiveauFormation | NiveauFormationType): string => {
+  return niveauDisplayNames[niveau as NiveauFormationType];
 };
