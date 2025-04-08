@@ -30,23 +30,18 @@ const SchoolLogo: React.FC<SchoolLogoProps> = ({
       <div className="flex flex-col items-center gap-2">
         <img 
           src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-          alt="Logo du Lycée Étienne Mimard"
+          alt="Logo du Lycée"
           className={`${logoSizeClass} drop-shadow-md transition-all duration-300 hover:scale-105`}
         />
         {showDescription && (
           <>
-            <h3 className="text-lg font-medium text-center text-white">Lycée Étienne Mimard</h3>
-            {variant === "mspc" ? (
+            <h3 className="text-lg font-medium text-center text-white">Lycée Professionnel</h3>
+            {variant === "mspc" && (
               <div className="text-center">
-                <p className="text-sm font-semibold text-white">MSPC-GMAO Edu</p>
                 <p className="text-xs text-white/80">
                   Bac Pro Maintenance des Systèmes de Production Connectés
                 </p>
               </div>
-            ) : (
-              <p className="text-sm text-white/80 text-center">
-                Lycée général technologique et professionnel
-              </p>
             )}
           </>
         )}

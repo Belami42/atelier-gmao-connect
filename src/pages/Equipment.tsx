@@ -91,31 +91,7 @@ const Equipment = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
-            Équipements
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Gestion du parc d'équipements
-          </p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <SchoolLogo className="hidden md:block" />
-          <Button variant="secondary" className="gap-2" onClick={() => setShowQrCode(!showQrCode)}>
-            <QrCode size={16} />
-            <span>{showQrCode ? "Masquer QR" : "Afficher QR"}</span>
-          </Button>
-          <Button className="gap-2 bg-accent hover:bg-accent/90" asChild>
-            <Link to="/equipment/new">
-              <Plus size={16} />
-              <span>Nouvel équipement</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
-
+      {/* Technical Equipment Banner - Now at the top */}
       <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex space-x-4 px-4">
@@ -133,6 +109,31 @@ const Equipment = () => {
         </div>
         <div className="absolute inset-0 flex items-center justify-center z-20">
           <h2 className="text-white font-bold text-2xl shadow-text">Équipements Techniques</h2>
+        </div>
+      </div>
+      
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
+            Équipements
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Gestion du parc d'équipements
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <SchoolLogo className="hidden md:block" showDescription={true} size="small" />
+          <Button variant="secondary" className="gap-2" onClick={() => setShowQrCode(!showQrCode)}>
+            <QrCode size={16} />
+            <span>{showQrCode ? "Masquer QR" : "Afficher QR"}</span>
+          </Button>
+          <Button className="gap-2 bg-accent hover:bg-accent/90" asChild>
+            <Link to="/equipment/new">
+              <Plus size={16} />
+              <span>Nouvel équipement</span>
+            </Link>
+          </Button>
         </div>
       </div>
 

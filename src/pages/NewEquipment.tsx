@@ -41,27 +41,7 @@ const NewEquipment = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-        <div>
-          <Button 
-            variant="ghost" 
-            className="pl-0 text-muted-foreground mb-2 -ml-3" 
-            onClick={() => navigate("/equipment")}
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Retour aux équipements
-          </Button>
-          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
-            Nouvel équipement
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Ajouter un nouvel équipement au parc
-          </p>
-        </div>
-        
-        <SchoolLogo className="hidden md:block" />
-      </div>
-
+      {/* Technical Equipment Banner - Now at the top */}
       <div className="relative mb-6 overflow-hidden rounded-xl h-40 vibrant-gradient">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex space-x-4 px-4">
@@ -80,6 +60,27 @@ const NewEquipment = () => {
         <div className="absolute inset-0 flex items-center justify-center z-20">
           <h2 className="text-white font-bold text-2xl shadow-text">Nouvel Équipement</h2>
         </div>
+      </div>
+      
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
+        <div>
+          <Button 
+            variant="ghost" 
+            className="pl-0 text-muted-foreground mb-2 -ml-3" 
+            onClick={() => navigate("/equipment")}
+          >
+            <ArrowLeft size={16} className="mr-2" />
+            Retour aux équipements
+          </Button>
+          <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
+            Nouvel équipement
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Ajouter un nouvel équipement au parc
+          </p>
+        </div>
+        
+        <SchoolLogo className="hidden md:block" size="small" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -276,7 +277,7 @@ const NewEquipment = () => {
             </div>
           </BlurryCard>
           
-          <SchoolLogo className="md:hidden" />
+          <SchoolLogo className="md:hidden" size="small" />
         </div>
       </div>
     </div>

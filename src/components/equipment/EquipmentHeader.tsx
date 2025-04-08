@@ -24,35 +24,26 @@ const EquipmentHeader: React.FC<EquipmentHeaderProps> = ({
 }) => {
   return (
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
-      <div>
-        <h1 className="text-3xl font-bold">Équipements</h1>
-        <p className="text-muted-foreground mt-1">
-          Gestion du parc machines de l'atelier
-        </p>
+      <div className="relative flex-1 w-full">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+        <Input
+          placeholder="Rechercher un équipement..."
+          className="pl-10 w-full"
+          value={searchValue}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
+        {searchValue && (
+          <button
+            onClick={onResetSearch}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
       
-      <div className="flex gap-2 w-full md:w-auto">
-        {isMobile && (
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input
-              placeholder="Rechercher un équipement..."
-              className="pl-10"
-              value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
-            {searchValue && (
-              <button
-                onClick={onResetSearch}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-        )}
-        
-        {isMobile && hasFilters && (
+      <div className="flex gap-2">
+        {hasFilters && (
           <Button variant="outline" onClick={onResetSearch}>
             Réinitialiser
           </Button>
