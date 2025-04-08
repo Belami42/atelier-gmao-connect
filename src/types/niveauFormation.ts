@@ -19,3 +19,8 @@ export const getNiveauFormationLabel = (niveau: NiveauFormationType): string => 
       return niveau;
   }
 };
+
+// Add the missing function that's referenced in Users.tsx
+export const getDisplayFromNiveauFormation = (niveau: NiveauFormationType): string => {
+  return getNiveauFormationLabel(niveau);
+};

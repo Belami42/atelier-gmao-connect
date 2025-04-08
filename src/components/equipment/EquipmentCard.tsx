@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +8,8 @@ import { AlertCircle, CheckCircle, Clock, Info, Wrench, Calendar, QrCode, FileTe
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import QRCodeGenerator from "./QRCodeGenerator";
-import { CompetenceCode, NiveauFormation, NiveauFormationType } from "@/types/mspc";
+import { CompetenceCode } from "@/types/mspc";
+import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 import { 
   AlertDialog,
   AlertDialogAction,

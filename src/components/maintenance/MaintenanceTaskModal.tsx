@@ -15,9 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { MaintenanceTask } from "@/components/equipment/EquipmentCard";
 import { Equipment } from "@/components/equipment/EquipmentCard";
-import { CompetenceCode, NiveauFormation } from "@/types/mspc";
+import { CompetenceCode } from "@/types/mspc";
+import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 import CompetencesList from "@/components/mspc/CompetencesList";
-import { NiveauFormationType } from "@/types/niveauFormation";
 
 type MaintenanceTaskModalProps = {
   isOpen: boolean;

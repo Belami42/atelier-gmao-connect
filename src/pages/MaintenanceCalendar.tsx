@@ -125,8 +125,8 @@ const MaintenanceCalendar = () => {
               >
                 {task.niveau && (
                   <Badge variant="outline" className="text-[10px] h-4 px-1 py-0">
-                    {task.niveau === NiveauFormation.SECONDE ? "2" : 
-                     task.niveau === NiveauFormation.PREMIERE ? "1" : "T"}
+                    {task.niveau === NiveauFormation.SECONDE_PMIA ? "2" : 
+                     task.niveau === NiveauFormation.PREMIERE_MSPC ? "1" : "T"}
                   </Badge>
                 )}
                 <span className="truncate">{task.title}</span>
@@ -288,28 +288,28 @@ const MaintenanceCalendar = () => {
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === NiveauFormation.SECONDE ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.SECONDE_PMIA ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-blue-50 hover:bg-blue-100 text-blue-800 border-blue-200"
-                  onClick={() => setSelectedNiveau(NiveauFormation.SECONDE)}
+                  onClick={() => setSelectedNiveau(NiveauFormation.SECONDE_PMIA)}
                 >
                   2nde PMIA
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === NiveauFormation.PREMIERE ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.PREMIERE_MSPC ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-purple-50 hover:bg-purple-100 text-purple-800 border-purple-200"
-                  onClick={() => setSelectedNiveau(NiveauFormation.PREMIERE)}
+                  onClick={() => setSelectedNiveau(NiveauFormation.PREMIERE_MSPC)}
                 >
                   1ère MSPC
                 </Button>
                 
                 <Button 
-                  variant={selectedNiveau === NiveauFormation.TERMINALE ? "default" : "outline"} 
+                  variant={selectedNiveau === NiveauFormation.TERMINALE_MSPC ? "default" : "outline"} 
                   size="sm" 
                   className="w-full justify-start bg-green-50 hover:bg-green-100 text-green-800 border-green-200"
-                  onClick={() => setSelectedNiveau(NiveauFormation.TERMINALE)}
+                  onClick={() => setSelectedNiveau(NiveauFormation.TERMINALE_MSPC)}
                 >
                   Term. MSPC
                 </Button>

@@ -1,5 +1,9 @@
+
 // Types pour les compétences du référentiel Bac Pro MSPC
-import { NiveauFormationType } from './niveauFormation';
+import { NiveauFormationType, NiveauFormation } from './niveauFormation';
+
+// Re-export these types so other files importing from mspc.ts can use them
+export { NiveauFormation, NiveauFormationType };
 
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 
@@ -8,7 +12,6 @@ export type CompetenceCode =
   | "C4.1" | "C4.2" | "C4.3" 
   | "C5.1" | "C5.2" | "C5.3";
 
-// We're now using NiveauFormationType imported from niveauFormation.ts
 export type TypeMaintenance = "correctif" | "preventif_systematique" | "preventif_conditionnel" | "amelioratif";
 
 export interface Competence {

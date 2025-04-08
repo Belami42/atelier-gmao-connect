@@ -121,19 +121,22 @@ const Users = () => {
       id: "1",
       name: "2PMIA",
       level: "2PMIA",
-      studentCount: 14
+      studentCount: 14,
+      avatar: null
     },
     {
       id: "2",
       name: "1MSPC",
       level: "1MSPC",
-      studentCount: 12
+      studentCount: 12,
+      avatar: null
     },
     {
       id: "3",
       name: "TMSPC",
       level: "TMSPC",
-      studentCount: 18
+      studentCount: 18,
+      avatar: null
     }
   ]);
 
