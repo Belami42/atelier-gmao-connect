@@ -1,5 +1,6 @@
-
 // Types pour les compétences du référentiel Bac Pro MSPC
+import { NiveauFormationType } from './niveauFormation';
+
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 
   | "C2.1" | "C2.2" | "C2.3" | "C2.4" 
@@ -7,16 +8,14 @@ export type CompetenceCode =
   | "C4.1" | "C4.2" | "C4.3" 
   | "C5.1" | "C5.2" | "C5.3";
 
-// Use string type to make it more compatible with the NiveauFormation enum
-export type NiveauFormation = "2PMIA" | "1MSPC" | "TMSPC";
-
+// We're now using NiveauFormationType imported from niveauFormation.ts
 export type TypeMaintenance = "correctif" | "preventif_systematique" | "preventif_conditionnel" | "amelioratif";
 
 export interface Competence {
   code: CompetenceCode;
   libelle: string;
   description: string;
-  niveau: NiveauFormation[];
+  niveau: NiveauFormationType[];
 }
 
 // Liste des compétences du référentiel
@@ -145,7 +144,7 @@ export interface OrdreTravail {
   statut: "cree" | "assigne" | "en_cours" | "attente_pieces" | "realise" | "cloture" | "valide";
   rapport?: RapportIntervention;
   competencesRequises: CompetenceCode[];
-  niveau: NiveauFormation;
+  niveau: NiveauFormationType;
 }
 
 export interface RapportIntervention {
@@ -166,7 +165,7 @@ export interface Eleve {
   id: string;
   nom: string;
   prenom: string;
-  classe: NiveauFormation;
+  classe: NiveauFormationType;
   competencesAcquises: CompetenceAcquise[];
   ordresTravauxRealises: string[];
 }

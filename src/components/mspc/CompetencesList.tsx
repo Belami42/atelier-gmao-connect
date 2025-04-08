@@ -1,13 +1,13 @@
-
 import React from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import { COMPETENCES_MSPC, CompetenceCode, NiveauFormation } from "@/types/mspc";
+import { COMPETENCES_MSPC, CompetenceCode } from "@/types/mspc";
+import { NiveauFormationType } from "@/types/niveauFormation";
 
 interface CompetencesListProps {
   selectedCompetences?: CompetenceCode[];
   onSelectCompetence?: (code: CompetenceCode, selected: boolean) => void;
-  niveau?: NiveauFormation;
+  niveau?: NiveauFormationType;
   readOnly?: boolean;
 }
 
@@ -45,7 +45,7 @@ const CompetencesList: React.FC<CompetencesListProps> = ({
     "C5": "Communiquer et rendre compte"
   };
 
-  const getNiveauBadge = (niveaux: NiveauFormation[]) => {
+  const getNiveauBadge = (niveaux: NiveauFormationType[]) => {
     return (
       <div className="flex gap-1">
         {niveaux.includes("2PMIA") && (

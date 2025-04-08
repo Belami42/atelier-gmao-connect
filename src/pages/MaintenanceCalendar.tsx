@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, GraduationCap, BookOpen } from "lucide-react";
@@ -10,7 +9,7 @@ import TaskDetailsModal from "@/components/maintenance/TaskDetailsModal";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
 import { useEquipmentData } from "@/hooks/useEquipmentData";
-import { NiveauFormation } from "@/types/niveauFormation";
+import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
 import { toast } from "sonner";
 
 const MaintenanceCalendar = () => {
@@ -18,7 +17,7 @@ const MaintenanceCalendar = () => {
   const [view, setView] = useState<"month" | "week" | "day">("month");
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<any | null>(null);
-  const [selectedNiveau, setSelectedNiveau] = useState<NiveauFormation | null>(null);
+  const [selectedNiveau, setSelectedNiveau] = useState<NiveauFormationType | null>(null);
 
   const { 
     equipmentData, 
