@@ -1,7 +1,8 @@
+import { NiveauFormation } from "./niveauFormation";
+import type { NiveauFormationType } from "./niveauFormation";
 
-import { NiveauFormation, NiveauFormationType } from "./niveauFormation";
-
-export { NiveauFormation, NiveauFormationType, getDisplayFromNiveauFormation } from "./niveauFormation";
+export { NiveauFormation, getDisplayFromNiveauFormation } from "./niveauFormation";
+export type { NiveauFormationType } from "./niveauFormation";
 
 export type CompetenceCode =
   | "C1.1"

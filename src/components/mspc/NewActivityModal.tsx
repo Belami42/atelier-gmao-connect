@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -30,7 +29,8 @@ import {
 } from "@/components/ui/form";
 import CompetencesList from "./CompetencesList";
 import { CompetenceCode, TypeMaintenance } from "@/types/mspc";
-import { NiveauFormationType } from "@/types/niveauFormation";
+import { NiveauFormation } from "@/types/niveauFormation";
+import type { NiveauFormationType } from "@/types/niveauFormation";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -53,12 +53,12 @@ interface Student {
 }
 
 const mockStudents: Student[] = [
-  { id: "1", name: "Thomas Dupont", classe: "2PMIA" },
-  { id: "2", name: "Julie Martin", classe: "1MSPC" },
-  { id: "3", name: "Lucas Dubois", classe: "TMSPC" },
-  { id: "4", name: "Emma Bernard", classe: "2PMIA" },
-  { id: "5", name: "Léo Petit", classe: "1MSPC" },
-  { id: "6", name: "Chloé Durand", classe: "TMSPC" },
+  { id: "1", name: "Thomas Dupont", classe: NiveauFormation.SECONDE },
+  { id: "2", name: "Julie Martin", classe: NiveauFormation.PREMIERE },
+  { id: "3", name: "Lucas Dubois", classe: NiveauFormation.TERMINALE },
+  { id: "4", name: "Emma Bernard", classe: NiveauFormation.SECONDE },
+  { id: "5", name: "Léo Petit", classe: NiveauFormation.PREMIERE },
+  { id: "6", name: "Chloé Durand", classe: NiveauFormation.TERMINALE },
 ];
 
 const equipmentOptions = [
@@ -70,10 +70,10 @@ const equipmentOptions = [
 ];
 
 const maintenanceTypes: { value: TypeMaintenance; label: string }[] = [
-  { value: "correctif", label: "Maintenance corrective" },
-  { value: "preventif_systematique", label: "Maintenance préventive systématique" },
-  { value: "preventif_conditionnel", label: "Maintenance préventive conditionnelle" },
-  { value: "amelioratif", label: "Maintenance améliorative" },
+  { value: TypeMaintenance.CORRECTIF, label: "Maintenance corrective" },
+  { value: TypeMaintenance.PREVENTIF_SYSTEMATIQUE, label: "Maintenance préventive systématique" },
+  { value: TypeMaintenance.PREVENTIF_CONDITIONNEL, label: "Maintenance préventive conditionnelle" },
+  { value: TypeMaintenance.AMELIORATIF, label: "Maintenance améliorative" },
 ];
 
 const NewActivityModal: React.FC<NewActivityModalProps> = ({
@@ -83,15 +83,15 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
 }) => {
   const [selectedCompetences, setSelectedCompetences] = useState<CompetenceCode[]>([]);
   const [date, setDate] = useState<Date>(new Date());
-  const [classe, setClasse] = useState<NiveauFormationType>("2PMIA");
-  const [filteredStudents, setFilteredStudents] = useState(mockStudents.filter(s => s.classe === "2PMIA"));
+  const [classe, setClasse] = useState<NiveauFormationType>(NiveauFormation.SECONDE);
+  const [filteredStudents, setFilteredStudents] = useState(mockStudents.filter(s => s.classe === NiveauFormation.SECONDE));
   
   const form = useForm({
     defaultValues: {
       title: "",
       student: "",
       equipment: "",
-      maintenanceType: "correctif" as TypeMaintenance,
+      maintenanceType: TypeMaintenance.CORRECTIF,
       description: "",
       report: "",
       isValidated: false,
@@ -145,7 +145,6 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
       onActivityCreated(newActivity);
     }
     
-    // Reset form
     form.reset();
     setSelectedCompetences([]);
     setDate(new Date());
@@ -214,9 +213,9 @@ const NewActivityModal: React.FC<NewActivityModalProps> = ({
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Classes</SelectLabel>
-                        <SelectItem value="2PMIA">2nde PMIA</SelectItem>
-                        <SelectItem value="1MSPC">1ère MSPC</SelectItem>
-                        <SelectItem value="TMSPC">Term. MSPC</SelectItem>
+                        <SelectItem value={NiveauFormation.SECONDE}>2nde PMIA</SelectItem>
+                        <SelectItem value={NiveauFormation.PREMIERE}>1ère MSPC</SelectItem>
+                        <SelectItem value={NiveauFormation.TERMINALE}>Term. MSPC</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>

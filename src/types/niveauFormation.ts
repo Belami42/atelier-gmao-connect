@@ -5,6 +5,7 @@ export enum NiveauFormation {
   TERMINALE = "TMSPC"
 }
 
+// Use export type for re-exporting types when isolatedModules is enabled
 export type NiveauFormationType = NiveauFormation;
 
 export function getDisplayFromNiveauFormation(niveau: NiveauFormation): string {
