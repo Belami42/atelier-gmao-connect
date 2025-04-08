@@ -33,7 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
-import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
+import { NiveauFormationType } from "@/types/niveauFormation";
 import NewActivityModal from "@/components/mspc/NewActivityModal";
 import { toast } from "sonner";
 
@@ -41,6 +41,26 @@ const Skills = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [activityModalOpen, setActivityModalOpen] = useState(false);
+  const [activitiesList, setActivitiesList] = useState([
+    {
+      id: "act-1",
+      title: "Maintenance préventive système hydraulique",
+      date: "2024-04-02",
+      student: {
+        id: "1",
+        name: "Martin Dubois",
+        classe: "2PMIA",
+      },
+      equipment: "Banc de test hydraulique",
+      maintenanceType: "preventif_systematique",
+      description: "Vérification et remplacement des filtres du système hydraulique",
+      competences: ["C3.2", "C4.1"],
+      report: "L'intervention s'est déroulée conformément à la procédure. Remplacement des filtres effectué.",
+      isValidated: true,
+      validatedBy: "M. Durand",
+      createdAt: "2024-04-02T10:30:00Z",
+    }
+  ]);
 
   const skills = [
     {
@@ -133,27 +153,6 @@ const Skills = () => {
     }
   ];
 
-  const activities = [
-    {
-      id: "act-1",
-      title: "Maintenance préventive système hydraulique",
-      date: "2024-04-02",
-      student: {
-        id: "1",
-        name: "Martin Dubois",
-        classe: "2PMIA",
-      },
-      equipment: "Banc de test hydraulique",
-      maintenanceType: "preventif_systematique",
-      description: "Vérification et remplacement des filtres du système hydraulique",
-      competences: ["C3.2", "C4.1"],
-      report: "L'intervention s'est déroulée conformément à la procédure. Remplacement des filtres effectué.",
-      isValidated: true,
-      validatedBy: "M. Durand",
-      createdAt: "2024-04-02T10:30:00Z",
-    }
-  ];
-
   const filteredSkills = skills.filter(skill => {
     const matchesSearch = skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           skill.code.toLowerCase().includes(searchQuery.toLowerCase());
@@ -191,7 +190,7 @@ const Skills = () => {
   };
 
   const handleActivityCreated = (newActivity: any) => {
-    setActivities([newActivity, ...activities]);
+    setActivitiesList([newActivity, ...activitiesList]);
     toast.success(`Activité "${newActivity.title}" enregistrée`);
   };
 
@@ -210,10 +209,10 @@ const Skills = () => {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold tech-gradient bg-clip-text text-transparent">
-            Compétences
+            Activités et compétences
           </h1>
           <p className="text-muted-foreground mt-1">
-            Gestion des compétences et suivi de progression
+            Liste des activit��s et suivi des compétences
           </p>
         </div>
         
@@ -242,7 +241,7 @@ const Skills = () => {
           </div>
         </div>
         <div className="absolute inset-0 flex items-center justify-center z-20">
-          <h2 className="text-white font-bold text-2xl shadow-text">Référentiel de Compétences</h2>
+          <h2 className="text-white font-bold text-2xl shadow-text">Liste des activités et compétences</h2>
         </div>
       </div>
 
@@ -289,9 +288,9 @@ const Skills = () => {
                 </Button>
               </div>
               
-              {activities.length > 0 ? (
+              {activitiesList.length > 0 ? (
                 <div className="space-y-4">
-                  {activities.map((activity) => (
+                  {activitiesList.map((activity) => (
                     <div key={activity.id} className="border rounded-md p-4 hover:bg-accent/5 transition-colors">
                       <div className="flex justify-between items-start">
                         <div>
