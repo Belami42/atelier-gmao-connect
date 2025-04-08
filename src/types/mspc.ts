@@ -1,3 +1,4 @@
+
 // Types pour les compétences du référentiel Bac Pro MSPC
 export type CompetenceCode = 
   | "C1.1" | "C1.2" | "C1.3" | "C1.4" 
@@ -6,6 +7,7 @@ export type CompetenceCode =
   | "C4.1" | "C4.2" | "C4.3" 
   | "C5.1" | "C5.2" | "C5.3";
 
+// Use string type to make it more compatible with the NiveauFormation enum
 export type NiveauFormation = "2PMIA" | "1MSPC" | "TMSPC";
 
 export type TypeMaintenance = "correctif" | "preventif_systematique" | "preventif_conditionnel" | "amelioratif";

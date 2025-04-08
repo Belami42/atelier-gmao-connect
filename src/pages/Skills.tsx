@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
+import { NiveauFormation } from "@/types/niveauFormation";
 
 const Skills = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +46,7 @@ const Skills = () => {
       name: "Analyser un système",
       description: "Étudier et comprendre le fonctionnement d'un système technique",
       category: "diagnostic",
-      level: "bts1"
+      level: "2PMIA"
     },
     {
       id: "2",
@@ -52,7 +54,7 @@ const Skills = () => {
       name: "Préparer une intervention",
       description: "Organiser et planifier une intervention de maintenance",
       category: "preparation",
-      level: "bts1"
+      level: "2PMIA"
     },
     {
       id: "3",
@@ -60,7 +62,7 @@ const Skills = () => {
       name: "Mettre en œuvre une intervention",
       description: "Réaliser une opération de maintenance sur un équipement",
       category: "intervention",
-      level: "bts1"
+      level: "1MSPC"
     },
     {
       id: "4",
@@ -68,7 +70,7 @@ const Skills = () => {
       name: "Améliorer un système",
       description: "Proposer et implémenter des améliorations sur un système",
       category: "amelioration",
-      level: "bts2"
+      level: "TMSPC"
     },
     {
       id: "5",
@@ -76,7 +78,7 @@ const Skills = () => {
       name: "Communiquer les informations",
       description: "Rédiger des rapports et présenter les résultats d'intervention",
       category: "communication",
-      level: "bts2"
+      level: "TMSPC"
     }
   ];
 
@@ -84,7 +86,7 @@ const Skills = () => {
     {
       id: "1",
       studentName: "Martin Dubois",
-      studentClass: "BTS MSPC 1",
+      studentClass: "2PMIA",
       skills: [
         { id: "1", status: "validated", date: "2023-10-15" },
         { id: "2", status: "in_progress", date: "2023-11-10" }
@@ -93,7 +95,7 @@ const Skills = () => {
     {
       id: "2",
       studentName: "Léa Bernard",
-      studentClass: "BTS MSPC 1",
+      studentClass: "1MSPC",
       skills: [
         { id: "1", status: "validated", date: "2023-10-18" },
         { id: "3", status: "validated", date: "2023-11-05" }
@@ -102,7 +104,7 @@ const Skills = () => {
     {
       id: "3",
       studentName: "Thomas Petit",
-      studentClass: "BTS MSPC 2",
+      studentClass: "TMSPC",
       skills: [
         { id: "4", status: "in_progress", date: "2023-11-12" },
         { id: "5", status: "validated", date: "2023-10-28" }
@@ -125,8 +127,9 @@ const Skills = () => {
   ];
 
   const levelLabels = {
-    "bts1": "BTS MSPC 1",
-    "bts2": "BTS MSPC 2"
+    "2PMIA": "2nde PMIA",
+    "1MSPC": "1ère MSPC",
+    "TMSPC": "Term. MSPC"
   };
 
   const categoryColors = {
@@ -209,8 +212,9 @@ const Skills = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
             <TabsList className="bg-muted w-full md:w-auto">
               <TabsTrigger value="all">Toutes</TabsTrigger>
-              <TabsTrigger value="bts1">BTS MSPC 1</TabsTrigger>
-              <TabsTrigger value="bts2">BTS MSPC 2</TabsTrigger>
+              <TabsTrigger value="2PMIA">2nde PMIA</TabsTrigger>
+              <TabsTrigger value="1MSPC">1ère MSPC</TabsTrigger>
+              <TabsTrigger value="TMSPC">Term. MSPC</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -277,12 +281,16 @@ const Skills = () => {
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">Par niveau</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span>BTS MSPC 1</span>
-                    <Badge>{skills.filter(s => s.level === "bts1").length}</Badge>
+                    <span>2nde PMIA</span>
+                    <Badge>{skills.filter(s => s.level === "2PMIA").length}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>BTS MSPC 2</span>
-                    <Badge>{skills.filter(s => s.level === "bts2").length}</Badge>
+                    <span>1ère MSPC</span>
+                    <Badge>{skills.filter(s => s.level === "1MSPC").length}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Term. MSPC</span>
+                    <Badge>{skills.filter(s => s.level === "TMSPC").length}</Badge>
                   </div>
                 </div>
               </div>

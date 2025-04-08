@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { GraduationCap, Calendar, Award, ClipboardList, BookOpen, ArrowRight } from "lucide-react";
 import { COMPETENCES_MSPC, CompetenceCode, Eleve, CompetenceAcquise } from "@/types/mspc";
-import { NiveauFormation } from "@/types/niveauFormation";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -23,7 +23,7 @@ const StudentCompetenciesTracker: React.FC<StudentCompetenciesTrackerProps> = ({
   selectedStudentId,
   onStudentSelect
 }) => {
-  const [filterLevel, setFilterLevel] = useState<NiveauFormation | "all">("all");
+  const [filterLevel, setFilterLevel] = useState<string | "all">("all");
   
   const selectedStudent = selectedStudentId ? students.find(s => s.id === selectedStudentId) : null;
   
@@ -31,7 +31,7 @@ const StudentCompetenciesTracker: React.FC<StudentCompetenciesTrackerProps> = ({
   const getCompetencesByFamily = () => {
     return COMPETENCES_MSPC.reduce((acc, comp) => {
       // Ne montrer que les compétences du niveau filtré
-      if (filterLevel !== "all" && !comp.niveau.includes(filterLevel)) {
+      if (filterLevel !== "all" && !comp.niveau.includes(filterLevel as any)) {
         return acc;
       }
       
@@ -94,7 +94,7 @@ const StudentCompetenciesTracker: React.FC<StudentCompetenciesTrackerProps> = ({
   };
   
   // Style de badge selon le niveau de classe
-  const getClassBadgeStyle = (classe: NiveauFormation) => {
+  const getClassBadgeStyle = (classe: string) => {
     switch (classe) {
       case "2PMIA":
         return "bg-blue-100 text-blue-800 border-blue-200";
@@ -165,7 +165,7 @@ const StudentCompetenciesTracker: React.FC<StudentCompetenciesTrackerProps> = ({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="all" onValueChange={(value) => setFilterLevel(value as NiveauFormation | "all")}>
+              <Tabs defaultValue="all" onValueChange={(value) => setFilterLevel(value)}>
                 <TabsList className="mb-4">
                   <TabsTrigger value="all">Toutes</TabsTrigger>
                   <TabsTrigger value="2PMIA">2nde PMIA</TabsTrigger>

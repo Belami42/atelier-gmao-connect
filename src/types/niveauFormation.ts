@@ -14,13 +14,16 @@ export const getNiveauFormationFromDisplay = (display: string): NiveauFormation 
   switch (display) {
     case "2nde":
     case "2nde PMIA":
+    case "2PMIA":
       return NiveauFormation.SECONDE;
     case "1ère":
     case "1ère MSPC":
+    case "1MSPC":
       return NiveauFormation.PREMIERE;
     case "Terminale":
     case "Term. MSPC":
     case "Terminale MSPC":
+    case "TMSPC":
       return NiveauFormation.TERMINALE;
     default:
       // Default to first year if unknown
