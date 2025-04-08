@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -39,29 +39,38 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
+import { getMissionById, updateMission } from "@/services/missionService";
+import { Mission, MissionStatus } from "@/components/mission/MissionCard";
+import { toast } from "sonner";
 
 const MissionDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [mission, setMission] = useState<Mission | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("details");
+  const [status, setStatus] = useState<MissionStatus>("to_assign");
   
-  // Sample mission data - in a real app, fetch this based on the ID
-  const mission = {
-    id,
-    type: "corrective",
-    title: "Remplacement capteur proximité",
-    description: "Le capteur de proximité en entrée de la ligne d'embouteillage ne répond plus. Après diagnostic, il est nécessaire de le remplacer et de recalibrer la position.",
-    equipmentId: "line1",
-    equipmentName: "Ligne d'embouteillage Festo",
-    status: "in_progress",
-    priority: "high",
-    assignedToNames: ["Thomas D.", "Julie M."],
-    plannedDate: "2023-11-22T09:00:00",
-    createdAt: "2023-11-15T10:23:00",
-    updatedAt: "2023-11-16T14:30:00",
-    estimatedDuration: 120,
-    createdBy: "Étienne Martin"
-  };
+  // Load mission data
+  useEffect(() => {
+    if (!id) return;
+    
+    try {
+      const missionData = getMissionById(id);
+      if (missionData) {
+        setMission(missionData);
+        setStatus(missionData.status);
+      } else {
+        toast.error("Mission introuvable");
+        navigate("/missions");
+      }
+    } catch (error) {
+      console.error("Error loading mission:", error);
+      toast.error("Erreur lors du chargement de la mission");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, navigate]);
 
   // Sample comments
   const comments = [
@@ -134,9 +143,9 @@ const MissionDetails = () => {
   ];
 
   const maintenanceImages = [
-    "/maintenance-1.jpg",
-    "/maintenance-2.jpg",
-    "/maintenance-3.jpg",
+    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
+    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
+    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
 
   const typeLabels: Record<string, string> = {
@@ -181,7 +190,8 @@ const MissionDetails = () => {
     high: <AlertCircle size={14} className="text-red-500" />
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Non définie";
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("fr-FR", {
       day: "2-digit",
@@ -199,6 +209,61 @@ const MissionDetails = () => {
       .join("")
       .toUpperCase();
   };
+  
+  const handleStatusChange = (newStatus: string) => {
+    if (!mission) return;
+    
+    try {
+      const updatedMission = updateMission({
+        ...mission,
+        status: newStatus as MissionStatus
+      });
+      
+      setMission(updatedMission);
+      setStatus(updatedMission.status);
+      toast.success(`Statut mis à jour: ${statusLabels[newStatus as MissionStatus]}`);
+    } catch (error) {
+      console.error("Error updating mission status:", error);
+      toast.error("Erreur lors de la mise à jour du statut");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+        <div className="animate-pulse">
+          <div className="h-8 w-64 bg-muted rounded mb-2"></div>
+          <div className="h-4 w-48 bg-muted rounded mb-8"></div>
+          
+          <div className="h-40 bg-muted rounded-xl mb-6"></div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <div className="h-96 bg-muted rounded-lg"></div>
+            </div>
+            <div>
+              <div className="h-64 bg-muted rounded-lg mb-6"></div>
+              <div className="h-64 bg-muted rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!mission) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Mission introuvable</h2>
+          <p className="text-muted-foreground mb-6">La mission que vous recherchez n'existe pas ou a été supprimée.</p>
+          <Button asChild>
+            <Link to="/missions">Retour aux missions</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -222,7 +287,7 @@ const MissionDetails = () => {
         
         <div className="flex items-center gap-4">
           <SchoolLogo className="hidden md:block" />
-          <Select defaultValue={mission.status}>
+          <Select value={status} onValueChange={handleStatusChange}>
             <SelectTrigger className="min-w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -325,7 +390,7 @@ const MissionDetails = () => {
                       <div className="mt-1">
                         <div className="font-medium">{mission.equipmentName}</div>
                         <Button variant="ghost" size="sm" className="pl-0 text-primary" asChild>
-                          <Link to={`/equipment/${mission.equipmentId}/maintenance`}>
+                          <Link to={`/equipment/${mission.equipmentId}`}>
                             Voir l'équipement
                           </Link>
                         </Button>
@@ -344,7 +409,7 @@ const MissionDetails = () => {
                       <h4 className="text-sm font-medium text-muted-foreground">Durée estimée</h4>
                       <div className="flex items-center gap-2 mt-1">
                         <Clock size={14} className="text-primary" />
-                        <span>{mission.estimatedDuration} minutes</span>
+                        <span>{mission.estimatedDuration ? `${mission.estimatedDuration} minutes` : "Non estimée"}</span>
                       </div>
                     </div>
                   </div>
@@ -353,20 +418,18 @@ const MissionDetails = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">Créé par</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">Créé le</h4>
                       <div className="flex items-center gap-2 mt-1">
-                        <User size={14} className="text-primary" />
-                        <span>{mission.createdBy}</span>
-                      </div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {formatDate(mission.createdAt)}
+                        <Calendar size={14} className="text-primary" />
+                        <span>{formatDate(mission.createdAt)}</span>
                       </div>
                     </div>
                     
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground">Dernière mise à jour</h4>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {formatDate(mission.updatedAt)}
+                      <div className="flex items-center gap-2 mt-1">
+                        <Clock size={14} className="text-primary" />
+                        <span>{formatDate(mission.updatedAt)}</span>
                       </div>
                     </div>
                   </div>
@@ -536,6 +599,12 @@ const MissionDetails = () => {
                 </div>
               ))}
               
+              {(!mission.assignedToNames || mission.assignedToNames.length === 0) && (
+                <div className="text-center text-muted-foreground py-3">
+                  Aucun personnel assigné
+                </div>
+              )}
+              
               <Button variant="outline" className="w-full gap-2">
                 <Plus size={16} />
                 <span>Ajouter du personnel</span>
@@ -548,7 +617,7 @@ const MissionDetails = () => {
             
             <div className="space-y-3">
               <Button className="w-full gap-2 justify-start" asChild>
-                <Link to="/equipment/line1/maintenance">
+                <Link to={`/equipment/${mission.equipmentId}`}>
                   <Wrench size={16} />
                   <span>Voir l'équipement</span>
                 </Link>

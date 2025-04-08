@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -40,12 +39,25 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
+import { saveMission } from "@/services/missionService";
+import { toast } from "sonner";
+import { Mission, MissionType, MissionPriority, MissionStatus } from "@/components/mission/MissionCard";
 
 const NewMission = () => {
   const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [selectedEquipment, setSelectedEquipment] = useState("");
-  const [missionType, setMissionType] = useState<string | undefined>(undefined);
-  const [priority, setPriority] = useState<string | undefined>(undefined);
+  const [missionType, setMissionType] = useState<MissionType | undefined>(undefined);
+  const [priority, setPriority] = useState<MissionPriority | undefined>(undefined);
+  const [status, setStatus] = useState<MissionStatus>("to_assign");
+  const [plannedDate, setPlannedDate] = useState("");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
+  const [prerequisites, setPrerequisites] = useState("");
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [selectedTeachers, setSelectedTeachers] = useState<string[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sample data
   const equipment = [
@@ -75,15 +87,71 @@ const NewMission = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would handle the form submission
-    navigate("/missions");
+    setIsSubmitting(true);
+    
+    // Validation
+    if (!title || !description || !selectedEquipment || !missionType || !priority) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    try {
+      // Prepare mission data
+      const missionData = {
+        title,
+        description,
+        equipmentId: selectedEquipment,
+        equipmentName: equipment.find(eq => eq.id === selectedEquipment)?.name || "",
+        type: missionType,
+        status,
+        priority,
+        assignedToNames: [
+          ...users.filter(user => selectedTeachers.includes(user.id)).map(user => user.name),
+          ...users.filter(user => selectedStudents.includes(user.id)).map(user => user.name)
+        ],
+        plannedDate: plannedDate || undefined,
+        estimatedDuration: estimatedDuration ? parseInt(estimatedDuration) : undefined
+      };
+      
+      // Save mission
+      const savedMission = saveMission(missionData);
+      
+      // Navigate to missions list
+      setTimeout(() => {
+        navigate("/missions");
+      }, 1500);
+      
+    } catch (error) {
+      console.error("Error creating mission:", error);
+      toast.error("Erreur lors de la création de la mission");
+      setIsSubmitting(false);
+    }
   };
 
-  const maintenanceImages = [
-    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
-    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
-    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
-  ];
+  const handleStudentToggle = (studentId: string) => {
+    setSelectedStudents(prev => 
+      prev.includes(studentId) 
+        ? prev.filter(id => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+  
+  const handleTeacherToggle = (teacherId: string) => {
+    setSelectedTeachers(prev => 
+      prev.includes(teacherId) 
+        ? prev.filter(id => id !== teacherId)
+        : [...prev, teacherId]
+    );
+  };
+  
+  const handleSkillToggle = (skillId: string) => {
+    setSelectedSkills(prev => 
+      prev.includes(skillId) 
+        ? prev.filter(id => id !== skillId)
+        : [...prev, skillId]
+    );
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 pt-24 pb-16">
@@ -138,12 +206,22 @@ const NewMission = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="title">Titre de la mission*</Label>
-                    <Input id="title" required placeholder="Ex: Remplacement capteur" />
+                    <Input 
+                      id="title" 
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      required 
+                      placeholder="Ex: Remplacement capteur" 
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="type">Type de mission*</Label>
-                    <Select value={missionType} onValueChange={setMissionType} required>
+                    <Select 
+                      value={missionType} 
+                      onValueChange={(value) => setMissionType(value as MissionType)} 
+                      required
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionner" />
                       </SelectTrigger>
@@ -160,6 +238,8 @@ const NewMission = () => {
                   <Label htmlFor="description">Description*</Label>
                   <Textarea 
                     id="description" 
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     required
                     placeholder="Description détaillée de la mission..."
                     rows={3}
@@ -168,7 +248,11 @@ const NewMission = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="equipment">Équipement concerné*</Label>
-                  <Select value={selectedEquipment} onValueChange={setSelectedEquipment} required>
+                  <Select 
+                    value={selectedEquipment} 
+                    onValueChange={setSelectedEquipment} 
+                    required
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un équipement" />
                     </SelectTrigger>
@@ -185,7 +269,11 @@ const NewMission = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="priority">Priorité*</Label>
-                    <Select value={priority} onValueChange={setPriority} required>
+                    <Select 
+                      value={priority} 
+                      onValueChange={(value) => setPriority(value as MissionPriority)} 
+                      required
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionner" />
                       </SelectTrigger>
@@ -199,7 +287,11 @@ const NewMission = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="status">Statut initial*</Label>
-                    <Select required defaultValue="to_assign">
+                    <Select 
+                      value={status} 
+                      onValueChange={(value) => setStatus(value as MissionStatus)} 
+                      required
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -220,12 +312,24 @@ const NewMission = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="planned_date">Date prévue</Label>
-                    <Input id="planned_date" type="date" />
+                    <Input 
+                      id="planned_date" 
+                      type="date" 
+                      value={plannedDate}
+                      onChange={(e) => setPlannedDate(e.target.value)}
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="estimated_duration">Durée estimée (minutes)</Label>
-                    <Input id="estimated_duration" type="number" min="0" placeholder="Ex: 60" />
+                    <Input 
+                      id="estimated_duration" 
+                      type="number" 
+                      min="0" 
+                      placeholder="Ex: 60" 
+                      value={estimatedDuration}
+                      onChange={(e) => setEstimatedDuration(e.target.value)}
+                    />
                   </div>
                 </div>
                 
@@ -235,6 +339,8 @@ const NewMission = () => {
                     id="prerequisites" 
                     placeholder="Outils, pièces de rechange, documentation..."
                     rows={3}
+                    value={prerequisites}
+                    onChange={(e) => setPrerequisites(e.target.value)}
                   />
                 </div>
               </div>
@@ -256,7 +362,11 @@ const NewMission = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {users.filter(user => user.role === "student").map((student) => (
                     <div key={student.id} className="flex items-center space-x-2 border rounded-md p-3">
-                      <Checkbox id={`student-${student.id}`} />
+                      <Checkbox 
+                        id={`student-${student.id}`} 
+                        checked={selectedStudents.includes(student.id)}
+                        onCheckedChange={() => handleStudentToggle(student.id)}
+                      />
                       <Label htmlFor={`student-${student.id}`} className="flex flex-col">
                         <span>{student.name}</span>
                         <span className="text-sm text-muted-foreground">{student.class}</span>
@@ -269,7 +379,11 @@ const NewMission = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {users.filter(user => user.role === "teacher").map((teacher) => (
                       <div key={teacher.id} className="flex items-center space-x-2 border rounded-md p-3">
-                        <Checkbox id={`teacher-${teacher.id}`} />
+                        <Checkbox 
+                          id={`teacher-${teacher.id}`}
+                          checked={selectedTeachers.includes(teacher.id)}
+                          onCheckedChange={() => handleTeacherToggle(teacher.id)} 
+                        />
                         <Label htmlFor={`teacher-${teacher.id}`}>{teacher.name}</Label>
                       </div>
                     ))}
@@ -343,7 +457,11 @@ const NewMission = () => {
               <div className="space-y-3">
                 {skills.map((skill) => (
                   <div key={skill.id} className="flex items-center space-x-2">
-                    <Checkbox id={`skill-${skill.id}`} />
+                    <Checkbox 
+                      id={`skill-${skill.id}`}
+                      checked={selectedSkills.includes(skill.id)}
+                      onCheckedChange={() => handleSkillToggle(skill.id)}
+                    />
                     <Label htmlFor={`skill-${skill.id}`} className="text-sm flex gap-2">
                       <Badge variant="outline">{skill.code}</Badge>
                       <span>{skill.name}</span>
@@ -362,15 +480,29 @@ const NewMission = () => {
               </CardHeader>
               <CardFooter>
                 <div className="space-y-2 w-full">
-                  <Button type="submit" className="w-full gap-2 bg-accent hover:bg-accent/90">
-                    <Send size={16} />
-                    <span>Créer la mission</span>
+                  <Button 
+                    type="submit" 
+                    className="w-full gap-2 bg-accent hover:bg-accent/90"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <span className="animate-spin mr-2">●</span>
+                        Création en cours...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        <span>Créer la mission</span>
+                      </>
+                    )}
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     className="w-full" 
                     onClick={() => navigate("/missions")}
+                    disabled={isSubmitting}
                   >
                     Annuler
                   </Button>
