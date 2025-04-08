@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -83,6 +84,13 @@ const NewMission = () => {
     { id: "skill3", code: "MS3", name: "Mettre en œuvre une intervention" },
     { id: "skill4", code: "MS4", name: "Améliorer un système" },
     { id: "skill5", code: "MS5", name: "Communiquer les informations" }
+  ];
+
+  // Define maintenanceImages here (this was missing)
+  const maintenanceImages = [
+    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
+    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
+    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
 
   const handleSubmit = (e: React.FormEvent) => {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { 
@@ -51,26 +50,12 @@ const MissionDetails = () => {
   const [activeTab, setActiveTab] = useState("details");
   const [status, setStatus] = useState<MissionStatus>("to_assign");
   
-  // Load mission data
-  useEffect(() => {
-    if (!id) return;
-    
-    try {
-      const missionData = getMissionById(id);
-      if (missionData) {
-        setMission(missionData);
-        setStatus(missionData.status);
-      } else {
-        toast.error("Mission introuvable");
-        navigate("/missions");
-      }
-    } catch (error) {
-      console.error("Error loading mission:", error);
-      toast.error("Erreur lors du chargement de la mission");
-    } finally {
-      setLoading(false);
-    }
-  }, [id, navigate]);
+  // Define maintenanceImages to avoid similar errors
+  const maintenanceImages = [
+    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
+    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
+    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
+  ];
 
   // Sample comments
   const comments = [
@@ -140,12 +125,6 @@ const MissionDetails = () => {
       name: "Mettre en œuvre une intervention",
       validated: false
     }
-  ];
-
-  const maintenanceImages = [
-    "/lovable-uploads/89799078-f0a6-43dc-a2f0-bcd0e8907332.png",
-    "/lovable-uploads/552dcec9-49b8-4640-99f8-c6989b60b59a.png",
-    "/lovable-uploads/61cdf18f-b447-4984-b172-082bc046ad1f.png",
   ];
 
   const typeLabels: Record<string, string> = {

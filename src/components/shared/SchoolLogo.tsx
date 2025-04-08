@@ -34,16 +34,14 @@ const SchoolLogo: React.FC<SchoolLogoProps> = ({
           className={`${logoSizeClass} drop-shadow-md transition-all duration-300 hover:scale-105`}
         />
         {showDescription && (
-          <>
-            <h3 className="text-lg font-medium text-center text-white">Lycée Professionnel</h3>
-            {variant === "mspc" && (
-              <div className="text-center">
-                <p className="text-xs text-white/80">
-                  Bac Pro Maintenance des Systèmes de Production Connectés
-                </p>
-              </div>
-            )}
-          </>
+          <h3 className="text-lg font-medium text-center text-white">Lycée Professionnel</h3>
+        )}
+        {(showDescription && variant === "mspc") && (
+          <div className="text-center">
+            <p className="text-xs text-white/80">
+              Bac Pro Maintenance des Systèmes de Production Connectés
+            </p>
+          </div>
         )}
       </div>
     </BlurryCard>
