@@ -27,8 +27,8 @@ const MissionLogo: React.FC<MissionLogoProps> = ({
     <BlurryCard className={`p-4 ${className} ${gradientClass}`}>
       <div className="flex flex-col items-center gap-2">
         <img 
-          src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-          alt="Logo du Lycée Étienne Mimard"
+          src="/logo-lycee.png" 
+          alt="Logo du Lycée Les Savarières"
           className={`${logoSizeClass} drop-shadow-md transition-all duration-300 hover:scale-105`}
         />
         {variant === "mspc" ? (
@@ -40,7 +40,7 @@ const MissionLogo: React.FC<MissionLogoProps> = ({
           </div>
         ) : (
           <>
-            <h3 className="text-lg font-medium text-center text-white">Lycée Étienne Mimard</h3>
+            <h3 className="text-lg font-medium text-center text-white">Lycée Polyvalent Les Savarières</h3>
             <p className="text-sm text-white/80 text-center">
               Lycée général technologique et professionnel
             </p>

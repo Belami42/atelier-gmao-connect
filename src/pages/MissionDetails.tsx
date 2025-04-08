@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mission } from "@/components/mission/MissionCard";
+import SchoolLogo from "@/components/shared/SchoolLogo";
 
 const MissionDetails = () => {
   const navigate = useNavigate();
@@ -33,7 +33,7 @@ const MissionDetails = () => {
     updatedAt: new Date().toISOString(),
   };
 
-  // For backward compatibility with the existing template
+  // Pour compatibilité avec le modèle existant
   const dueDate = mission.plannedDate ? new Date(mission.plannedDate) : undefined;
   
   return (
@@ -45,8 +45,13 @@ const MissionDetails = () => {
 
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">{mission.title}</CardTitle>
-          <CardDescription>{mission.description}</CardDescription>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-2xl font-bold">{mission.title}</CardTitle>
+              <CardDescription>{mission.description}</CardDescription>
+            </div>
+            <SchoolLogo variant="default" size="small" className="hidden md:flex" />
+          </div>
         </CardHeader>
 
         <CardContent className="grid gap-4">
@@ -95,6 +100,10 @@ const MissionDetails = () => {
                 className="rounded-md border"
               />
             </div>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <SchoolLogo size="medium" className="md:hidden" />
           </div>
         </CardContent>
       </Card>

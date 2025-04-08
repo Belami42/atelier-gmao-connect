@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,8 +13,8 @@ const Index = () => {
       <div className="text-center mb-10 max-w-3xl mx-auto">
         <div className="mb-8 flex justify-center">
           <img 
-            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-            alt="Logo Étienne Mimard"
+            src="/logo-lycee.png" 
+            alt="Logo Lycée Les Savarières"
             className="h-40 md:h-48 w-auto object-contain" 
           />
         </div>
@@ -44,7 +43,7 @@ const Index = () => {
       <BlurryCard className="relative overflow-hidden my-12 p-8 mimard-gradient-blue">
         <div className="absolute top-0 left-0 w-full h-full opacity-10">
           <img 
-            src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
+            src="/logo-lycee.png" 
             alt="Logo Watermark"
             className="w-full h-full object-contain" 
           />

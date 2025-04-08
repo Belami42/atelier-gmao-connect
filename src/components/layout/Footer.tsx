@@ -11,8 +11,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
             <img 
-              src="/lovable-uploads/4a126662-bd80-4409-bc7e-51241cd339c9.png" 
-              alt="Logo Étienne Mimard"
+              src="/logo-lycee.png" 
+              alt="Logo Lycée Les Savarières"
               className="h-16 w-auto object-contain" 
             />
             <span className="text-foreground/80 font-medium">
