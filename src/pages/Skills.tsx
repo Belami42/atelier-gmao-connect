@@ -2,14 +2,6 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
   Table, 
   TableBody, 
   TableCell, 
@@ -33,108 +25,16 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BlurryCard from "@/components/ui/BlurryCard";
 import SchoolLogo from "@/components/shared/SchoolLogo";
-import { NiveauFormation, NiveauFormationType } from "@/types/niveauFormation";
+import { NiveauFormation } from "@/types/niveauFormation";
 import NewActivityModal from "@/components/mspc/NewActivityModal";
 import { toast } from "sonner";
+import { Activity } from "@/types/mspc";
 
 const Skills = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [activityModalOpen, setActivityModalOpen] = useState(false);
-  const [activities, setActivities] = useState<Activity[]>([]);
-
-  const skills = [
-    {
-      id: "1",
-      code: "MS1",
-      name: "Analyser un système",
-      description: "Étudier et comprendre le fonctionnement d'un système technique",
-      category: "diagnostic",
-      level: "2PMIA"
-    },
-    {
-      id: "2",
-      code: "MS2",
-      name: "Préparer une intervention",
-      description: "Organiser et planifier une intervention de maintenance",
-      category: "preparation",
-      level: "2PMIA"
-    },
-    {
-      id: "3",
-      code: "MS3",
-      name: "Mettre en œuvre une intervention",
-      description: "Réaliser une opération de maintenance sur un équipement",
-      category: "intervention",
-      level: "1MSPC"
-    },
-    {
-      id: "4",
-      code: "MS4",
-      name: "Améliorer un système",
-      description: "Proposer et implémenter des améliorations sur un système",
-      category: "amelioration",
-      level: "TMSPC"
-    },
-    {
-      id: "5",
-      code: "MS5",
-      name: "Communiquer les informations",
-      description: "Rédiger des rapports et présenter les résultats d'intervention",
-      category: "communication",
-      level: "TMSPC"
-    }
-  ];
-
-  const mockStudents: { id: string; name: string; classe: NiveauFormationType }[] = [
-    {
-      id: "1",
-      name: "Martin Dubois",
-      classe: "2PMIA"
-    },
-    {
-      id: "2",
-      name: "Léa Bernard",
-      classe: "1MSPC"
-    },
-    {
-      id: "3",
-      name: "Thomas Petit",
-      classe: "TMSPC"
-    }
-  ];
-
-  const studentSkills = [
-    {
-      id: "1",
-      studentName: "Martin Dubois",
-      studentClass: "2PMIA",
-      skills: [
-        { id: "1", status: "validated", date: "2023-10-15" },
-        { id: "2", status: "in_progress", date: "2023-11-10" }
-      ]
-    },
-    {
-      id: "2",
-      studentName: "Léa Bernard",
-      studentClass: "1MSPC",
-      skills: [
-        { id: "1", status: "validated", date: "2023-10-18" },
-        { id: "3", status: "validated", date: "2023-11-05" }
-      ]
-    },
-    {
-      id: "3",
-      studentName: "Thomas Petit",
-      studentClass: "TMSPC",
-      skills: [
-        { id: "4", status: "in_progress", date: "2023-11-12" },
-        { id: "5", status: "validated", date: "2023-10-28" }
-      ]
-    }
-  ];
-
-  const activities = [
+  const [activities, setActivities] = useState<Activity[]>([
     {
       id: "act-1",
       title: "Maintenance préventive système hydraulique",
@@ -142,7 +42,7 @@ const Skills = () => {
       student: {
         id: "1",
         name: "Martin Dubois",
-        classe: "2PMIA",
+        classe: NiveauFormation.SECONDE,
       },
       equipment: "Banc de test hydraulique",
       maintenanceType: "preventif_systematique",
@@ -152,6 +52,97 @@ const Skills = () => {
       isValidated: true,
       validatedBy: "M. Durand",
       createdAt: "2024-04-02T10:30:00Z",
+    }
+  ]);
+
+  const skills = [
+    {
+      id: "1",
+      code: "MS1",
+      name: "Analyser un système",
+      description: "Étudier et comprendre le fonctionnement d'un système technique",
+      category: "diagnostic",
+      level: NiveauFormation.SECONDE
+    },
+    {
+      id: "2",
+      code: "MS2",
+      name: "Préparer une intervention",
+      description: "Organiser et planifier une intervention de maintenance",
+      category: "preparation",
+      level: NiveauFormation.SECONDE
+    },
+    {
+      id: "3",
+      code: "MS3",
+      name: "Mettre en œuvre une intervention",
+      description: "Réaliser une opération de maintenance sur un équipement",
+      category: "intervention",
+      level: NiveauFormation.PREMIERE
+    },
+    {
+      id: "4",
+      code: "MS4",
+      name: "Améliorer un système",
+      description: "Proposer et implémenter des améliorations sur un système",
+      category: "amelioration",
+      level: NiveauFormation.TERMINALE
+    },
+    {
+      id: "5",
+      code: "MS5",
+      name: "Communiquer les informations",
+      description: "Rédiger des rapports et présenter les résultats d'intervention",
+      category: "communication",
+      level: NiveauFormation.TERMINALE
+    }
+  ];
+
+  const mockStudents = [
+    {
+      id: "1",
+      name: "Martin Dubois",
+      classe: NiveauFormation.SECONDE
+    },
+    {
+      id: "2",
+      name: "Léa Bernard",
+      classe: NiveauFormation.PREMIERE
+    },
+    {
+      id: "3",
+      name: "Thomas Petit",
+      classe: NiveauFormation.TERMINALE
+    }
+  ];
+
+  const studentSkills = [
+    {
+      id: "1",
+      studentName: "Martin Dubois",
+      studentClass: NiveauFormation.SECONDE,
+      skills: [
+        { id: "1", status: "validated", date: "2023-10-15" },
+        { id: "2", status: "in_progress", date: "2023-11-10" }
+      ]
+    },
+    {
+      id: "2",
+      studentName: "Léa Bernard",
+      studentClass: NiveauFormation.PREMIERE,
+      skills: [
+        { id: "1", status: "validated", date: "2023-10-18" },
+        { id: "3", status: "validated", date: "2023-11-05" }
+      ]
+    },
+    {
+      id: "3",
+      studentName: "Thomas Petit",
+      studentClass: NiveauFormation.TERMINALE,
+      skills: [
+        { id: "4", status: "in_progress", date: "2023-11-12" },
+        { id: "5", status: "validated", date: "2023-10-28" }
+      ]
     }
   ];
 
@@ -170,9 +161,9 @@ const Skills = () => {
   ];
 
   const levelLabels = {
-    "2PMIA": "2nde PMIA",
-    "1MSPC": "1ère MSPC",
-    "TMSPC": "Term. MSPC"
+    [NiveauFormation.SECONDE]: "2nde PMIA",
+    [NiveauFormation.PREMIERE]: "1ère MSPC",
+    [NiveauFormation.TERMINALE]: "Term. MSPC"
   };
 
   const categoryColors = {
@@ -191,7 +182,7 @@ const Skills = () => {
     "communication": "Communication"
   };
 
-  const handleActivityCreated = (newActivity: any) => {
+  const handleActivityCreated = (newActivity: Activity) => {
     setActivities([newActivity, ...activities]);
     toast.success(`Activité "${newActivity.title}" enregistrée`);
   };
@@ -270,9 +261,9 @@ const Skills = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
             <TabsList className="bg-muted w-full md:w-auto">
               <TabsTrigger value="all">Toutes</TabsTrigger>
-              <TabsTrigger value="2PMIA">2nde PMIA</TabsTrigger>
-              <TabsTrigger value="1MSPC">1ère MSPC</TabsTrigger>
-              <TabsTrigger value="TMSPC">Term. MSPC</TabsTrigger>
+              <TabsTrigger value={NiveauFormation.SECONDE}>2nde PMIA</TabsTrigger>
+              <TabsTrigger value={NiveauFormation.PREMIERE}>1ère MSPC</TabsTrigger>
+              <TabsTrigger value={NiveauFormation.TERMINALE}>Term. MSPC</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -328,7 +319,7 @@ const Skills = () => {
                       <div className="mt-3">
                         <span className="text-sm text-muted-foreground">Compétences validées:</span>
                         <div className="flex flex-wrap gap-2 mt-1">
-                          {activity.competences.map((code: string) => (
+                          {activity.competences.map((code) => (
                             <Badge key={code} variant="outline" className="bg-blue-50">
                               {code}
                             </Badge>
@@ -425,15 +416,15 @@ const Skills = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span>2nde PMIA</span>
-                    <Badge>{skills.filter(s => s.level === "2PMIA").length}</Badge>
+                    <Badge>{skills.filter(s => s.level === NiveauFormation.SECONDE).length}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>1ère MSPC</span>
-                    <Badge>{skills.filter(s => s.level === "1MSPC").length}</Badge>
+                    <Badge>{skills.filter(s => s.level === NiveauFormation.PREMIERE).length}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span>Term. MSPC</span>
-                    <Badge>{skills.filter(s => s.level === "TMSPC").length}</Badge>
+                    <Badge>{skills.filter(s => s.level === NiveauFormation.TERMINALE).length}</Badge>
                   </div>
                 </div>
               </div>
@@ -464,7 +455,7 @@ const Skills = () => {
                   <div className="flex justify-between items-center mb-2">
                     <div>
                       <h3 className="font-medium">{student.studentName}</h3>
-                      <p className="text-sm text-muted-foreground">{student.studentClass}</p>
+                      <p className="text-sm text-muted-foreground">{levelLabels[student.studentClass as keyof typeof levelLabels]}</p>
                     </div>
                     <Button variant="ghost" size="sm" className="gap-1">
                       <span>Détails</span>

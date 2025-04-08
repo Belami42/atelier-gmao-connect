@@ -1,8 +1,8 @@
 
 export enum NiveauFormation {
-  SECONDE = "SECONDE",
-  PREMIERE = "PREMIERE",
-  TERMINALE = "TERMINALE",
+  SECONDE = "2PMIA",
+  PREMIERE = "1MSPC",
+  TERMINALE = "TMSPC",
 }
 
 export type NiveauFormationType = NiveauFormation | null;
