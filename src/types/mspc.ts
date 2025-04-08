@@ -2,7 +2,7 @@
 import { NiveauFormation } from "./niveauFormation";
 import type { NiveauFormationType } from "./niveauFormation";
 
-export { NiveauFormation, getDisplayFromNiveauFormation } from "./niveauFormation";
+export { NiveauFormation, getDisplayFromNiveauFormation, NIVEAU_LABELS } from "./niveauFormation";
 export type { NiveauFormationType } from "./niveauFormation";
 
 export type CompetenceCode =
